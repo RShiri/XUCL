@@ -1,0 +1,369 @@
+#!/usr/bin/env python3
+"""Build data.js for the Premier League dashboard — one payload per season, from the FotMob
+schedule (spine: fixtures/results/standings) plus any rich per-match scrapes.
+
+Unlike the WC2026 builder (whose primary source was the rich scraped match JSONs), a
+league is driven by its **schedule**: ``epl/schedules/SCHEDULE_<season>.json`` already
+carries every fixture with real scores + matchday (built token-free from FotMob by
+``epl/build_schedule.py``). Rich per-match data (xG, shots, events) is *layered on*
+when present in ``epl/matches/<season>/<fotmob_id>.json`` — the same files the browser
+scrapers (``epl/run_match.py`` / ``epl/backfill.py``) produce. Matches with no rich
+file still appear with their score/standings contribution; the xG lab simply fills in as
+matches get deep-scraped.
+
+Output: one self-contained ``data.js`` →
+    window.LL_DATA = { "2025-26": {...}, "2026-27": {...} };
+so the static site works by just opening index.html (no build step at view time).
+"""
+from __future__ import annotations
+
+import os
+import sys
+import json
+import glob
+import shutil
+import datetime
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from xg_model import team_xg_from_events, team_ppda_from_events  # shared shot-extraction + xG (matches the PNGs)
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SCHED_DIR = os.path.join(ROOT, "epl", "schedules")
+TEAM_STATS_DIR = os.path.join(ROOT, "epl", "team_stats")  # FotMob season team stats (fetch_team_stats.py)
+MATCH_DIR = os.environ.get("EPL_MATCH_DIR") or os.path.join(ROOT, "epl", "matches")  # rich scrapes: <season>/<id>.json
+PNG_DIRS = [os.path.join(ROOT, "epl_png"), os.path.join(ROOT, "epl", "output")]
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.js")
+
+FOTMOB_CREST = "https://images.fotmob.com/image_resources/logo/teamlogo/{id}.png"
+CREST_DIR = os.path.join(ROOT, "team_logos", "epl")
+
+
+def _crest(team, team_id):
+    """Prefer a locally downloaded crest (self-contained site); fall back to the CDN."""
+    local = os.path.join(CREST_DIR, f"{team}.png")
+    if os.path.exists(local):
+        return f"../team_logos/epl/{team}.png"
+    return FOTMOB_CREST.format(id=team_id) if team_id else ""
+
+# Canonical stat keys we surface (same set the WC dashboard used), mapped to how the
+# scraper stores them in a rich match JSON's ``match_stats`` (nested {home,away} or flat).
+_STAT_KEYS = {
+    "xg": "xg", "shots": "shots", "sot": "shots_on_target",
+    "possession": "possession", "passes": "passes_total",
+    "pass_acc": "passes_accuracy", "big_chances": "big_chances_created",
+    "big_missed": "big_chances_missed", "saves": "saves", "fouls": "fouls",
+    "duels_won": "duels_won", "corners": "corners",
+}
+
+
+def _pair(ms, canonical):
+    v = ms.get(canonical)
+    if isinstance(v, dict):
+        return [v.get("home"), v.get("away")]
+    return [ms.get(canonical + "_home"), ms.get(canonical + "_away")]
+
+
+def _stat_line(ms):
+    line = {dst: _pair(ms, canon) for dst, canon in _STAT_KEYS.items()}
+    if line["pass_acc"] == [None, None]:
+        line["pass_acc"] = _pair(ms, "pass_accuracy")
+    return line
+
+
+def _find_png(season, fotmob_id):
+    """Link to the PUBLISHED copy (epl_png/, tracked) — a PNG that only exists in the
+    git-ignored epl/output/ works on localhost but 404s on GitHub Pages, so copy it into
+    epl_png/ here and always emit that path."""
+    published, output = (os.path.join(d, f"{fotmob_id}.png") for d in PNG_DIRS)
+    if not os.path.exists(published) and os.path.exists(output):
+        try:
+            os.makedirs(os.path.dirname(published), exist_ok=True)
+            shutil.copy2(output, published)
+        except OSError:
+            return os.path.relpath(output, os.path.dirname(OUT)).replace("\\", "/")
+    if os.path.exists(published):
+        return os.path.relpath(published, os.path.dirname(OUT)).replace("\\", "/")
+    return None
+
+
+# Box entries come from the derived matches_detail/<id>.js (build_match_details.py runs first),
+# which keeps every pass and take-on with start/end coords, normalised so each side attacks x=100.
+DETAIL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "matches_detail")
+
+
+def _in_box(x, y):
+    """Opponent's penalty area in WhoScored 0-100 coords (attacking toward x=100)."""
+    return x is not None and y is not None and x >= 83 and 21.1 <= y <= 78.9
+
+
+def _box_entries(fotmob_id):
+    """[home, away] box entries for one match, or None without a detail file. An entry is a
+    completed open-play pass or a successful take-on that starts outside the opponent's box and
+    ends inside it. Corners (taken from the flag, x>=99 at a touchline) are left out: they're set
+    pieces, not a way of working the ball into the area."""
+    path = os.path.join(DETAIL_DIR, f"{fotmob_id}.js")
+    if not os.path.exists(path):
+        return None
+    try:
+        raw = open(path, encoding="utf-8").read()
+        d = json.loads(raw[raw.index("{"):raw.rstrip().rstrip(";").rindex("}") + 1])
+    except Exception:
+        return None
+    out = {"home": 0, "away": 0}
+    for p in d.get("passes") or []:
+        if not p.get("ok") or p.get("team") not in out:
+            continue
+        if p.get("x", 0) >= 99 and (p.get("y", 50) <= 5 or p.get("y", 50) >= 95):
+            continue                                   # corner kick
+        if not _in_box(p.get("x"), p.get("y")) and _in_box(p.get("ex"), p.get("ey")):
+            out[p["team"]] += 1
+    for t in d.get("dribbles") or []:
+        if t.get("ok") and t.get("team") in out and not _in_box(t.get("x"), t.get("y")) \
+                and _in_box(t.get("ex"), t.get("ey")):
+            out[t["team"]] += 1
+    if not (d.get("passes") or d.get("dribbles")):
+        return None
+    return [out["home"], out["away"]]
+
+
+def _load_rich(season, fotmob_id):
+    """Return the rich scraped match JSON for a fixture, or None."""
+    for cand in (os.path.join(MATCH_DIR, season, f"{fotmob_id}.json"),
+                 os.path.join(MATCH_DIR, f"{fotmob_id}.json")):
+        if os.path.exists(cand):
+            try:
+                return json.load(open(cand, encoding="utf-8"))
+            except Exception:
+                return None
+    return None
+
+
+def build_matches(season, schedule):
+    """Merge schedule fixtures with any rich scrape → the dashboard match list + crest map."""
+    matches, crests = [], {}
+    for f in schedule["matches"]:
+        fid = f["fotmob_id"]
+        home, away = f["home"], f["away"]
+        if home not in crests:
+            crests[home] = _crest(home, f.get("home_id"))
+        if away not in crests:
+            crests[away] = _crest(away, f.get("away_id"))
+
+        hs, as_ = f.get("home_score"), f.get("away_score")
+        stats = {k: [None, None] for k in _STAT_KEYS}
+        xg_home = xg_away = None
+        xg_estimated = False
+        has_events = False
+        sources = []
+        ppda_home = ppda_away = None
+
+        rich = _load_rich(season, fid)
+        if rich:
+            ms = rich.get("match_stats") or {}
+            stats = _stat_line(ms)
+            xg_home, xg_away = stats["xg"][0], stats["xg"][1]
+            sources = rich.get("_sources", [])
+            has_events = bool(rich.get("events"))
+            # WhoScored is authoritative for the score whenever we have its event data. FotMob's
+            # schedule feed reports 0-0 for a chunk of older-season games (17 in 2022-23, 9 in
+            # 2023-24, 1 in 2024-25) and null for fixtures still unplayed when the spine was built —
+            # both wrong once the match is scraped. The rich fulltime score matches the event-derived
+            # score for every match in every season, so trust it when events exist; else fall back
+            # to the schedule (and fill a missing schedule score from the rich file if we have one).
+            rhs, ras = rich.get("home", {}).get("score"), rich.get("away", {}).get("score")
+            if rich.get("events"):
+                if rhs is not None:
+                    hs = rhs
+                if ras is not None:
+                    as_ = ras
+            else:
+                if hs is None:
+                    hs = rhs
+                if as_ is None:
+                    as_ = ras
+            if (xg_home is None or xg_away is None) and rich.get("events"):
+                ch, ca = team_xg_from_events(rich)
+                if ch is not None:
+                    xg_home, xg_away, xg_estimated = ch, ca, True
+                    stats["xg"] = [xg_home, xg_away]
+            if rich.get("events"):
+                ppda_home, ppda_away = team_ppda_from_events(rich)
+
+        played = hs is not None and as_ is not None
+        has_stats = stats["xg"][0] is not None or stats["shots"][0] is not None
+        matches.append({
+            "id": str(fid),
+            "fotmob_id": fid,
+            "date": f.get("date") or "",
+            "matchday": f.get("matchday"),
+            "venue": (rich or {}).get("meta", {}).get("venue", "") if rich else "",
+            "home": home, "away": away,
+            "home_id": f.get("home_id"), "away_id": f.get("away_id"),
+            "hs": hs, "as": as_,
+            "played": played,
+            "upcoming": not played,
+            "kickoff": f.get("kickoff_utc") or "",
+            "has_stats": bool(has_stats),
+            "has_events": has_events,
+            "xg_home": xg_home, "xg_away": xg_away,
+            "xg_estimated": xg_estimated,
+            "png": _find_png(season, fid),
+            "stats": stats,
+            "sources": sources,
+            "ppda_home": ppda_home, "ppda_away": ppda_away,
+            "box": _box_entries(fid) if (played and has_events) else None,
+        })
+    return matches, crests
+
+
+def compute_standings(matches):
+    """Single 20-team league table from finished results, ranked Pts→GD→GF→name."""
+    T = {}
+    for m in matches:
+        if not m["played"]:
+            continue
+        h, a, hs, as_ = m["home"], m["away"], m["hs"], m["as"]
+        for t in (h, a):
+            T.setdefault(t, dict(team=t, P=0, W=0, D=0, L=0, GF=0, GA=0, GD=0, Pts=0, form=[],
+                                 ppda_sum=0.0, ppda_n=0))
+        H, A = T[h], T[a]
+        if m.get("ppda_home") is not None:
+            H["ppda_sum"] += m["ppda_home"]; H["ppda_n"] += 1
+        if m.get("ppda_away") is not None:
+            A["ppda_sum"] += m["ppda_away"]; A["ppda_n"] += 1
+        H["P"] += 1; A["P"] += 1
+        H["GF"] += hs; H["GA"] += as_; A["GF"] += as_; A["GA"] += hs
+        if hs > as_:
+            H["W"] += 1; H["Pts"] += 3; A["L"] += 1; H["form"].append(["W", m]); A["form"].append(["L", m])
+        elif hs < as_:
+            A["W"] += 1; A["Pts"] += 3; H["L"] += 1; A["form"].append(["W", m]); H["form"].append(["L", m])
+        else:
+            H["D"] += 1; A["D"] += 1; H["Pts"] += 1; A["Pts"] += 1
+            H["form"].append(["D", m]); A["form"].append(["D", m])
+    # Make sure every team that has a fixture appears, even with 0 played.
+    for m in matches:
+        for t in (m["home"], m["away"]):
+            T.setdefault(t, dict(team=t, P=0, W=0, D=0, L=0, GF=0, GA=0, GD=0, Pts=0, form=[],
+                                 ppda_sum=0.0, ppda_n=0))
+    rows = list(T.values())
+    for r in rows:
+        r["GD"] = r["GF"] - r["GA"]
+        # last-5 form (most recent first), by kickoff order
+        r["form"] = [fm[0] for fm in sorted(r["form"], key=lambda x: x[1].get("kickoff") or x[1]["date"])][-5:]
+        # PPDA: season average of the per-match values (a rate stat, not a sum).
+        r["ppda"] = round(r["ppda_sum"] / r["ppda_n"], 2) if r["ppda_n"] else None
+        del r["ppda_sum"], r["ppda_n"]
+    rows.sort(key=lambda r: (-r["Pts"], -r["GD"], -r["GF"], r["team"]))
+    for i, r in enumerate(rows, 1):
+        r["rank"] = i
+    return rows
+
+
+def build_xg_records(matches):
+    recs = []
+    for m in matches:
+        if not m["played"] or m["xg_home"] is None or m["xg_away"] is None:
+            continue
+        recs.append(dict(team=m["home"], opp=m["away"], gf=m["hs"], ga=m["as"],
+                         xgf=round(m["xg_home"], 2), xga=round(m["xg_away"], 2), home=True, date=m["date"]))
+        recs.append(dict(team=m["away"], opp=m["home"], gf=m["as"], ga=m["hs"],
+                         xgf=round(m["xg_away"], 2), xga=round(m["xg_home"], 2), home=False, date=m["date"]))
+    return recs
+
+
+def build_distance(season, schedule):
+    """Avg km covered per match, per club, from epl/team_stats/DISTANCE_<season>.json (FotMob's
+    "Total distance per match" team stat — tracking data, so no event scrape can derive it).
+    Rows are keyed back to the schedule's team names by FotMob team id, so a club FotMob
+    spells differently in its stats feed still lines up with the standings. None if absent."""
+    path = os.path.join(TEAM_STATS_DIR, f"DISTANCE_{season}.json")
+    if not os.path.exists(path):
+        return None
+    raw = json.load(open(path, encoding="utf-8"))
+    by_id = {}
+    for f in schedule.get("matches", []):
+        by_id[str(f.get("home_id"))] = f["home"]
+        by_id[str(f.get("away_id"))] = f["away"]
+    rows = [{"team": by_id.get(str(r.get("team_id")), r["team"]), "km": r["km"], "mp": r.get("matches")}
+            for r in raw.get("teams", []) if r.get("km") is not None]
+    rows.sort(key=lambda r: -r["km"])
+    return {"stat": raw.get("stat"), "fetched": (raw.get("fetched_utc") or "")[:10], "teams": rows}
+
+
+def build_season(season):
+    path = os.path.join(SCHED_DIR, f"SCHEDULE_{season}.json")
+    if not os.path.exists(path):
+        return None
+    schedule = json.load(open(path, encoding="utf-8"))
+    if not schedule.get("matches"):
+        # Empty (e.g. 26/27 before fixtures release) — render a "not started" shell.
+        return {"season": season, "status": "not_started", "counts": {},
+                "standings": [], "matches": [], "xgRecords": [], "crests": {}, "teams": []}
+
+    matches, crests = build_matches(season, schedule)
+    standings = compute_standings(matches)
+    xg_records = build_xg_records(matches)
+    played = [m for m in matches if m["played"]]
+    with_xg = [m for m in played if m["xg_home"] is not None]
+    mds = [m["matchday"] for m in matches if m["matchday"]]
+    cur_md = max((m["matchday"] for m in played if m["matchday"]), default=0)
+    return {
+        "season": season,
+        "status": "in_progress" if played and len(played) < len(matches) else
+                  ("finished" if played else "not_started"),
+        "counts": {
+            "total": len(matches), "played": len(played), "with_xg": len(with_xg),
+            "teams": len(standings), "matchdays": max(mds) if mds else 0,
+            "current_matchday": cur_md,
+        },
+        "standings": standings,
+        "matches": matches,
+        "xgRecords": xg_records,
+        "crests": crests,
+        "teams": sorted(r["team"] for r in standings),
+        "distance": build_distance(season, schedule),
+    }
+
+
+def _default_season(seasons):
+    """Newest season with at least one played match out of a real, (near-)complete fixture
+    list; else the newest we have. The >=100 floor keeps a season with only a handful of
+    fixtures on disk (an incremental build_schedule.py sweep just starting, or a few
+    hand-added preview matches) from briefly becoming the default before its full 380-match
+    schedule is pulled — landing new visitors on a near-empty table."""
+    played = [s for s in sorted(seasons)
+              if (seasons[s].get("counts") or {}).get("played")
+              and (seasons[s].get("counts") or {}).get("total", 0) >= 100]
+    return (played or sorted(seasons))[-1]
+
+
+def main():
+    seasons = {}
+    for season in ("2022-23", "2023-24", "2024-25", "2025-26", "2026-27"):
+        s = build_season(season)
+        if s is not None:
+            seasons[season] = s
+    if not seasons:
+        raise SystemExit("No schedules found in " + SCHED_DIR + " — run epl/build_schedule.py first.")
+
+    payload = {
+        "generated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        # Land on the newest season that has a played match — a new season takes over
+        # the moment it kicks off, instead of the site sitting on last year forever.
+        "defaultSeason": _default_season(seasons),
+        "seasons": seasons,
+    }
+    with open(OUT, "w", encoding="utf-8") as fh:
+        fh.write("// AUTO-GENERATED by build_data.py — do not edit by hand.\n")
+        fh.write("window.LL_DATA = ")
+        json.dump(payload, fh, ensure_ascii=False, indent=1)
+        fh.write(";\n")
+    print(f"Wrote {OUT}")
+    for season, s in seasons.items():
+        c = s.get("counts", {})
+        print(f"  {season}: {c.get('played',0)}/{c.get('total',0)} played, "
+              f"{c.get('with_xg',0)} with xG, {c.get('teams',0)} teams, status={s['status']}")
+
+
+if __name__ == "__main__":
+    main()

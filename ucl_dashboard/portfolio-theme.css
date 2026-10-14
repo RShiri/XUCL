@@ -1,0 +1,236 @@
+/* ============================================================================
+   Portfolio theme bridge: maps the "Broadcast Kinetic" tokens in styles.css /
+   match.css onto the shared rshiri.github.io brand kit (--rs-* tokens from
+   https://rshiri.github.io/assets/brand/brand.css). brand.js sets
+   html[data-site-style] before paint and switches it live, so everything here
+   is pure CSS: no re-render is needed when the visitor flips C <-> A.
+
+   A "Matchday"  — the dashboard's native language; keeps Premier League purple.
+   C "HUD"       — deep navy, cyan hairlines, square corners, corner brackets,
+                   upright Chakra Petch display over IBM Plex Sans.
+   Data colours (team kits, win/draw/loss, relegation red, pitch green) are left
+   alone in both looks. Load AFTER styles.css and match.css.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- A: Matchday */
+html[data-site-style="a"] {
+  --bg: var(--rs-bg);
+  --plate: var(--rs-panel);
+  --plate-2: var(--rs-panel-2);
+  --muted-2: var(--rs-muted);            /* #737b88 -> #9aa1ad: small labels read at AA */
+  --font-display: var(--rs-display);
+  --font-label: var(--rs-display);
+  --font-body: var(--rs-text);
+  /* the portfolio bar + About panel take the league purple instead of portfolio lime */
+  --rs-accent: #a855f7; --rs-accent-ink: #0c0d10; --rs-accent-soft: rgba(168, 85, 247, 0.14); --rs-goal: #a855f7;
+}
+
+/* ---------------------------------------------------------------- C: HUD */
+html[data-site-style="c"] {
+  color-scheme: dark;
+  --bg: var(--rs-bg);
+  --plate: var(--rs-panel);
+  --plate-2: var(--rs-panel-2);
+  --well: #040a12;
+  --line: rgba(77, 240, 255, 0.10);
+  --line-strong: var(--rs-line);
+  --text: var(--rs-ink);
+  --muted: var(--rs-body);
+  --muted-2: var(--rs-muted);
+
+  --accent: var(--rs-accent);
+  --accent-ink: var(--rs-accent-ink);
+  --accent-dim: #1aa6b5;
+  --accent-soft: var(--rs-accent-soft);
+  --info: #b69cff;                       /* second series / Europa: violet, distinct from cyan */
+  --info-soft: rgba(182, 156, 255, 0.10);
+  --zone-uel: var(--info);
+  --zone-uecl: #a9c6d3;
+  --glow: 0 0 14px rgba(77, 240, 255, 0.4);
+
+  --font-display: var(--rs-display);
+  --font-label: var(--rs-display);
+  --font-body: var(--rs-text);
+  --fs-display: 56px;
+
+  --plate-cut: none; --slant: none; --slant-sm: none;
+  --hatch: repeating-linear-gradient(-55deg, rgba(169, 198, 211, 0.30) 0 5px, rgba(169, 198, 211, 0.13) 5px 9px);
+  --hatch-info: repeating-linear-gradient(-55deg, #b69cff 0 5px, #7a64b8 5px 9px);
+  --hatch-grey: repeating-linear-gradient(-55deg, #a9c6d3 0 5px, #5f7b88 5px 9px);
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+  /* corner brackets (top-left + bottom-right), drawn as background layers so no
+     existing ::before/::after is disturbed */
+  --rs-brk:
+    linear-gradient(var(--rs-accent), var(--rs-accent)) left top / 16px 2px no-repeat,
+    linear-gradient(var(--rs-accent), var(--rs-accent)) left top / 2px 16px no-repeat,
+    linear-gradient(var(--rs-accent), var(--rs-accent)) right bottom / 16px 2px no-repeat,
+    linear-gradient(var(--rs-accent), var(--rs-accent)) right bottom / 2px 16px no-repeat;
+}
+html[data-site-style="c"] body {
+  background: radial-gradient(80% 50% at 75% 0%, rgba(77, 240, 255, 0.06), transparent 70%) no-repeat, var(--bg);
+  font-weight: 400;
+}
+/* HUD type is upright: drop the broadcast italics everywhere except real emphasis */
+html[data-site-style="c"] body :not(em, i, .cl-note) { font-style: normal; }
+html[data-site-style="c"] h1, html[data-site-style="c"] h2, html[data-site-style="c"] h3, html[data-site-style="c"] h4 { letter-spacing: 0.04em; }
+
+/* header + tabs */
+html[data-site-style="c"] header.site,
+html[data-site-style="c"] .mv-nav { background: rgba(5, 11, 20, 0.9); border-bottom-color: var(--rs-line); }
+html[data-site-style="c"] .brand .title { font-weight: 700; font-size: 22px; letter-spacing: 0.12em; }
+html[data-site-style="c"] .brand .title span { margin-inline-start: 0.35em; }
+html[data-site-style="c"] .brand .sub { letter-spacing: 0.26em; }
+html[data-site-style="c"] nav.tabs button,
+html[data-site-style="c"] .mv-nav a { font-weight: 600; font-size: 12.5px; letter-spacing: 0.14em; box-shadow: inset 0 -2px 0 transparent; }
+html[data-site-style="c"] nav.tabs button.active,
+html[data-site-style="c"] nav.tabs button[aria-selected="true"],
+html[data-site-style="c"] .mv-nav a.current { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+html[data-site-style="c"] .season-pick select { font-weight: 600; font-size: 14px; }
+html[data-site-style="c"] nav.tabs button { padding: 0 14px; font-size: 13.5px; margin: 0; }
+
+/* section headings: portfolio "// TITLE" */
+html[data-site-style="c"] .section-head h2 { font-weight: 700; letter-spacing: 0.03em; gap: 10px; }
+html[data-site-style="c"] .section-head h2::before,
+html[data-site-style="c"] .mv-title::before { content: "//"; width: auto; height: auto; background: none; transform: none; color: var(--accent); }
+html[data-site-style="c"] .mv-title { font-weight: 700; letter-spacing: 0.03em; gap: 10px; border-bottom-color: var(--rs-line); }
+html[data-site-style="c"] .stat { border-top-color: var(--rs-line); }
+html[data-site-style="c"] .stat::before { transform: none; width: 18px; height: 2px; top: -1px; }
+html[data-site-style="c"] .stat .k { letter-spacing: 0.16em; }
+
+/* plates -> hairline panels with corner brackets */
+html[data-site-style="c"] .card,
+html[data-site-style="c"] .data-card,
+html[data-site-style="c"] .champ-card,
+html[data-site-style="c"] .scoreboard { background: var(--rs-brk), var(--plate); border: 1px solid var(--rs-line); }
+html[data-site-style="c"] .match-card { background: var(--plate); border: 1px solid var(--line); }
+html[data-site-style="c"] .match-card.has-link:hover,
+html[data-site-style="c"] .data-card:hover { background: var(--rs-brk), var(--plate-2); border-color: var(--rs-line-strong); }
+html[data-site-style="c"] .db-match,
+html[data-site-style="c"] .lineup-card,
+html[data-site-style="c"] .pitch-wrap,
+html[data-site-style="c"] .mv-wp-wrap,
+html[data-site-style="c"] .tl-map-card { border: 1px solid var(--line); }
+html[data-site-style="c"] .md-head { font-weight: 600; letter-spacing: 0.16em; }
+html[data-site-style="c"] .md-head::before { content: "// "; }
+
+/* callouts: straight 2px accent rule instead of the slanted slash */
+html[data-site-style="c"] .insight::before,
+html[data-site-style="c"] .explainer::before,
+html[data-site-style="c"] .so-spot::before { width: 2px; clip-path: none; }
+html[data-site-style="c"] .insight, html[data-site-style="c"] .explainer, html[data-site-style="c"] .so-spot { border: 1px solid var(--line); }
+
+/* segmented controls / chips: HUD outline style; primary buttons stay solid */
+html[data-site-style="c"] .seg { border: 1px solid var(--line); }
+html[data-site-style="c"] .seg-btn,
+html[data-site-style="c"] .so-preset,
+html[data-site-style="c"] .agm-tab,
+html[data-site-style="c"] .chip-toggle,
+html[data-site-style="c"] .back-link,
+html[data-site-style="c"] .agm-dl { font-weight: 600; font-size: 12.5px; letter-spacing: 0.12em; border: 1px solid transparent; }
+html[data-site-style="c"] .seg-btn.active,
+html[data-site-style="c"] .so-preset.active,
+html[data-site-style="c"] .agm-tab.active,
+html[data-site-style="c"] .chip-toggle.on:not(.home):not(.away) { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+html[data-site-style="c"] .agm-tab.active .mm { color: var(--accent); }
+html[data-site-style="c"] .back-link:hover,
+html[data-site-style="c"] .agm-dl:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+html[data-site-style="c"] .png-btn,
+html[data-site-style="c"] .live-toast { font-weight: 600; font-size: 13px; letter-spacing: 0.16em; }
+html[data-site-style="c"] .match-top .png-btn-alt { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+html[data-site-style="c"] .match-top .png-btn-alt:hover { background: var(--accent-soft); }
+html[data-site-style="c"] .pl-badge { border: 1px solid var(--line); }
+html[data-site-style="c"] .controls input, html[data-site-style="c"] .controls select,
+html[data-site-style="c"] .so-controls select, html[data-site-style="c"] .so-controls input,
+html[data-site-style="c"] .controls-bar select, html[data-site-style="c"] .controls-bar input[type=text] { font-weight: 500; }
+
+/* tables */
+html[data-site-style="c"] table { font-weight: 500; }
+html[data-site-style="c"] thead th,
+html[data-site-style="c"] table.standings th,
+html[data-site-style="c"] table.proj th { letter-spacing: 0.14em; font-weight: 600; }
+html[data-site-style="c"] tr.z-ucl { background: rgba(77, 240, 255, 0.045); }
+html[data-site-style="c"] tr.z-uel { background: rgba(182, 156, 255, 0.04); }
+
+/* big figures: Chakra Petch is wider than Barlow Condensed */
+html[data-site-style="c"] .mc-score .sc { font-size: 26px; font-weight: 700; }
+html[data-site-style="c"] .r-big { font-weight: 700; }
+html[data-site-style="c"] .champ-team { font-size: 46px; font-weight: 700; line-height: 1; }
+html[data-site-style="c"] .sb-team .nm { font-size: 26px; font-weight: 700; letter-spacing: 0.03em; }
+html[data-site-style="c"] .sb-score { font-weight: 700; }
+@media (max-width: 720px) {
+  html[data-site-style="c"] .sb-team .nm { font-size: 13px; letter-spacing: 0; line-height: 1.15; }
+  html[data-site-style="c"] .sb-team { gap: 8px; }
+  html[data-site-style="c"] .sb-team img { width: 30px; height: 30px; }
+  html[data-site-style="c"] .sb-main { gap: 10px; }
+  html[data-site-style="c"] .sb-score { font-size: 36px; }
+  html[data-site-style="c"] .scoreboard { padding: 22px 18px 18px; }
+  html[data-site-style="c"] .champ-team { font-size: 30px; }
+}
+
+/* broadcast lower-thirds (scoreboard, champion card): square them off */
+html[data-site-style="c"] .scoreboard,
+html[data-site-style="c"] .champ-card,
+html[data-site-style="c"] .champ-plate { clip-path: none; }
+html[data-site-style="c"] .scoreboard::before,
+html[data-site-style="c"] .champ-card::before { display: none; }
+html[data-site-style="c"] .scoreboard { padding-left: 44px; }
+html[data-site-style="c"] .champ-card { padding-left: 34px; }
+html[data-site-style="c"] .champ-lbl { clip-path: none; left: -1px; top: -1px; font-weight: 600; font-size: 12px; letter-spacing: 0.2em; padding: 5px 14px; }
+html[data-site-style="c"] .champ-plate { border: 1px solid var(--line); }
+html[data-site-style="c"] .champ-meter { background: repeating-linear-gradient(90deg, rgba(77, 240, 255, 0.14) 0 4.4%, transparent 4.4% 5%); }
+html[data-site-style="c"] .tooltip { border: 1px solid var(--rs-line); border-top: 2px solid var(--accent); }
+html[data-site-style="c"] .cardm { transform: none; }
+html[data-site-style="c"] .agm-node.shot, html[data-site-style="c"] .agm-lz.shot { stroke: var(--accent-dim); border-color: var(--accent-dim); }
+
+/* ---- JS-drawn SVG chart chrome: app.js / match.js write literal hex colours as
+   SVG presentation attributes, which any CSS property overrides. Remap the chrome
+   (and the accent / second-series colours) onto the HUD tokens. */
+html[data-site-style="c"] svg [stroke="#1c1f26"],
+html[data-site-style="c"] svg [stroke="#23262e"],
+html[data-site-style="c"] svg [stroke="#15171c"] { stroke: rgba(77, 240, 255, 0.16); }
+html[data-site-style="c"] svg [fill="#0c0d10"] { fill: var(--bg); }
+html[data-site-style="c"] svg [stroke="#0c0d10"],
+html[data-site-style="c"] svg [stroke="#050611"] { stroke: var(--bg); }
+html[data-site-style="c"] svg [fill="#0d1420"] { fill: var(--well); }
+html[data-site-style="c"] svg text[fill="#f5f7fa"] { fill: var(--text); }
+html[data-site-style="c"] svg text[fill="#b9bfc9"] { fill: var(--muted); }
+html[data-site-style="c"] svg text[fill="#7c89a8"] { fill: var(--muted-2); }
+html[data-site-style="c"] svg [stroke="#b9bfc9"] { stroke: var(--muted); }
+html[data-site-style="c"] svg [fill="#a855f7"] { fill: var(--accent); }
+html[data-site-style="c"] svg [stroke="#a855f7"] { stroke: var(--accent); }
+html[data-site-style="c"] svg [fill="#7c3aed"] { fill: var(--accent-dim); }
+html[data-site-style="c"] svg [stroke="#7c3aed"] { stroke: var(--accent-dim); }
+html[data-site-style="c"] svg [fill="#9fd0ff"] { fill: var(--info); }
+html[data-site-style="c"] svg [stroke="#9fd0ff"] { stroke: var(--info); }
+html[data-site-style="c"] svg[style*="#0f1114"] { background: var(--well) !important; border-radius: 0 !important; outline: 1px solid var(--line); }
+html[data-site-style="c"] [style*="background:#a855f7"] { background: var(--accent) !important; }
+html[data-site-style="c"] [style*="background:#7c3aed"] { background: var(--accent-dim) !important; }
+html[data-site-style="c"] [style*="background:#9fd0ff"] { background: var(--info) !important; }
+
+/* ---- colour words in the explainers follow the look (the accent is purple in A,
+   cyan in C; the second series is pale blue in A, violet in C) */
+.cw-acc::after { content: "purple"; }
+.cw-acc-cap::after { content: "Purple"; }
+.cw-info::after { content: "pale blue"; }
+html[data-site-style="c"] .cw-acc::after { content: "cyan"; }
+html[data-site-style="c"] .cw-acc-cap::after { content: "Cyan"; }
+html[data-site-style="c"] .cw-info::after { content: "violet"; }
+html[data-site-lang="he"] .cw-acc::after, html[data-site-lang="he"] .cw-acc-cap::after { content: "סגול"; }
+html[data-site-lang="he"] .cw-info::after { content: "תכלת"; }
+html[data-site-lang="he"][data-site-style="c"] .cw-acc::after, html[data-site-lang="he"][data-site-style="c"] .cw-acc-cap::after { content: "טורקיז"; }
+html[data-site-lang="he"][data-site-style="c"] .cw-info::after { content: "סגול"; }
+
+/* ---- Hebrew (brand kit ?lang=he): the page layout stays LTR (tables, pitches and charts
+   read left to right); translated text runs right to left inside its own box. */
+html[data-site-lang="he"] .brand .title span { margin-inline-start: 0.3em; }
+html[data-site-lang="he"] .brand .title { letter-spacing: 0.02em; }
+/* an element mixing a translated label with data children (numbers, names) keeps LTR
+   order, so "home - away" figures are never swapped */
+html[data-site-lang="he"] [data-rs-dir]:has(> :not(br)):not(.title) { direction: ltr; }
+/* Hebrew has no capitals: drop the wide tracking used for uppercase Latin labels */
+html[data-site-lang="he"] [dir="auto"], html[data-site-lang="he"] [dir="rtl"] { letter-spacing: 0.01em; }
+html[data-site-lang="he"] .stat { text-align: right; }
+html[data-site-lang="he"] .stat::before { left: auto; right: 0; }
+/* translated prose keeps its max-width but hugs the right edge, under its RTL heading */
+html[data-site-lang="he"] [data-he-html] { margin-left: auto; }

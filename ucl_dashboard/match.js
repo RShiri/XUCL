@@ -1,0 +1,2364 @@
+/* Interactive single-match dashboard: clickable shot map + pass explorer with a
+   minute timeline. Loads matches_detail/<id>.js (set via ?id=) as a <script> tag
+   so it works on file:// without fetch/CORS. */
+(function () {
+  "use strict";
+
+  var LOGO = "../team_logos/epl/";
+  var PW = 100, PH = 64; // pitch SVG units (length x width)
+  var tooltip = document.getElementById("tooltip");
+
+  // Per-season bundles: data/index.js (loaded statically) lists the seasons and the cache
+  // version; the season's bundle data/<season>.js is fetched on demand and aliased into
+  // window.WC_DATA, which the rest of this file reads for head-to-head context.
+  var IDX = window.LL_INDEX || { seasons: {}, defaultSeason: "", v: "", teamColors: {} };
+  var SEASON = (function () {
+    var s = (location.search.match(/[?&]season=([^&]+)/) || [])[1];
+    s = s ? decodeURIComponent(s) : "";
+    return (s && IDX.seasons[s]) ? s : (IDX.defaultSeason || "");
+  })();
+  var VER = "?v=" + encodeURIComponent(IDX.v || "");
+  function loadScript(src, ok, err) {
+    var sc = document.createElement("script");
+    sc.src = src; sc.onload = ok; sc.onerror = err || ok;
+    document.head.appendChild(sc);
+  }
+  function loadSeasonData(cb) {
+    var LL = window.LL_DATA;
+    if (LL && LL.seasons && LL.seasons[SEASON]) { window.WC_DATA = LL.seasons[SEASON]; cb(); return; }
+    if (!SEASON) { window.WC_DATA = { matches: [] }; cb(); return; }
+    loadScript("data/" + encodeURIComponent(SEASON) + ".js" + VER, function () {
+      var L2 = window.LL_DATA;
+      window.WC_DATA = (L2 && L2.seasons && L2.seasons[SEASON]) || { matches: [] };
+      cb();
+    });
+  }
+  // Keep aria-pressed in sync on every filter chip (their own handlers toggle the .on class).
+  document.addEventListener("click", function (e) {
+    var c = e.target && e.target.closest ? e.target.closest(".chip-toggle") : null;
+    if (c) c.setAttribute("aria-pressed", c.classList.contains("on") ? "true" : "false");
+  });
+
+  function el(t, c, h) { var e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function logoImg(team) {
+    return '<img src="' + LOGO + encodeURIComponent(team) + '.png" alt="" width="44" height="44" loading="lazy" ' +
+      'onerror="this.style.visibility=\'hidden\'">';
+  }
+  // Player headshot (FotMob, matched by team+surname at build time — see
+  // build_match_details.py's _fotmob_photo_lookup). Not every player has one (name
+  // matching isn't perfect); omitting the <img> entirely is the fallback, no broken-image icon.
+  function photoImg(p) {
+    if (!p.photo) return '<span class="ph-photo noimg" aria-hidden="true"></span>';
+    return '<img class="ph-photo" src="' + esc(p.photo) + '" alt="" width="22" height="22" loading="lazy" ' +
+      'onerror="this.style.visibility=\'hidden\'">';
+  }
+  function qid() {
+    var m = location.search.match(/[?&]id=([^&]+)/);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  /* Shared "faces instead of numbers" node renderer for the pitch SVG maps (Pass
+     Network, Average Position): draws either a plain numbered circle (default,
+     matches the existing look) or the same circle with a circular-clipped player
+     photo on top, toggled per map by a checkbox in its own controls bar. Falls
+     back to the numbered circle when a player has no photo, so the toggle never
+     produces an empty node. */
+  var NS_SVG = "http://www.w3.org/2000/svg";
+  var _svgNodeSeq = 0;
+  function drawPitchNode(nodeG, cx, cy, r, color, num, photo, showFaces) {
+    var c = document.createElementNS(NS_SVG, "circle");
+    c.setAttribute("cx", cx.toFixed(2)); c.setAttribute("cy", cy.toFixed(2));
+    c.setAttribute("r", r.toFixed(2));
+    c.setAttribute("fill", color); c.setAttribute("fill-opacity", "0.92");
+    c.setAttribute("stroke", "#0c0d10"); c.setAttribute("stroke-width", "0.3");
+    nodeG.appendChild(c);
+    if (showFaces && photo) {
+      var id = "pn-face-" + (_svgNodeSeq++);
+      var defs = document.createElementNS(NS_SVG, "defs");
+      var clip = document.createElementNS(NS_SVG, "clipPath");
+      clip.setAttribute("id", id);
+      var cc = document.createElementNS(NS_SVG, "circle");
+      cc.setAttribute("cx", cx.toFixed(2)); cc.setAttribute("cy", cy.toFixed(2)); cc.setAttribute("r", r.toFixed(2));
+      clip.appendChild(cc);
+      defs.appendChild(clip);
+      nodeG.appendChild(defs);
+      var img = document.createElementNS(NS_SVG, "image");
+      img.setAttributeNS("http://www.w3.org/1999/xlink", "href", photo);
+      img.setAttribute("href", photo);
+      img.setAttribute("x", (cx - r).toFixed(2)); img.setAttribute("y", (cy - r).toFixed(2));
+      img.setAttribute("width", (2 * r).toFixed(2)); img.setAttribute("height", (2 * r).toFixed(2));
+      img.setAttribute("preserveAspectRatio", "xMidYMid slice");
+      img.setAttribute("clip-path", "url(#" + id + ")");
+      img.setAttribute("pointer-events", "none");
+      nodeG.appendChild(img);
+      return c;
+    }
+    if (num != null) {
+      var t = document.createElementNS(NS_SVG, "text");
+      t.setAttribute("x", cx.toFixed(2)); t.setAttribute("y", (cy + 0.9).toFixed(2));
+      t.setAttribute("text-anchor", "middle"); t.setAttribute("font-size", "2.4");
+      t.setAttribute("font-weight", "800"); t.setAttribute("fill", "#fff");
+      t.setAttribute("pointer-events", "none");
+      t.textContent = num;
+      nodeG.appendChild(t);
+    }
+    return c;
+  }
+  function facesToggleHtml(id, checked) {
+    return '<label class="grp faces-toggle"><input type="checkbox" id="' + id + '"' +
+      (checked ? " checked" : "") + '> Faces instead of numbers</label>';
+  }
+
+  var id = qid();
+  if (!id) { fail("No match id in the URL. Open this page from the dashboard."); return; }
+
+  // Load the season bundle (head-to-head stats), then the match's own event file.
+  loadSeasonData(function () {
+    loadScript("matches_detail/" + encodeURIComponent(id) + ".js" + VER, function () {
+      if (window.MATCH_DETAIL) boot(window.MATCH_DETAIL);
+      else fail("Match data loaded but was empty.");
+    }, function () { fail("No detailed data for this match (it may not have shot/pass events yet)."); });
+  });
+
+  function fail(msg) {
+    document.getElementById("matchRoot").innerHTML =
+      '<div class="card" style="text-align:center;padding:40px">' + esc(msg) +
+      '<br><br><a class="back-link" href="index.html">← Back to all matches</a></div>';
+  }
+
+  /* ---- coordinate transforms (WhoScored 0-100 → pitch units) ---- */
+  // Home attacks right; away is rotated 180° so it attacks left on the same pitch.
+  // WhoScored y grows towards the attacker's left, so we flip it (PH - y) to match
+  // the broadcast/PNG orientation; away gets the opposite flip (180° rotation).
+  function tx(side, x) { return side === "home" ? x : PW - x; }
+  function ty(side, y) { return side === "home" ? PH - y * (PH / 100) : y * (PH / 100); }
+
+  /* ---- pitch markings ---- */
+  function pitchMarkup() {
+    var p = [];
+    p.push('<rect class="pitch-bg" x="0" y="0" width="' + PW + '" height="' + PH + '" rx="1.5"/>');
+    // subtle mowing stripes
+    for (var i = 0; i < 10; i++) {
+      if (i % 2 === 0) p.push('<rect x="' + (i * 10) + '" y="0" width="10" height="' + PH +
+        '" fill="rgba(255,255,255,0.025)"/>');
+    }
+    var L = "pitch-line";
+    p.push('<rect class="' + L + '" x="0.6" y="0.6" width="' + (PW - 1.2) + '" height="' + (PH - 1.2) + '"/>');
+    p.push('<line class="' + L + '" x1="50" y1="0.6" x2="50" y2="' + (PH - 0.6) + '"/>');
+    p.push('<circle class="' + L + '" cx="50" cy="32" r="8.3"/>');
+    p.push('<circle cx="50" cy="32" r="0.5" fill="rgba(255,255,255,0.5)"/>');
+    // boxes (left + right)
+    var by1 = 13, by2 = PH - 13, sby1 = 23.4, sby2 = PH - 23.4;
+    var GW1 = 28.5, GW2 = 35.5;          // goal-mouth y span
+    [["L"], ["R"]].forEach(function (sd) {
+      var right = sd[0] === "R";
+      var bx = right ? PW - 15.7 : 0.6, sbx = right ? PW - 5.6 : 0.6;
+      p.push('<rect class="' + L + '" x="' + bx + '" y="' + by1 + '" width="15.1" height="' + (by2 - by1) + '"/>');
+      p.push('<rect class="' + L + '" x="' + sbx + '" y="' + sby1 + '" width="5" height="' + (sby2 - sby1) + '"/>');
+      var spot = right ? PW - 10.5 : 10.5;
+      p.push('<circle cx="' + spot + '" cy="32" r="0.5" fill="rgba(255,255,255,0.5)"/>');
+      var gx = right ? PW - 0.6 : 0.6;
+      p.push('<line class="' + L + '" x1="' + gx + '" y1="' + GW1 + '" x2="' + gx + '" y2="' + GW2 + '" stroke-width="0.8"/>');
+      // penalty arc (the "D"): the slice of the 8.3-radius circle round the spot that pokes
+      // out beyond the penalty box.
+      var arcR = 8.3, boxEdge = right ? bx : bx + 15.1, ddx = Math.abs(boxEdge - spot);
+      if (ddx < arcR) {
+        var ddy = Math.sqrt(arcR * arcR - ddx * ddx), sweep = right ? 0 : 1;
+        p.push('<path class="' + L + '" d="M ' + boxEdge.toFixed(2) + " " + (32 - ddy).toFixed(2) +
+          " A " + arcR + " " + arcR + " 0 0 " + sweep + " " + boxEdge.toFixed(2) + " " + (32 + ddy).toFixed(2) + '"/>');
+      }
+      // goal frame (posts + net) just outside the goal line
+      var gd = 1.6, gxOut = right ? PW - 0.6 : 0.6 - gd;
+      p.push('<rect class="pitch-goal" x="' + gxOut.toFixed(2) + '" y="' + GW1 + '" width="' + gd + '" height="' + (GW2 - GW1) + '"/>');
+      p.push('<line class="pitch-net" x1="' + gxOut.toFixed(2) + '" y1="32" x2="' + (gxOut + gd).toFixed(2) + '" y2="32"/>');
+      p.push('<line class="pitch-net" x1="' + (gxOut + gd / 2).toFixed(2) + '" y1="' + GW1 + '" x2="' + (gxOut + gd / 2).toFixed(2) + '" y2="' + GW2 + '"/>');
+    });
+    return p.join("");
+  }
+
+  /* ---- goal-mouth ("behind the net") view, shared by the on-target shot map and
+     the penalty-shootout map. WhoScored GoalMouthY runs across the goal (posts at
+     45.2 / 54.8), GoalMouthZ is height (crossbar ≈ 38). Exposes the frame markup,
+     the coordinate mappers and key frame positions. ---- */
+  var GM = (function () {
+    var GW = 100, GROUND = 50, GY0 = 43, GYR = 14, GZTOP = 48;
+    function gxOf(gy) { return (Math.max(GY0, Math.min(GY0 + GYR, gy)) - GY0) / GYR * GW; }
+    function gyOf(gz) { return GROUND - Math.max(0, Math.min(GZTOP, gz)); }
+    var postL = gxOf(45.2), postR = gxOf(54.8), barY = gyOf(38);
+    function frame() {
+      var fr = "#f4f6fb", ng = "rgba(255,255,255,0.14)", net = [];
+      net.push('<rect x="-2" y="-2" width="' + (GW + 4) + '" height="' + (GROUND + 6) + '" fill="#0d1420"/>');
+      net.push('<rect x="' + postL.toFixed(1) + '" y="' + barY.toFixed(1) + '" width="' + (postR - postL).toFixed(1) +
+        '" height="' + (GROUND - barY).toFixed(1) + '" fill="rgba(255,255,255,0.04)"/>');
+      for (var nx = postL; nx <= postR + 0.01; nx += 3.2)
+        net.push('<line x1="' + nx.toFixed(1) + '" y1="' + barY.toFixed(1) + '" x2="' + nx.toFixed(1) + '" y2="' + GROUND + '" stroke="' + ng + '" stroke-width="0.18"/>');
+      for (var ny = barY; ny <= GROUND + 0.01; ny += 3.0)
+        net.push('<line x1="' + postL.toFixed(1) + '" y1="' + ny.toFixed(1) + '" x2="' + postR.toFixed(1) + '" y2="' + ny.toFixed(1) + '" stroke="' + ng + '" stroke-width="0.18"/>');
+      net.push('<line x1="0" y1="' + GROUND + '" x2="' + GW + '" y2="' + GROUND + '" stroke="rgba(255,255,255,0.3)" stroke-width="0.4"/>');
+      net.push('<line x1="' + postL.toFixed(1) + '" y1="' + GROUND + '" x2="' + postL.toFixed(1) + '" y2="' + barY.toFixed(1) + '" stroke="' + fr + '" stroke-width="1.1"/>');
+      net.push('<line x1="' + postR.toFixed(1) + '" y1="' + GROUND + '" x2="' + postR.toFixed(1) + '" y2="' + barY.toFixed(1) + '" stroke="' + fr + '" stroke-width="1.1"/>');
+      net.push('<line x1="' + (postL - 0.55).toFixed(1) + '" y1="' + barY.toFixed(1) + '" x2="' + (postR + 0.55).toFixed(1) + '" y2="' + barY.toFixed(1) + '" stroke="' + fr + '" stroke-width="1.1"/>');
+      return net.join("");
+    }
+    return { GW: GW, GROUND: GROUND, gxOf: gxOf, gyOf: gyOf, postL: postL, postR: postR,
+             barY: barY, frame: frame, viewBox: "-2 -2 " + (GW + 4) + " " + (GROUND + 8) };
+  })();
+
+  /* ---- team colours with a collision guard ----
+     Two clubs whose primaries are near-identical (Liverpool #C8102E vs Nottingham Forest #DD0000)
+     would make every home/away-coloured mark on the page indistinguishable. Measure the CIE76 ΔE
+     between the two; below the threshold, move the away side to its secondary kit colour
+     (LL_INDEX.teamColors, from epl/team_colors.py), then to a neutral fallback that also reads
+     against the pitch. */
+  function hexRgb(h) {
+    h = String(h || "").replace("#", "");
+    if (h.length === 3) h = h.replace(/./g, function (c) { return c + c; });
+    var n = parseInt(h, 16);
+    return (isNaN(n) || h.length !== 6) ? null : [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function rgbLab(rgb) {
+    var f = function (v) { v /= 255; return v > 0.04045 ? Math.pow((v + 0.055) / 1.055, 2.4) : v / 12.92; };
+    var r = f(rgb[0]), g = f(rgb[1]), b = f(rgb[2]);
+    var x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+    var y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    var z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+    var t = function (v) { return v > 0.008856 ? Math.cbrt(v) : 7.787 * v + 16 / 116; };
+    return [116 * t(y) - 16, 500 * (t(x) - t(y)), 200 * (t(y) - t(z))];
+  }
+  function deltaE(a, b) {
+    var A = hexRgb(a), B = hexRgb(b);
+    if (!A || !B) return 100;
+    var la = rgbLab(A), lb = rgbLab(B);
+    return Math.sqrt(Math.pow(la[0] - lb[0], 2) + Math.pow(la[1] - lb[1], 2) + Math.pow(la[2] - lb[2], 2));
+  }
+  function inkFor(hex) { var c = hexRgb(hex); return (c && rgbLab(c)[0] > 62) ? "#0b0e16" : "#ffffff"; }
+  function teamColours(D) {
+    var MIN = 28, PITCH = "#0f3d22", tc = IDX.teamColors || {};
+    var home = D.home.color || "#9aa5bf", away = D.away.color || "#e6e9f2";
+    function ok(c) { return !!c && deltaE(c, home) >= MIN && deltaE(c, PITCH) >= 18; }
+    if (!ok(away)) {
+      var secondary = (tc[D.away.raw] || tc[D.away.name] || [])[1];
+      var cands = [secondary, "#e6e9f2", "#f0b64a", "#6fb3ff", "#ff4d93"];
+      for (var i = 0; i < cands.length; i++) if (ok(cands[i])) { away = cands[i]; break; }
+    }
+    return { home: home, away: away, swapped: away !== D.away.color };
+  }
+
+  /* ---- sticky jump bar: one link per block, the block in view is underlined ---- */
+  /* Scroll strips fade only on the side that hides more tabs; nothing fades when it all fits. */
+  function wireScrollFade(strip) {
+    if (!strip || strip._fade) return;
+    strip._fade = 1;
+    strip.classList.add("scroll-fade");
+    function upd() {
+      var max = strip.scrollWidth - strip.clientWidth;
+      strip.classList.toggle("fade-s", strip.scrollLeft > 2);
+      strip.classList.toggle("fade-e", max > 2 && strip.scrollLeft < max - 2);
+    }
+    strip.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    if (window.ResizeObserver) new ResizeObserver(upd).observe(strip);
+    upd();
+  }
+  function buildSectionNav(root) {
+    var blocks = Array.prototype.slice.call(root.querySelectorAll(".mv-block"));
+    if (blocks.length < 3) return;
+    var nav = el("nav", "mv-nav");
+    nav.setAttribute("aria-label", "Match sections");
+    nav.innerHTML = '<div class="mv-nav-inner">' + blocks.map(function (b) {
+      var host = b.querySelector("[id]"), t = b.querySelector(".mv-title");
+      return '<a href="#' + host.id + '">' + esc(t.textContent) + "</a>";
+    }).join("") + "</div>";
+    root.insertBefore(nav, blocks[0]);
+    wireScrollFade(nav.querySelector(".mv-nav-inner"));
+    var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+    function mark(id) {
+      links.forEach(function (a) {
+        var on = a.getAttribute("href") === "#" + id;
+        a.classList.toggle("current", on);
+        if (on) { try { a.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (e) {} }
+      });
+    }
+    if (window.IntersectionObserver) {
+      var io = new IntersectionObserver(function (ents) {
+        ents.forEach(function (en) { if (en.isIntersecting) mark(en.target.querySelector("[id]").id); });
+      }, { rootMargin: "-30% 0px -60% 0px" });
+      blocks.forEach(function (b) { io.observe(b); });
+    }
+    nav.addEventListener("click", function (e) {
+      var a = e.target.closest ? e.target.closest("a") : null;
+      if (!a) return;
+      var target = document.getElementById(a.getAttribute("href").slice(1));
+      if (!target) return;
+      e.preventDefault();
+      var sec = target.closest(".mv-block") || target;
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      sec.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      history.replaceState(null, "", a.getAttribute("href"));
+      mark(target.id);
+    });
+  }
+
+  /* ---- in-browser PNG export ---- */
+  function wireExport(D, rec) {
+    var btn = document.getElementById("exportPng");
+    if (!btn || !window.LL_EXPORT) return;
+    btn.addEventListener("click", function () {
+      var oldText = btn.textContent;
+      btn.disabled = true; btn.textContent = "Rendering…";
+      var sum = function (side) { return D.shots.filter(function (s) { return s.team === side; }).reduce(function (t, s) { return t + (s.xg || 0); }, 0); };
+      var dt = D.date ? new Date(D.date + "T00:00:00") : null;
+      var M = {
+        home: { name: D.home.name, color: D.home.color, score: D.home.score },
+        away: { name: D.away.name, color: D.away.color, score: D.away.score },
+        matchday: rec && rec.matchday,
+        date: dt && !isNaN(dt) ? dt.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" }) : D.date,
+        venue: D.venue || "",
+        season: SEASON,
+        xg: D.shots && D.shots.length ? [sum("home"), sum("away")] : null,
+        xgNote: D.shots && D.shots.length ? "model-estimated from " + D.shots.length + " shots" : "",
+        goals: D.goals || [],
+        stats: statRows(rec, D),
+        shots: D.shots || [],
+        passes: D.passes || [],
+        lineups: D.lineups || null,
+        crests: { home: LOGO + encodeURIComponent(D.home.name) + ".png", away: LOGO + encodeURIComponent(D.away.name) + ".png" },
+        source: "Data: WhoScored · xG: our own shot model"
+      };
+      var slug = function (s) { return String(s).replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); };
+      var name = slug(D.home.name) + "-" + (D.home.score == null ? "" : D.home.score) + "-" + (D.away.score == null ? "" : D.away.score) + "-" + slug(D.away.name) + (D.date ? "-" + D.date : "") + ".png";
+      window.LL_EXPORT.render(M).then(function (cv) { return window.LL_EXPORT.download(cv, name); })
+        .catch(function (e) { alert("Could not render the image: " + (e && e.message ? e.message : e)); })
+        .then(function () { btn.disabled = false; btn.textContent = oldText; });
+    });
+  }
+
+  /* ================= BOOT ================= */
+  function boot(D) {
+    document.title = D.home.name + " " + D.home.score + "-" + D.away.score + " " + D.away.name + " · EPL";
+    var cols = teamColours(D);
+    D.home.color = cols.home; D.away.color = cols.away;   // every downstream mark reads these
+    document.documentElement.style.setProperty("--c-home", cols.home);
+    document.documentElement.style.setProperty("--c-away", cols.away);
+    document.documentElement.style.setProperty("--c-home-ink", inkFor(cols.home));
+    document.documentElement.style.setProperty("--c-away-ink", inkFor(cols.away));
+
+    var rec = matchRecord();                       // head-to-head team stats from data.js
+    var hasStats = !!(rec && rec.stats);
+
+    var root = document.getElementById("matchRoot");
+    // Single scrolling page: every section is rendered one under the other.
+    function block(title, id) {
+      return '<section class="mv-block"><h2 class="mv-title">' + title + '</h2><div id="' + id + '"></div></section>';
+    }
+    var hasDribbles = !!(D.dribbles && D.dribbles.length);
+    var hasGoals = !!(D.goals && D.goals.length);
+    var hasShootout = !!(D.shootout && D.shootout.length);
+    // Win probability needs the calibrated model (winprob_params.js) plus a played
+    // match with shot events — skip the block silently for upcoming fixtures or
+    // when the params script is missing.
+    var hasWinProb = !!(window.WINPROB_PARAMS && D.shots && D.shots.length &&
+      D.home.score != null && D.away.score != null);
+    root.innerHTML = scoreboard(D) +
+      (hasStats ? block("Match stats", "mv-stats") : "") +
+      // Live win probability sits between the stats and the shot map.
+      (hasWinProb ? block("Win probability", "mv-winprob") : "") +
+      block("Shot map", "mv-shots") +
+      // On-target shot map sits directly under the xG shot map.
+      block("On-target shots", "mv-shots-ot") +
+      block("Pass explorer", "mv-passes") +
+      (hasDribbles ? block("Dribbles", "mv-dribbles") : "") +
+      block("Pass network", "mv-network") +
+      block("Average position", "mv-avgpos") +
+      block("Line-ups", "mv-lineups") +
+      // All Goals Map sits below every stats section.
+      (hasGoals ? block("All goals map", "mv-goals") : "") +
+      // Animated "movie" replays of each goal sit directly below the static map.
+      (hasGoals ? block("Goal replays", "mv-goals-anim") : "") +
+      // Penalty shootout (goal-mouth placement) is the last block — below all graphs.
+      (hasShootout ? block("Penalty shootout", "mv-shootout") : "");
+    buildSectionNav(root);
+    wireExport(D, rec);
+
+    if (hasStats) buildMatchStats(rec, D);
+    if (hasWinProb) buildWinProb(D);
+    buildShots(D);
+    buildOnTargetShots(D);
+    buildPasses(D);
+    if (hasDribbles) buildDribbles(D);
+    buildNetwork(D);
+    buildAvgPos(D);
+    buildLineups(D);
+    if (hasGoals) buildAllGoals(D);
+    if (hasGoals) buildGoalReplays(D);
+    if (hasShootout) buildShootout(D);
+  }
+
+  // "Matchday 3 · Sat 29 Aug 2026 · Premier League 2026/27". The detail files still carry a
+  // "Group Stage" label inherited from the World Cup port; the matchday from the season
+  // bundle replaces it.
+  function metaLine(D) {
+    var rec = matchRecord(), parts = [];
+    if (rec && rec.matchday) parts.push("Matchday " + rec.matchday);
+    else if (D.stage && !/group stage/i.test(D.stage)) parts.push(D.stage);
+    if (D.date) {
+      var dt = new Date(D.date + "T00:00:00");
+      parts.push(isNaN(dt) ? D.date : dt.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" }));
+    }
+    if (D.venue) parts.push(D.venue);
+    if (SEASON) parts.push("Premier League " + SEASON.replace("-", "/"));
+    return parts.map(esc).join(" · ");
+  }
+
+  function scoreboard(D) {
+    var xgTxt = "";
+    var hs = D.shots.filter(function (s) { return s.team === "home"; });
+    var as = D.shots.filter(function (s) { return s.team === "away"; });
+    function sum(a) { return a.reduce(function (t, s) { return t + s.xg; }, 0); }
+    xgTxt = '<div class="sb-xg">Expected goals (xG): <b>' + sum(hs).toFixed(2) + "</b> — <b>" +
+      sum(as).toFixed(2) + '</b> <span class="est">· model-estimated from ' + D.shots.length + " shots</span></div>";
+
+    var goals = D.goals.map(function (g) {
+      var as = g.assist ? '<span class="as">(' + esc(g.assist) + ")</span>" : "";
+      return '<span class="goal-ev ' + g.team + '"><span class="min">' + g.min + "'</span> ⚽ " +
+        esc(g.scorer) + (g.pen ? " (P)" : "") + (g.own ? " (OG)" : "") + " " + as + "</span>";
+    }).join("");
+
+    // The detail file records the PNG path at build time; the season bundle (build_data.py)
+    // is rebuilt more often, so fall back to its record when a PNG was rendered later.
+    var recPng = (function () { var r = matchRecord(); return r && r.png; })();
+    var png = D.png || recPng;
+    // Drawn in the browser (match_export.js): works on the static site, any device, no server.
+    var pngBtn = (window.LL_EXPORT ? '<button type="button" class="png-btn" id="exportPng">⬇ Download image</button>' : "") +
+      (png ? '<a class="png-btn png-btn-alt" href="' + esc(png) + '" target="_blank" rel="noopener" download title="Infographic rendered by the pipeline">Pipeline PNG</a>' : "");
+
+    return '<div class="match-top">' + pngBtn + "</div>" +
+      '<div class="scoreboard"><h1 class="sb-main">' +
+        '<div class="sb-team home"><span class="nm">' + esc(D.home.name) + "</span>" + logoImg(D.home.name) + "</div>" +
+        '<div class="sb-score">' + (D.home.score == null ? "-" : D.home.score) + " : " +
+          (D.away.score == null ? "-" : D.away.score) +
+          (D.home.pens != null && D.away.pens != null
+            ? '<span class="sb-pens">(' + D.home.pens + "-" + D.away.pens + " pens)</span>" : "") +
+          "</div>" +
+        '<div class="sb-team away">' + logoImg(D.away.name) + '<span class="nm">' + esc(D.away.name) + "</span></div>" +
+      "</h1>" + xgTxt +
+      '<div class="sb-meta">' + metaLine(D) + "</div>" +
+      (goals ? '<div class="timeline">' + goals + "</div>" : "") +
+      "</div>";
+  }
+
+  /* ================= MATCH STATS (head-to-head, from data.js) ================= */
+  var STAT_DEFS = [
+    ["possession", "Possession", true, true],
+    ["xg", "Expected goals (xG)", false, true],
+    ["shots", "Shots", false, true],
+    ["sot", "Shots on target", false, true],
+    ["big_chances", "Big chances", false, true],
+    ["passes", "Passes", false, true],
+    ["pass_acc", "Pass accuracy", true, true],
+    ["saves", "Saves", false, true],
+    ["duels_won", "Duels won", true, true],
+    ["fouls", "Fouls", false, false],
+  ];
+
+  function matchRecord() {
+    var arr = (window.WC_DATA && window.WC_DATA.matches) || [];
+    for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return arr[i];
+    return null;
+  }
+
+  // Stats we can derive from the shot/pass event stream when the provider feed
+  // is missing them (e.g. re-scraped matches that only carry xG + pass accuracy).
+  function eventStats(D) {
+    function compute(t) {
+      var sh = D.shots.filter(function (x) { return x.team === t; });
+      var ps = D.passes.filter(function (x) { return x.team === t; });
+      var okp = ps.filter(function (p) { return p.ok; }).length;
+      return {
+        xg: +sh.reduce(function (a, s) { return a + s.xg; }, 0).toFixed(2),
+        shots: sh.length,
+        sot: sh.filter(function (s) { return s.onTarget; }).length,
+        big_chances: sh.filter(function (s) { return s.big; }).length,
+        passes: ps.length,
+        pass_acc: ps.length ? Math.round((100 * okp) / ps.length) : null,
+      };
+    }
+    return { home: compute("home"), away: compute("away") };
+  }
+
+  // One row per STAT_DEFS entry that has a value: {label, h, a, hpct, hBetter, aBetter, isXg, pct}.
+  // Provider stats first, event-derived numbers as the fallback. Shared by the stats panel
+  // and the in-browser image export.
+  function statRows(rec, D) {
+    var s = (rec && rec.stats) || {};
+    var es = eventStats(D);
+    return STAT_DEFS.map(function (def) {
+      var key = def[0];
+      var pair = s[key] || [null, null];
+      if (pair[0] == null && pair[1] == null && es.home[key] != null) pair = [es.home[key], es.away[key]];
+      var h = pair[0], a = pair[1];
+      if (h == null && a == null) return null;
+      var hv = h == null ? 0 : h, av = a == null ? 0 : a, total = hv + av;
+      return { label: def[1], h: h, a: a, hpct: total > 0 ? (hv / total) * 100 : 50,
+               hBetter: def[3] ? hv > av : hv < av, aBetter: def[3] ? av > hv : av < hv,
+               isXg: key === "xg", pct: !!def[2] };
+    }).filter(Boolean);
+  }
+
+  function buildMatchStats(rec, D) {
+    var host = document.getElementById("mv-stats");
+    if (!host) return;
+    var rows = statRows(rec, D).map(function (r) {
+      function disp(x) { return x == null ? "–" : (r.isXg ? x.toFixed(2) : x) + (r.pct ? "%" : ""); }
+      return '<div class="stat-cmp">' +
+        '<div class="sc-val ' + (r.hBetter ? "win" : "") + '">' + disp(r.h) + "</div>" +
+        '<div class="sc-mid"><div class="sc-label">' + r.label + '</div>' +
+          '<div class="sc-bar"><div class="sc-fill h" style="width:' + r.hpct.toFixed(1) + '%"></div>' +
+          '<div class="sc-fill a" style="width:' + (100 - r.hpct).toFixed(1) + '%"></div></div></div>' +
+        '<div class="sc-val ' + (r.aBetter ? "win" : "") + '">' + disp(r.a) + "</div>" +
+        "</div>";
+    }).join("");
+    var LABELS = { fotmob: "FotMob", whoscored: "WhoScored", sofascore: "SofaScore",
+                   understat: "Understat" };
+    var srcs = (rec.sources || []).map(function (s) { return LABELS[s] || s; });
+    var cap = srcs.length
+      ? '<div class="stat-src" style="text-align:center;font-size:.78em;opacity:.6;margin-top:8px">' +
+          (srcs.length > 1 ? "Combined from " + srcs.length + " sources: " : "Source: ") +
+          srcs.join(" · ") + "</div>"
+      : "";
+    host.innerHTML = '<div class="stat-panel" style="border-top:none">' +
+      '<div class="sp-head"><span>' + esc(D.home.name) + "</span><span>" + esc(D.away.name) + "</span></div>" +
+      rows + cap + "</div>";
+  }
+
+  /* ================= WIN PROBABILITY (calibrated in-play model) ================= */
+  /* Live win probability priced by the pre-fit Poisson model in winprob_params.js
+     (per-team att/def strengths + home advantage, calibrated offline by the
+     tradepipe). Each minute the remaining-goal rates blend the pre-match
+     expectation with the last 15 minutes of live xG, then a truncated
+     double-Poisson grid over the remaining goals — offset by the current score —
+     prices home/draw/away. League football: stoppage folds into minute 90,
+     no extra time, so the lines always resolve to the real result at 90'. */
+  function buildWinProb(D) {
+    var host = document.getElementById("mv-winprob");
+    var P = window.WINPROB_PARAMS;
+    if (!host || !P) return;
+    var shots = (D.shots || []).filter(function (s) { return s.min != null; });
+    var goals = (D.goals || []).slice().sort(function (a, b) { return a.min - b.min; });
+    function eff(m) { return m > 90 ? 90 : m; }        // stoppage time folds into 90'
+
+    /* ---- model ---- */
+    var mu = P.mu, hfa = P.hfa, w = P.w, MG = P.maxGoals, lamFloor = P.lamFloor;
+    // unseen team name (e.g. newly promoted) ≈ league-average strengths
+    function T(name) { return (P.teams && P.teams[name]) || { att: mu, def: mu }; }
+    var th = T(D.home.name), ta = T(D.away.name);
+    var lamHPre = th.att * ta.def / mu * hfa;          // home side always at its own venue
+    var lamAPre = ta.att * th.def / mu / hfa;
+    function scoreAt(t) {
+      var h = 0, a = 0;
+      goals.forEach(function (g) { if (eff(g.min) <= t) { if (g.team === "home") h++; else a++; } });
+      return [h, a];
+    }
+    function pace15(side, t) {                          // live xG per minute over (t-15, t]
+      var s = 0;
+      shots.forEach(function (sh) {
+        var m = eff(sh.min);
+        if (sh.team === side && m > t - 15 && m <= t) s += sh.xg;
+      });
+      return s / 15;
+    }
+    function lamRem(pre, side, t) {                     // expected goals left for one side
+      var rem = (90 - t) / 90;
+      var lam = rem * ((1 - w) * pre + w * 90 * pace15(side, t));
+      return Math.max(lam, lamFloor * rem);
+    }
+    function pois(lam) {                                // Poisson pmf table 0..maxGoals
+      var a = [Math.exp(-lam)];
+      for (var k = 1; k <= MG; k++) a.push(a[k - 1] * lam / k);
+      return a;
+    }
+    function probsAt(t) {                               // [P(home win), P(draw), P(away win)]
+      var sc = scoreAt(t), cH = sc[0], cA = sc[1];
+      var ph = pois(lamRem(lamHPre, "home", t)), pa = pois(lamRem(lamAPre, "away", t));
+      var pH = 0, pD = 0, pA = 0, tot = 0;
+      for (var i = 0; i <= MG; i++) for (var j = 0; j <= MG; j++) {
+        var p = ph[i] * pa[j]; tot += p;
+        var d = cH + i - cA - j;
+        if (d > 0) pH += p; else if (d < 0) pA += p; else pD += p;
+      }
+      return [pH / tot, pD / tot, pA / tot];            // renormalise the truncated grid
+    }
+    window.WINPROB_AT = probsAt;                        // console/test hook
+
+    // Display honesty: a live 0.6% renders as a sliver reading "<1%", never a flat 0
+    // glued to the axis — only the full-time endpoint may sit at a true 0/100.
+    function liveCl(v) { return Math.max(0.8, Math.min(99.2, v)); }
+    function fmtPct(p) { return p > 0 && p < 1 ? "<1" : p > 99 && p < 100 ? ">99" : String(Math.round(p)); }
+
+    // sample every minute + a sharp kink just before each goal minute
+    var goalMins = {};
+    goals.forEach(function (g) { var m = eff(g.min); if (m > 0) goalMins[m] = true; });
+    var times = [];
+    for (var t = 0; t <= 90; t++) {
+      if (goalMins[t] && t > 0) times.push(t - 0.001);
+      times.push(t);
+    }
+    var ptsH = [], ptsA = [], ptsD = [];
+    times.forEach(function (tt) {
+      var pr = probsAt(tt), last = tt === 90;           // 90' is exact (hits 0/100)
+      ptsH.push([tt, last ? pr[0] * 100 : liveCl(pr[0] * 100)]);
+      ptsA.push([tt, last ? pr[2] * 100 : liveCl(pr[2] * 100)]);
+      ptsD.push([tt, pr[1] * 100]);
+    });
+    var finH = ptsH[ptsH.length - 1][1], finA = ptsA[ptsA.length - 1][1], finD = ptsD[ptsD.length - 1][1];
+
+    /* ---- colours (blue/orange fallback when the two kits are too close) ---- */
+    var colH = D.home.color || "#9aa5bf", colA = D.away.color || "#e6e9f2";
+    function hex(c) { var m = /^#?([0-9a-f]{6})$/i.exec(c || ""); if (!m) return null; var n = parseInt(m[1], 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+    var ch = hex(colH), ca = hex(colA);
+    if (ch && ca && Math.sqrt(Math.pow(ch[0] - ca[0], 2) + Math.pow(ch[1] - ca[1], 2) + Math.pow(ch[2] - ca[2], 2)) < 90) {
+      colH = "#9d6bff"; colA = "#ff6a3d";
+    }
+    var colD = "#8a94ad";
+
+    /* ---- geometry ---- */
+    var W = 820, HT = 360, padL = 46, padR = 64, padT = 18, padB = 42;
+    var plotW = W - padL - padR, plotH = HT - padT - padB;
+    function sx(m) { return padL + plotW * m / 90; }
+    function sy(p) { return padT + plotH * (1 - p / 100); }
+    function valAt(pts, minute) { var v = pts.length ? pts[0][1] : 0; for (var i = 0; i < pts.length; i++) { if (pts[i][0] <= minute + 1e-9) v = pts[i][1]; else break; } return v; }
+    function cl(v) { return Math.max(0, Math.min(100, v)); }
+    // Smooth each line WITHIN inter-goal segments (moving avg + Catmull-Rom→bézier), but keep
+    // the goal jumps sharp: the series carries a t-ε pre-goal + t post-goal point, so a jump is
+    // a pair with tiny Δx — we split there and join the two segments with a straight vertical L.
+    function smoothD(pts) {
+      var d = "", seg = [];
+      function flush() {
+        if (!seg.length) return;
+        var ys = seg.map(function (p) { return p[1]; });
+        var Pp = seg.map(function (p, i) {
+          if (i === 0 || i === seg.length - 1) return [p[0], cl(p[1])];
+          var lo = Math.max(0, i - 2), hi = Math.min(seg.length - 1, i + 2), s = 0, c = 0;
+          for (var k = lo; k <= hi; k++) { s += ys[k]; c++; }
+          return [p[0], cl(s / c)];
+        });
+        d += (d === "" ? "M " : " L ") + sx(Pp[0][0]).toFixed(1) + " " + sy(Pp[0][1]).toFixed(1);
+        for (var i = 0; i < Pp.length - 1; i++) {
+          var p0 = Pp[i - 1] || Pp[i], p1 = Pp[i], p2 = Pp[i + 1], p3 = Pp[i + 2] || Pp[i + 1];
+          var c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+          var c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+          d += " C " + sx(c1x).toFixed(1) + " " + sy(c1y).toFixed(1) + " " + sx(c2x).toFixed(1) + " " + sy(c2y).toFixed(1) + " " + sx(p2[0]).toFixed(1) + " " + sy(p2[1]).toFixed(1);
+        }
+        seg = [];
+      }
+      for (var i = 0; i < pts.length; i++) {
+        if (seg.length && Math.abs(pts[i][0] - seg[seg.length - 1][0]) < 0.5) flush();
+        seg.push(pts[i]);
+      }
+      flush();
+      return d;
+    }
+    var baseY = sy(0);
+    function areaD(pts) { return smoothD(pts) + " L " + sx(90).toFixed(1) + " " + baseY.toFixed(1) + " L " + sx(0).toFixed(1) + " " + baseY.toFixed(1) + " Z"; }
+
+    var svg = ['<svg viewBox="0 0 ' + W + ' ' + HT + '" class="mv-wp-chart" preserveAspectRatio="xMidYMid meet" role="img">'];
+    // vertical fade gradients for the area fills (opaque near the line → transparent at baseline)
+    svg.push('<defs>' +
+      '<linearGradient id="wpGradH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + colH + '" stop-opacity="0.30"/><stop offset="1" stop-color="' + colH + '" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="wpGradA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + colA + '" stop-opacity="0.30"/><stop offset="1" stop-color="' + colA + '" stop-opacity="0"/></linearGradient>' +
+      '</defs>');
+    // y gridlines at 0/25/50/75/100 with a brighter 50% midline
+    [0, 25, 50, 75, 100].forEach(function (yv) {
+      var y = sy(yv);
+      svg.push('<line x1="' + padL + '" y1="' + y.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + y.toFixed(1) + '" stroke="' + (yv === 50 ? "#33405f" : "#1a2340") + '" stroke-width="' + (yv === 50 ? 1.3 : 1) + '"/>');
+      svg.push('<text x="' + (padL - 6) + '" y="' + (y + 3.5).toFixed(1) + '" fill="var(--muted)" font-size="10.5" text-anchor="end">' + yv + '%</text>');
+    });
+    // x ticks every 15' + HT dashed line at 45
+    for (var xm = 0; xm <= 90; xm += 15) {
+      svg.push('<text x="' + sx(xm).toFixed(1) + '" y="' + (HT - padB + 16) + '" fill="var(--muted)" font-size="10.5" text-anchor="middle">' + xm + "'</text>");
+    }
+    svg.push('<line x1="' + sx(45).toFixed(1) + '" y1="' + padT + '" x2="' + sx(45).toFixed(1) + '" y2="' + (padT + plotH) + '" stroke="#2b3557" stroke-width="1" stroke-dasharray="3 3"/>');
+    svg.push('<text x="' + (padL + plotW / 2).toFixed(1) + '" y="' + (HT - 4) + '" fill="var(--text)" font-size="12" text-anchor="middle">Minute</text>');
+    // full-time annotation with the actual result (kept clear of the crest column;
+    // its box is registered below so the goal chips route around it too)
+    var annTxt = "90′ — actual: " + D.home.score + "–" + D.away.score;
+    var annX = W - padR - 28, annY = padT + 12;
+    svg.push('<text x="' + annX + '" y="' + annY + '" fill="var(--muted)" font-size="11.5" text-anchor="end">' + annTxt + "</text>");
+    // area fills (behind the lines), then draw line, away, home on top
+    svg.push('<path d="' + areaD(ptsA) + '" fill="url(#wpGradA)" stroke="none"/>');
+    svg.push('<path d="' + areaD(ptsH) + '" fill="url(#wpGradH)" stroke="none"/>');
+    svg.push('<path d="' + smoothD(ptsD) + '" fill="none" stroke="' + colD + '" stroke-width="1.8" stroke-dasharray="5 4" opacity="0.85"/>');
+    svg.push('<path d="' + smoothD(ptsA) + '" fill="none" stroke="' + colA + '" stroke-width="2.6" stroke-linejoin="round"/>');
+    svg.push('<path d="' + smoothD(ptsH) + '" fill="none" stroke="' + colH + '" stroke-width="2.6" stroke-linejoin="round"/>');
+    // goal markers + score chips (running score at each goal, placed to avoid overlaps)
+    var _hc = 0, _ac = 0;
+    goals.forEach(function (g) { if (g.team === "home") _hc++; else _ac++; g._sh = _hc; g._sa = _ac; });
+    var placed = [{ x1: annX - annTxt.length * 6.2, y1: annY - 12, x2: annX, y2: annY + 4 }];
+    function overlaps(a, b) { return !(a.x2 < b.x1 - 3 || b.x2 < a.x1 - 3 || a.y2 < b.y1 - 3 || b.y2 < a.y1 - 3); }
+    goals.forEach(function (g) {
+      var col = g.team === "home" ? colH : colA;
+      var pts = g.team === "home" ? ptsH : ptsA;
+      var gm = eff(g.min);
+      var gx = sx(gm), gy = sy(valAt(pts, gm));
+      var gName = g.team === "home" ? D.home.name : D.away.name;
+      var info = g.min + "' " + g.scorer + (g.pen ? " (pen)" : "") + (g.own ? " (OG)" : "") + " — " + gName;
+      svg.push('<circle cx="' + gx.toFixed(1) + '" cy="' + gy.toFixed(1) + '" r="5" fill="' + col + '" stroke="#050611" stroke-width="1.4" data-info="' + esc(info) + '"></circle>');
+      // score chip: bold score line + "min' scorer" sub-line
+      var scoreTxt = g._sh + "–" + g._sa;
+      var sub = g.min + "′ " + g.scorer + (g.pen ? " (pen)" : "") + (g.own ? " (OG)" : "");
+      var chipW = Math.max(30, sub.length * 5.4 + 12), chipH = 27;
+      var near = (90 - gm) < 5;                         // goal near the endpoint → place left
+      var preferAbove = g.team === "home";              // home above, away below (then step away)
+      var cands = [];
+      if (near) cands.push([gx - chipW - 12, gy - chipH / 2]);
+      for (var st = 0; st < 7; st++) { var off = 14 + st * (chipH + 5); cands.push(preferAbove ? [gx - chipW / 2, gy - off - chipH] : [gx - chipW / 2, gy + off]); }
+      for (var st2 = 0; st2 < 7; st2++) { var off2 = 14 + st2 * (chipH + 5); cands.push(preferAbove ? [gx - chipW / 2, gy + off2] : [gx - chipW / 2, gy - off2 - chipH]); }
+      var chosen = null;
+      for (var ci = 0; ci < cands.length; ci++) {
+        var cx = Math.max(padL + 2, Math.min(cands[ci][0], W - padR - chipW - 2));
+        var cy = Math.max(padT + 2, Math.min(cands[ci][1], HT - padB - chipH - 2));
+        var rect = { x1: cx, y1: cy, x2: cx + chipW, y2: cy + chipH };
+        var clash = false;
+        for (var pi = 0; pi < placed.length; pi++) { if (overlaps(rect, placed[pi])) { clash = true; break; } }
+        if (!clash || ci === cands.length - 1) { chosen = rect; break; }
+      }
+      placed.push(chosen);
+      var cx0 = chosen.x1, cy0 = chosen.y1, midX = cx0 + chipW / 2;
+      var leadY = cy0 + (cy0 + chipH / 2 < gy ? chipH : 0);
+      svg.push('<line x1="' + gx.toFixed(1) + '" y1="' + gy.toFixed(1) + '" x2="' + midX.toFixed(1) + '" y2="' + leadY.toFixed(1) + '" stroke="' + col + '" stroke-width="1" opacity="0.55"/>');
+      svg.push('<rect x="' + cx0.toFixed(1) + '" y="' + cy0.toFixed(1) + '" width="' + chipW.toFixed(1) + '" height="' + chipH + '" rx="4" fill="#050611" fill-opacity="0.82" stroke="' + col + '" stroke-opacity="0.6"/>');
+      svg.push('<text x="' + midX.toFixed(1) + '" y="' + (cy0 + 12).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="bold" fill="' + col + '">' + esc(scoreTxt) + '</text>');
+      svg.push('<text x="' + midX.toFixed(1) + '" y="' + (cy0 + 23).toFixed(1) + '" text-anchor="middle" font-size="9.5" fill="#d6d9f5">' + esc(sub) + '</text>');
+    });
+    // crest + final-% endpoints in the right margin (nudge apart if the finals coincide)
+    var yH = sy(finH), yA = sy(finA);
+    if (Math.abs(finH - finA) < 8) { var mid = (yH + yA) / 2; yH = finH >= finA ? mid - 14 : mid + 14; yA = finH >= finA ? mid + 14 : mid - 14; }
+    function crest(name, col, y, pct) {
+      var ex = sx(90);
+      return '<image href="' + LOGO + encodeURIComponent(name) + '.png" x="' + (ex - 15).toFixed(1) + '" y="' + (y - 15).toFixed(1) + '" width="30" height="30"/>' +
+        '<text x="' + (ex + 18).toFixed(1) + '" y="' + (y + 4.5).toFixed(1) + '" text-anchor="start" font-size="13.5" font-weight="bold" fill="' + col + '">' + fmtPct(pct) + '%</text>';
+    }
+    svg.push(crest(D.home.name, colH, yH, finH));
+    svg.push(crest(D.away.name, colA, yA, finA));
+    // hover crosshair (scrubber) — reads the win % at any minute; moved/shown by JS below
+    svg.push('<g id="wpCross" style="display:none" pointer-events="none">' +
+      '<line id="wpCrossLine" x1="0" y1="' + padT + '" x2="0" y2="' + (padT + plotH) + '" stroke="#5b6a8a" stroke-width="1" stroke-dasharray="2 3"/>' +
+      '<circle id="wpCrossH" r="4.2" fill="' + colH + '" stroke="#050611" stroke-width="1.2"/>' +
+      '<circle id="wpCrossA" r="4.2" fill="' + colA + '" stroke="#050611" stroke-width="1.2"/>' +
+      '<circle id="wpCrossD" r="3.6" fill="' + colD + '" stroke="#050611" stroke-width="1.2"/>' +
+      '</g>');
+    svg.push("</svg>");
+
+    var legend = '<div class="mv-wp-legend">' +
+      '<span><i style="background:' + colH + '"></i>' + esc(D.home.name) + " — <b>" + fmtPct(finH) + "%</b> win</span>" +
+      '<span><i style="background:' + colA + '"></i>' + esc(D.away.name) + " — <b>" + fmtPct(finA) + "%</b> win</span>" +
+      '<span><i style="background:' + colD + '"></i>Draw — <b>' + fmtPct(finD) + "%</b></span>" +
+      "</div>";
+    host.innerHTML = '<p class="mv-wp-hint">Live <b>win probability</b> — priced at kickoff by a calibrated Poisson model ' +
+      '(team attack/defence strengths + home advantage), then re-estimated each minute from the running score and the last 15 minutes of xG. ' +
+      'The grey dashed line is the draw chance; stoppage-time events fold into the 90th minute. ' +
+      'Each goal is labelled with the score; <b>hover (or drag) across the chart to read the win % at any minute</b>. An estimate, not a betting market.</p>' +
+      '<div class="mv-wp-wrap">' + svg.join("") + "</div>" + legend +
+      '<div class="chart-tip" id="mvWpTip"></div>';
+    var tip = document.getElementById("mvWpTip");
+    var svgEl = host.querySelector("svg");
+    var cross = host.querySelector("#wpCross"), crossLine = host.querySelector("#wpCrossLine");
+    var dotH = host.querySelector("#wpCrossH"), dotA = host.querySelector("#wpCrossA"), dotD = host.querySelector("#wpCrossD");
+    function isDot(elm) { return elm && (elm.tagName || "").toLowerCase() === "circle" && elm.hasAttribute("data-info"); }
+    function wpHTML(info) {
+      var i = info.indexOf(" — "), a = i >= 0 ? info.slice(0, i) : info, bb = i >= 0 ? info.slice(i + 3) : "";
+      return '<div class="t-team">' + esc(a) + "</div>" + (bb ? '<div class="t-line">' + esc(bb) + "</div>" : "");
+    }
+    // client px → SVG viewBox user units, so we can map back to a minute
+    function clientToVB(e) {
+      if (!svgEl || !svgEl.getScreenCTM) return null;
+      var ctm = svgEl.getScreenCTM(); if (!ctm) return null;
+      var p = svgEl.createSVGPoint(); p.x = e.clientX; p.y = e.clientY;
+      var q = p.matrixTransform(ctm.inverse());
+      return { x: q.x, y: q.y };
+    }
+    function minuteAt(e) {
+      var vb = clientToVB(e); if (!vb) return null;
+      if (vb.x < padL - 6 || vb.x > W - padR + 6 || vb.y < padT - 6 || vb.y > padT + plotH + 6) return null;
+      var xv = Math.max(padL, Math.min(W - padR, vb.x));
+      return Math.round((xv - padL) / plotW * 90);
+    }
+    function rowHTML(c, nm, v) {
+      return '<div class="t-line"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:' + c + ';margin-right:6px;vertical-align:middle"></i>' + esc(nm) + ' <b>' + fmtPct(v) + '%</b></div>';
+    }
+    function readoutHTML(mn) {
+      return '<div class="t-team">' + mn + "′</div>" + rowHTML(colH, D.home.name, valAt(ptsH, mn)) +
+        rowHTML(colA, D.away.name, valAt(ptsA, mn)) + rowHTML(colD, "Draw", valAt(ptsD, mn));
+    }
+    function showCross(mn) {
+      var x = sx(mn);
+      crossLine.setAttribute("x1", x); crossLine.setAttribute("x2", x);
+      dotH.setAttribute("cx", x); dotH.setAttribute("cy", sy(valAt(ptsH, mn)));
+      dotA.setAttribute("cx", x); dotA.setAttribute("cy", sy(valAt(ptsA, mn)));
+      dotD.setAttribute("cx", x); dotD.setAttribute("cy", sy(valAt(ptsD, mn)));
+      cross.style.display = "";
+    }
+    function hideAll() { hideTip(); if (cross) cross.style.display = "none"; }
+    host.addEventListener("pointermove", function (e) {
+      if (e.pointerType === "touch") return;
+      if (isDot(e.target)) { showTip(e, wpHTML(e.target.getAttribute("data-info"))); if (cross) cross.style.display = "none"; return; }
+      var mn = minuteAt(e);
+      if (mn == null) { hideAll(); return; }
+      showCross(mn); showTip(e, readoutHTML(mn));
+    });
+    host.addEventListener("pointerleave", hideAll);
+    // touch: tap/drag shows the per-minute readout in the caption line (+ scorer on a dot)
+    host.addEventListener("click", function (e) {
+      if (isDot(e.target)) { tip.textContent = e.target.getAttribute("data-info"); tip.classList.add("show"); return; }
+      var mn = minuteAt(e);
+      if (mn == null) return;
+      showCross(mn);
+      tip.textContent = mn + "′ · " + D.home.name + " " + fmtPct(valAt(ptsH, mn)) + "% · " +
+        D.away.name + " " + fmtPct(valAt(ptsA, mn)) + "% · Draw " + fmtPct(valAt(ptsD, mn)) + "%";
+      tip.classList.add("show");
+    });
+  }
+
+  /* ================= SHOT MAP ================= */
+  function buildShots(D) {
+    var host = document.getElementById("mv-shots");
+    host.innerHTML =
+      '<div class="controls-bar">' +
+        '<button type="button" class="chip-toggle on home" id="shHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
+        '<button type="button" class="chip-toggle on away" id="shAway" aria-pressed="true">' + esc(D.away.name) + "</button>" +
+        '<button type="button" class="chip-toggle" id="shGoals" aria-pressed="false">Goals only</button>' +
+        '<span class="grp">Min xG <input type="text" id="shMinXg" value="0" size="3" style="width:42px"></span>' +
+      "</div>" +
+      '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="-2 -2 ' + (PW + 4) + " " + (PH + 8) + '">' +
+        pitchMarkup() +
+        '<text class="dir-label" x="3" y="' + (PH + 4) + '">◀ ' + esc(D.away.name) + "</text>" +
+        '<text class="dir-label" x="' + (PW - 3) + '" y="' + (PH + 4) + '" text-anchor="end">' + esc(D.home.name) + " ▶</text>" +
+        '<g id="shotLayer"></g>' +
+      "</svg></div>" +
+      '<div class="legend-row">' +
+        '<span><i class="dot" style="background:var(--c-home);border:1.5px solid #ffb020"></i>Goal (team colour)</span>' +
+        '<span><i class="dot" style="background:var(--c-home)"></i>On target</span>' +
+        '<span><i class="dot" style="background:transparent;border:1px solid var(--muted)"></i>Off target</span>' +
+        '<span><i class="dot" style="background:#7a869f"></i>Blocked</span>' +
+        '<span>● size = xG</span>' +
+      "</div>" +
+      '<div class="shot-detail empty" id="shotDetail">Click any shot to see who took it, when, and its xG.</div>';
+
+    var state = { home: true, away: true, goalsOnly: false, minXg: 0, sel: null };
+    var layer = document.getElementById("shotLayer");
+    var detail = document.getElementById("shotDetail");
+
+    function draw() {
+      layer.innerHTML = "";
+      D.shots.forEach(function (sh, i) {
+        if (!state[sh.team]) return;
+        if (state.goalsOnly && !sh.goal) return;
+        if (sh.xg < state.minXg) return;
+        var cx = tx(sh.team, sh.x), cy = ty(sh.team, sh.y);
+        // dot radius scaled to the pitch (viewBox 100×64) so dots don't overlap
+        var r = 0.55 + Math.sqrt(sh.xg) * 2.0;
+        var col = sh.team === "home" ? D.home.color : D.away.color;
+        var NS = "http://www.w3.org/2000/svg";
+        var fill, stroke = "none", op = 0.85;
+        if (sh.goal) { fill = col; op = 1; }                        // goals = team colour
+        else if (sh.blocked) { fill = "#7a869f"; op = 0.7; }
+        else if (sh.onTarget) { fill = col; }
+        else { fill = "none"; stroke = col; }
+        // goals: a tight ring around the (same-size) dot so they read as goals
+        if (sh.goal) {
+          var ring = document.createElementNS(NS, "circle");
+          ring.setAttribute("cx", cx.toFixed(2)); ring.setAttribute("cy", cy.toFixed(2));
+          ring.setAttribute("r", (r + 0.55).toFixed(2));
+          ring.setAttribute("fill", "none"); ring.setAttribute("stroke", "#ffb020");
+          ring.setAttribute("stroke-width", "0.45");
+          layer.appendChild(ring);
+        }
+        var c = document.createElementNS(NS, "circle");
+        c.setAttribute("class", "shot-dot");
+        c.setAttribute("cx", cx.toFixed(2)); c.setAttribute("cy", cy.toFixed(2));
+        c.setAttribute("r", r.toFixed(2));
+        c.setAttribute("fill", fill); c.setAttribute("fill-opacity", op);
+        if (stroke !== "none") { c.setAttribute("stroke", stroke); c.setAttribute("stroke-width", fill === "none" ? 0.5 : 0.3); }
+        c.addEventListener("click", function () { select(sh, c); });
+        c.addEventListener("mousemove", function (e) {
+          showTip(e, "<b>" + esc(sh.player) + "</b> " + sh.min + "'<br>xG " + sh.xg.toFixed(2) +
+            " · " + (sh.goal ? "GOAL" : sh.onTarget ? "On target" : sh.blocked ? "Blocked" : "Off target"));
+        });
+        c.addEventListener("mouseleave", hideTip);
+        layer.appendChild(c);
+      });
+    }
+    function select(sh, node) {
+      layer.querySelectorAll(".sel").forEach(function (n) { n.classList.remove("sel"); });
+      node.classList.add("sel");
+      detail.className = "shot-detail";
+      var teamName = sh.team === "home" ? D.home.name : D.away.name;
+      detail.innerHTML = '<div class="sd-head">' + esc(sh.player) + " · " + esc(teamName) + "</div>" +
+        '<div class="sd-grid">' +
+        "<div><span>Minute</span><br>" + sh.min + "'</div>" +
+        "<div><span>xG</span><br>" + sh.xg.toFixed(2) + "</div>" +
+        "<div><span>Outcome</span><br>" + (sh.goal ? "⚽ Goal" : sh.onTarget ? "On target" : sh.blocked ? "Blocked" : "Off target") + "</div>" +
+        "<div><span>Body</span><br>" + esc(sh.body) + "</div>" +
+        "<div><span>Situation</span><br>" + esc(sh.sit) + (sh.big ? " · Big chance" : "") + "</div>" +
+        "</div>";
+    }
+
+    document.getElementById("shHome").addEventListener("click", function () {
+      state.home = !state.home; this.classList.toggle("on"); draw(); });
+    document.getElementById("shAway").addEventListener("click", function () {
+      state.away = !state.away; this.classList.toggle("on"); draw(); });
+    document.getElementById("shGoals").addEventListener("click", function () {
+      state.goalsOnly = !state.goalsOnly; this.classList.toggle("on"); draw(); });
+    document.getElementById("shMinXg").addEventListener("input", function () {
+      state.minXg = parseFloat(this.value) || 0; draw(); });
+    draw();
+  }
+
+  /* ================= ON-TARGET SHOT MAP (goal-mouth view) ================= */
+  // A "behind the goal" view: every on-target attempt (goal + saved) plotted at the
+  // spot in the goal it was aimed at (WhoScored GoalMouthY/Z), coloured green for a
+  // goal and blue for a save. Dot size = xG. Team chooser isolates a side. (Note:
+  // WhoScored often gives saved shots a default height, so saves cluster at one row.)
+  function buildOnTargetShots(D) {
+    var host = document.getElementById("mv-shots-ot");
+    if (!host) return;
+    var onT = D.shots.filter(function (s) { return s.onTarget && s.gy != null && s.gz != null; });
+    var noCoord = D.shots.filter(function (s) { return s.onTarget && (s.gy == null || s.gz == null); }).length;
+    if (!onT.length) {
+      host.innerHTML = '<div class="shot-detail empty">No on-target shots with goal-placement data for this match.</div>';
+      return;
+    }
+    var GOAL_COL = "#a855f7", SAVE_COL = "#5a9bff";
+    host.innerHTML =
+      '<div class="controls-bar">' +
+        '<button type="button" class="chip-toggle on home" id="otHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
+        '<button type="button" class="chip-toggle on away" id="otAway" aria-pressed="true">' + esc(D.away.name) + "</button>" +
+        '<button type="button" class="chip-toggle" id="otGoals" aria-pressed="false">Goals only</button>' +
+        '<span class="ot-count" id="otCount"></span>' +
+      "</div>" +
+      '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="' + GM.viewBox + '">' +
+        GM.frame() +
+        '<text class="dir-label" x="' + (GM.GW / 2) + '" y="' + (GM.GROUND + 5) +
+          '" text-anchor="middle">Goal-mouth view · where on-target shots were aimed</text>' +
+        '<g id="otLayer"></g>' +
+      "</svg></div>" +
+      '<div class="legend-row">' +
+        '<span><i class="dot" style="background:' + GOAL_COL + '"></i>Goal</span>' +
+        '<span><i class="dot" style="background:' + SAVE_COL + '"></i>On target (saved)</span>' +
+        '<span><i class="dot" style="background:#222;border:2px solid var(--c-home)"></i>Team ring</span>' +
+        '<span>● size = xG</span>' +
+      "</div>" +
+      '<div class="shot-detail empty" id="otDetail">' +
+        "Each dot is an on-target shot, placed where it was aimed in the goal. Click one for details." +
+        (noCoord ? " (" + noCoord + " on-target shot" + (noCoord === 1 ? "" : "s") + " had no placement data.)" : "") +
+      "</div>";
+
+    var state = { home: true, away: true, goalsOnly: false };
+    var layer = document.getElementById("otLayer");
+    var detail = document.getElementById("otDetail");
+    var countEl = document.getElementById("otCount");
+    var NS = "http://www.w3.org/2000/svg";
+
+    function draw() {
+      layer.innerHTML = "";
+      var shown = 0, hg = 0, ag = 0;
+      onT.forEach(function (sh) {
+        if (!state[sh.team]) return;
+        if (state.goalsOnly && !sh.goal) return;
+        shown++;
+        if (sh.team === "home") hg++; else ag++;
+        var cx = GM.gxOf(sh.gy), cy = GM.gyOf(sh.gz);
+        var r = 1.4 + Math.sqrt(sh.xg) * 2.6;
+        var ring = sh.team === "home" ? D.home.color : D.away.color;
+        var c = document.createElementNS(NS, "circle");
+        c.setAttribute("cx", cx.toFixed(2)); c.setAttribute("cy", cy.toFixed(2));
+        c.setAttribute("r", r.toFixed(2));
+        c.setAttribute("fill", sh.goal ? GOAL_COL : SAVE_COL);
+        c.setAttribute("fill-opacity", sh.goal ? 0.95 : 0.8);
+        c.setAttribute("stroke", ring); c.setAttribute("stroke-width", "0.7");
+        c.style.cursor = "pointer";
+        c.addEventListener("click", function () { select(sh, c); });
+        c.addEventListener("mousemove", function (e) {
+          showTip(e, "<b>" + esc(sh.player) + "</b> " + sh.min + "'<br>xG " + sh.xg.toFixed(2) +
+            " · " + (sh.goal ? "GOAL" : "On target (saved)"));
+        });
+        c.addEventListener("mouseleave", hideTip);
+        layer.appendChild(c);
+      });
+      countEl.textContent = shown + " on target · " + hg + "–" + ag;
+    }
+    function select(sh, node) {
+      layer.querySelectorAll(".sel").forEach(function (n) { n.classList.remove("sel"); });
+      node.classList.add("sel");
+      detail.className = "shot-detail";
+      var teamName = sh.team === "home" ? D.home.name : D.away.name;
+      detail.innerHTML = '<div class="sd-head">' + esc(sh.player) + " · " + esc(teamName) + "</div>" +
+        '<div class="sd-grid">' +
+        "<div><span>Minute</span><br>" + sh.min + "'</div>" +
+        "<div><span>xG</span><br>" + sh.xg.toFixed(2) + "</div>" +
+        "<div><span>Outcome</span><br>" + (sh.goal ? "⚽ Goal" : "On target (saved)") + "</div>" +
+        "<div><span>Body</span><br>" + esc(sh.body) + "</div>" +
+        "<div><span>Situation</span><br>" + esc(sh.sit) + (sh.big ? " · Big chance" : "") + "</div>" +
+        "</div>";
+    }
+
+    document.getElementById("otHome").addEventListener("click", function () {
+      state.home = !state.home; this.classList.toggle("on"); draw(); });
+    document.getElementById("otAway").addEventListener("click", function () {
+      state.away = !state.away; this.classList.toggle("on"); draw(); });
+    document.getElementById("otGoals").addEventListener("click", function () {
+      state.goalsOnly = !state.goalsOnly; this.classList.toggle("on"); draw(); });
+    draw();
+  }
+
+  /* ================= PASS EXPLORER ================= */
+  function buildPasses(D) {
+    var host = document.getElementById("mv-passes");
+    var players = {};
+    D.passes.forEach(function (p) { (players[p.team] = players[p.team] || {})[p.player] = 1; });
+    function opts(side) {
+      return Object.keys(players[side] || {}).sort().map(function (n) {
+        return '<option value="' + esc(n) + '">' + esc(n) + "</option>"; }).join("");
+    }
+
+    host.innerHTML =
+      '<div class="controls-bar">' +
+        '<button type="button" class="chip-toggle on home" id="paHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
+        '<button type="button" class="chip-toggle on away" id="paAway" aria-pressed="true">' + esc(D.away.name) + "</button>" +
+        '<span class="grp">Player <select id="paPlayer"><option value="">All players</option>' +
+          '<optgroup label="' + esc(D.home.name) + '" data-side="home">' + opts("home") + "</optgroup>" +
+          '<optgroup label="' + esc(D.away.name) + '" data-side="away">' + opts("away") + "</optgroup></select></span>" +
+        '<span class="grp">Type <select id="paType">' +
+          '<option value="all">All passes</option><option value="ok">Completed</option>' +
+          '<option value="fail">Incomplete</option><option value="prog">Progressive</option>' +
+          '<option value="key">Key passes</option>' +
+          '<option value="assist">Assists</option><option value="cross">Crosses</option>' +
+          '<option value="through">Through balls</option></select></span>' +
+        '<button type="button" class="chip-toggle" id="paThird" aria-pressed="false">Final third</button>' +
+        '<button type="button" class="chip-toggle" id="paWindow" aria-pressed="false">5-min window</button>' +
+      "</div>" +
+      '<div class="timeline-scrub">' +
+        '<button class="play-btn" id="paPlay" aria-label="Play or pause the pass timeline">▶</button>' +
+        '<input type="range" id="paRange" aria-label="Minute" min="0" max="' + (D.maxMin || 90) + '" value="' + (D.maxMin || 90) + '">' +
+        '<span class="minlab" id="paMinLab"></span>' +
+      "</div>" +
+      '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="-2 -2 ' + (PW + 4) + " " + (PH + 8) + '">' +
+        pitchMarkup() +
+        '<text class="dir-label" x="3" y="' + (PH + 4) + '">◀ ' + esc(D.away.name) + "</text>" +
+        '<text class="dir-label" x="' + (PW - 3) + '" y="' + (PH + 4) + '" text-anchor="end">' + esc(D.home.name) + " ▶</text>" +
+        '<g id="passLayer"></g>' +
+      "</svg></div>" +
+      '<div class="legend-row">' +
+        '<span><i class="dot" style="background:#a855f7"></i>completed · progressive/key</span>' +
+        '<span><i class="dot" style="background:#7c3aed"></i>completed · normal</span>' +
+        '<span><i class="dot" style="background:#ff2a4d"></i>incomplete · forward/key</span>' +
+        '<span><i class="dot" style="background:#a83646"></i>incomplete · normal</span>' +
+        '<span>dashed = incomplete · dot = start</span>' +
+      "</div>" +
+      '<div class="stat-note" id="paCount"></div>';
+
+    var state = { home: true, away: true, player: "", type: "all", third: false, windowMode: false, upper: D.maxMin || 90 };
+    var layer = document.getElementById("passLayer");
+    var minLab = document.getElementById("paMinLab");
+    var countEl = document.getElementById("paCount");
+    var SVGNS = "http://www.w3.org/2000/svg";
+
+    function pass_passes_filter(p) {
+      if (!state[p.team]) return false;
+      if (state.player && p.player !== state.player) return false;
+      var t = state.type;
+      if (t === "ok" && !p.ok) return false;
+      if (t === "fail" && p.ok) return false;
+      if (t === "prog" && !p.prog) return false;
+      if (t === "key" && !p.key && !p.assist) return false;
+      if (t === "assist" && !p.assist) return false;
+      if (t === "cross" && !p.cross) return false;
+      if (t === "through" && !p.through) return false;
+      // Final third = pass that ENDS in the attacking third (WhoScored x ≥ 66.7).
+      if (state.third && p.ex < 200 / 3) return false;
+      if (p.min > state.upper) return false;
+      if (state.windowMode && p.min < state.upper - 5) return false;
+      return true;
+    }
+
+    function draw() {
+      layer.innerHTML = "";
+      var shown = 0;
+      var frag = document.createDocumentFragment();
+      D.passes.forEach(function (p) {
+        if (!pass_passes_filter(p)) return;
+        shown++;
+        var x1 = tx(p.team, p.x), y1 = ty(p.team, p.y);
+        var x2 = tx(p.team, p.ex), y2 = ty(p.team, p.ey);
+        // Two greens for completed (bright = progressive/key/assist, dim = normal);
+        // two reds for incomplete (bright = forward/key attempt, dim = normal).
+        var dangerous = p.prog || p.key || p.assist || p.through;
+        var col = p.ok
+          ? (dangerous ? "#a855f7" : "#7c3aed")
+          : (dangerous ? "#ff2a4d" : "#a83646");
+        var ln = document.createElementNS(SVGNS, "line");
+        var cls = "pass-line" + (p.assist ? " assist" : p.key || p.prog ? " key" : "");
+        ln.setAttribute("class", cls);
+        ln.setAttribute("x1", x1.toFixed(2)); ln.setAttribute("y1", y1.toFixed(2));
+        ln.setAttribute("x2", x2.toFixed(2)); ln.setAttribute("y2", y2.toFixed(2));
+        ln.setAttribute("stroke", col);
+        if (!p.ok) ln.setAttribute("stroke-dasharray", "0.9 0.9");
+        ln.addEventListener("mousemove", function (e) {
+          showTip(e, "<b>" + esc(p.player) + "</b> " + p.min + "'" +
+            (p.recv ? " → " + esc(p.recv) : "") + "<br>" +
+            (p.ok ? "Completed" : "Incomplete") + (p.assist ? " · ASSIST" : p.key ? " · key pass" :
+              p.through ? " · through ball" : p.cross ? " · cross" : p.prog ? " · progressive" : ""));
+        });
+        ln.addEventListener("mouseleave", hideTip);
+        frag.appendChild(ln);
+        var d0 = document.createElementNS(SVGNS, "circle");
+        d0.setAttribute("class", "pass-dot");
+        d0.setAttribute("cx", x1.toFixed(2)); d0.setAttribute("cy", y1.toFixed(2));
+        d0.setAttribute("r", "0.6"); d0.setAttribute("fill", col);
+        frag.appendChild(d0);
+      });
+      layer.appendChild(frag);
+      countEl.textContent = shown + " passes shown" + (state.windowMode ? " (minutes " + Math.max(0, state.upper - 5) + "–" + state.upper + ")" : " (up to " + state.upper + "')");
+    }
+    function setUpper(v) {
+      state.upper = v;
+      minLab.textContent = (state.windowMode ? Math.max(0, v - 5) + "–" + v : "0–" + v) + "'";
+      draw();
+    }
+
+    document.getElementById("paHome").addEventListener("click", function () { state.home = !state.home; this.classList.toggle("on"); draw(); });
+    document.getElementById("paAway").addEventListener("click", function () { state.away = !state.away; this.classList.toggle("on"); draw(); });
+    document.getElementById("paPlayer").addEventListener("change", function () { state.player = this.value; draw(); });
+    document.getElementById("paType").addEventListener("change", function () { state.type = this.value; draw(); });
+    document.getElementById("paThird").addEventListener("click", function () { state.third = !state.third; this.classList.toggle("on"); draw(); });
+    document.getElementById("paWindow").addEventListener("click", function () { state.windowMode = !state.windowMode; this.classList.toggle("on"); setUpper(state.upper); });
+    var range = document.getElementById("paRange");
+    range.addEventListener("input", function () { stopPlay(); setUpper(parseInt(this.value, 10)); });
+
+    // play animation
+    var timer = null;
+    var playBtn = document.getElementById("paPlay");
+    function stopPlay() { if (timer) { clearInterval(timer); timer = null; playBtn.classList.remove("playing"); playBtn.textContent = "▶"; } }
+    playBtn.addEventListener("click", function () {
+      if (timer) { stopPlay(); return; }
+      if (state.upper >= (D.maxMin || 90)) { range.value = 0; setUpper(0); }
+      playBtn.classList.add("playing"); playBtn.textContent = "❚❚";
+      timer = setInterval(function () {
+        var v = state.upper + 1;
+        if (v > (D.maxMin || 90)) { stopPlay(); return; }
+        range.value = v; setUpper(v);
+      }, 180);
+    });
+
+    setUpper(state.upper);
+  }
+
+  /* ================= DRIBBLES (take-ons) ================= */
+  function buildDribbles(D) {
+    var host = document.getElementById("mv-dribbles");
+    if (!host) return;
+    var players = {};
+    D.dribbles.forEach(function (p) { (players[p.team] = players[p.team] || {})[p.player] = 1; });
+    function opts(side) {
+      return Object.keys(players[side] || {}).sort().map(function (n) {
+        return '<option value="' + esc(n) + '">' + esc(n) + "</option>"; }).join("");
+    }
+
+    host.innerHTML =
+      '<div class="controls-bar">' +
+        '<button type="button" class="chip-toggle on home" id="drHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
+        '<button type="button" class="chip-toggle on away" id="drAway" aria-pressed="true">' + esc(D.away.name) + "</button>" +
+        '<span class="grp">Player <select id="drPlayer"><option value="">All players</option>' +
+          '<optgroup label="' + esc(D.home.name) + '">' + opts("home") + "</optgroup>" +
+          '<optgroup label="' + esc(D.away.name) + '">' + opts("away") + "</optgroup></select></span>" +
+        '<span class="grp">Outcome <select id="drType">' +
+          '<option value="all">All dribbles</option><option value="ok">Successful</option>' +
+          '<option value="fail">Unsuccessful</option></select></span>' +
+        '<button type="button" class="chip-toggle" id="drWindow" aria-pressed="false">5-min window</button>' +
+      "</div>" +
+      '<div class="timeline-scrub">' +
+        '<button class="play-btn" id="drPlay" aria-label="Play or pause the take-on timeline">▶</button>' +
+        '<input type="range" id="drRange" aria-label="Minute" min="0" max="' + (D.maxMin || 90) + '" value="' + (D.maxMin || 90) + '">' +
+        '<span class="minlab" id="drMinLab"></span>' +
+      "</div>" +
+      '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="-2 -2 ' + (PW + 4) + " " + (PH + 8) + '">' +
+        '<defs>' +
+          '<marker id="drArrG" markerWidth="4" markerHeight="4" refX="3.1" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 Z" fill="#a855f7"/></marker>' +
+          '<marker id="drArrR" markerWidth="4" markerHeight="4" refX="3.1" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 Z" fill="#ff2a4d"/></marker>' +
+        "</defs>" +
+        pitchMarkup() +
+        '<text class="dir-label" x="3" y="' + (PH + 4) + '">◀ ' + esc(D.away.name) + "</text>" +
+        '<text class="dir-label" x="' + (PW - 3) + '" y="' + (PH + 4) + '" text-anchor="end">' + esc(D.home.name) + " ▶</text>" +
+        '<g id="dribLayer"></g>' +
+      "</svg></div>" +
+      '<div class="legend-row">' +
+        '<span><i class="dot" style="background:#a855f7"></i>successful</span>' +
+        '<span><i class="dot" style="background:transparent;border:1px solid #ff2a4d"></i>unsuccessful</span>' +
+        '<span>● = where the take-on happened · → carry direction (next touch)</span>' +
+      "</div>" +
+      '<div class="stat-note" id="drCount"></div>';
+
+    // Carry direction: build_match_details now ships ex/ey for each take-on (the player's
+    // next on-ball event, found across the FULL event stream). For any older match file
+    // without it, fall back to inferring from the next tracked touch (pass/shot/dribble).
+    (function () {
+      var byPlayer = {}, T = function (o) { return (o.min || 0) * 60 + (o.sec || 0); };
+      function add(t, pl, tt, x, y) { var k = t + "|" + pl; (byPlayer[k] = byPlayer[k] || []).push({ t: tt, x: x, y: y }); }
+      (D.passes || []).forEach(function (p) { add(p.team, p.player, T(p), p.x, p.y); });
+      (D.shots || []).forEach(function (s) { add(s.team, s.player, T(s), s.x, s.y); });
+      (D.dribbles || []).forEach(function (d) { add(d.team, d.player, T(d), d.x, d.y); });
+      Object.keys(byPlayer).forEach(function (k) { byPlayer[k].sort(function (a, b) { return a.t - b.t; }); });
+      D.dribbles.forEach(function (d) {
+        if (d.ex != null) { d._ex = d.ex; d._ey = d.ey; return; }   // prefer the server-computed end
+        var arr = byPlayer[d.team + "|" + d.player] || [], dt = T(d), nxt = null;
+        for (var i = 0; i < arr.length; i++) { if (arr[i].t > dt && arr[i].t - dt <= 8) { nxt = arr[i]; break; } }
+        if (nxt && (Math.abs(nxt.x - d.x) > 0.8 || Math.abs(nxt.y - d.y) > 0.8)) { d._ex = nxt.x; d._ey = nxt.y; }
+      });
+    })();
+
+    var state = { home: true, away: true, player: "", type: "all", windowMode: false, upper: D.maxMin || 90 };
+    var layer = document.getElementById("dribLayer");
+    var minLab = document.getElementById("drMinLab");
+    var countEl = document.getElementById("drCount");
+    var SVGNS = "http://www.w3.org/2000/svg";
+
+    function filt(p) {
+      if (!state[p.team]) return false;
+      if (state.player && p.player !== state.player) return false;
+      if (state.type === "ok" && !p.ok) return false;
+      if (state.type === "fail" && p.ok) return false;
+      if (p.min > state.upper) return false;
+      if (state.windowMode && p.min < state.upper - 5) return false;
+      return true;
+    }
+
+    function draw() {
+      layer.innerHTML = "";
+      var shown = 0, ok = 0;
+      var frag = document.createDocumentFragment();
+      D.dribbles.forEach(function (p) {
+        if (!filt(p)) return;
+        shown++; if (p.ok) ok++;
+        var cx = tx(p.team, p.x), cy = ty(p.team, p.y);
+        var col = p.ok ? "#a855f7" : "#ff2a4d";
+        if (p._ex != null) {
+          var ax = tx(p.team, p._ex), ay = ty(p.team, p._ey);
+          var arr = document.createElementNS(SVGNS, "line");
+          arr.setAttribute("class", "drib-arrow");
+          arr.setAttribute("x1", cx.toFixed(2)); arr.setAttribute("y1", cy.toFixed(2));
+          arr.setAttribute("x2", ax.toFixed(2)); arr.setAttribute("y2", ay.toFixed(2));
+          arr.setAttribute("stroke", col); arr.setAttribute("stroke-width", "0.45");
+          arr.setAttribute("stroke-opacity", "0.85");
+          arr.setAttribute("marker-end", p.ok ? "url(#drArrG)" : "url(#drArrR)");
+          arr.addEventListener("mousemove", function (e) {
+            showTip(e, "<b>" + esc(p.player) + "</b> " + p.min + "'<br>" +
+              (p.ok ? "Successful dribble" : "Unsuccessful dribble") + " · carry direction");
+          });
+          arr.addEventListener("mouseleave", hideTip);
+          frag.appendChild(arr);
+        }
+        var c = document.createElementNS(SVGNS, "circle");
+        c.setAttribute("class", "drib-dot");
+        c.setAttribute("cx", cx.toFixed(2)); c.setAttribute("cy", cy.toFixed(2));
+        c.setAttribute("r", "1.1");
+        c.setAttribute("fill", p.ok ? col : "none");
+        c.setAttribute("stroke", col); c.setAttribute("stroke-width", "0.4");
+        c.setAttribute("fill-opacity", "0.85");
+        c.addEventListener("mousemove", function (e) {
+          showTip(e, "<b>" + esc(p.player) + "</b> " + p.min + "'<br>" +
+            (p.ok ? "Successful dribble" : "Unsuccessful dribble"));
+        });
+        c.addEventListener("mouseleave", hideTip);
+        frag.appendChild(c);
+      });
+      layer.appendChild(frag);
+      var pct = shown ? Math.round((100 * ok) / shown) : 0;
+      countEl.textContent = shown + " dribbles · " + ok + " successful (" + pct + "%)" +
+        (state.windowMode ? " · minutes " + Math.max(0, state.upper - 5) + "–" + state.upper
+          : " · up to " + state.upper + "'");
+    }
+    function setUpper(v) {
+      state.upper = v;
+      minLab.textContent = (state.windowMode ? Math.max(0, v - 5) + "–" + v : "0–" + v) + "'";
+      draw();
+    }
+
+    document.getElementById("drHome").addEventListener("click", function () { state.home = !state.home; this.classList.toggle("on"); draw(); });
+    document.getElementById("drAway").addEventListener("click", function () { state.away = !state.away; this.classList.toggle("on"); draw(); });
+    document.getElementById("drPlayer").addEventListener("change", function () { state.player = this.value; draw(); });
+    document.getElementById("drType").addEventListener("change", function () { state.type = this.value; draw(); });
+    document.getElementById("drWindow").addEventListener("click", function () { state.windowMode = !state.windowMode; this.classList.toggle("on"); setUpper(state.upper); });
+    var range = document.getElementById("drRange");
+    range.addEventListener("input", function () { stopPlay(); setUpper(parseInt(this.value, 10)); });
+
+    var timer = null;
+    var playBtn = document.getElementById("drPlay");
+    function stopPlay() { if (timer) { clearInterval(timer); timer = null; playBtn.classList.remove("playing"); playBtn.textContent = "▶"; } }
+    playBtn.addEventListener("click", function () {
+      if (timer) { stopPlay(); return; }
+      if (state.upper >= (D.maxMin || 90)) { range.value = 0; setUpper(0); }
+      playBtn.classList.add("playing"); playBtn.textContent = "❚❚";
+      timer = setInterval(function () {
+        var v = state.upper + 1;
+        if (v > (D.maxMin || 90)) { stopPlay(); return; }
+        range.value = v; setUpper(v);
+      }, 180);
+    });
+
+    setUpper(state.upper);
+  }
+
+  /* ================= PASS NETWORK (avg position + links) ================= */
+  function buildNetwork(D) {
+    var host = document.getElementById("mv-network");
+    // name -> shirt number / photo, per side, from the line-ups
+    var numMap = { home: {}, away: {} };
+    var photoMap = { home: {}, away: {} };
+    ["home", "away"].forEach(function (sd) {
+      (D.lineups[sd].starters.concat(D.lineups[sd].subs)).forEach(function (p) {
+        numMap[sd][p.name] = p.num;
+        photoMap[sd][p.name] = p.photo;
+      });
+    });
+
+    host.innerHTML =
+      '<div class="controls-bar">' +
+        '<button type="button" class="chip-toggle on home" id="nwHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
+        '<button type="button" class="chip-toggle away" id="nwAway" aria-pressed="false">' + esc(D.away.name) + "</button>" +
+        '<span class="grp">Min. combined passes <input type="range" id="nwMin" aria-label="Minimum combined passes" min="1" max="10" value="3" style="width:90px"> <b id="nwMinLab">3</b></span>' +
+        facesToggleHtml("nwFaces", false) +
+      "</div>" +
+      '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="-2 -2 ' + (PW + 4) + " " + (PH + 8) + '">' +
+        pitchMarkup() +
+        '<text class="dir-label" x="' + (PW / 2) + '" y="' + (PH + 4) + '" text-anchor="middle" id="nwDir">attacking →</text>' +
+        '<g id="nwLinks"></g><g id="nwNodes"></g>' +
+      "</svg></div>" +
+      '<div class="legend-row">' +
+        '<span>● node = player at average position · size = passes involved</span>' +
+        '<span>line thickness = passes between the pair</span>' +
+        '<span>starting XI, until the first substitution</span>' +
+      "</div>" +
+      '<div class="stat-note" id="nwNote"></div>';
+
+    var state = { side: "home", minLink: 3, showFaces: false };
+    var linkG = document.getElementById("nwLinks");
+    var nodeG = document.getElementById("nwNodes");
+    var note = document.getElementById("nwNote");
+    var NS = "http://www.w3.org/2000/svg";
+
+    // Standard pass network: the starting XI, using passes up to the first
+    // substitution (the window in which all 11 were on the pitch together).
+    function cutoffFor(side) {
+      var subs = D.lineups[side].subs;
+      return (subs && subs.length && subs[0].on != null) ? subs[0].on : (D.maxMin || 90);
+    }
+
+    function compute() {
+      var nodes = {}; // name -> {sx,sy,n, passes}
+      var links = {}; // "a|b" -> count
+      var starter = {};
+      D.lineups[state.side].starters.forEach(function (p) { starter[p.name] = true; });
+      var cutoff = cutoffFor(state.side);
+      function node(name) {
+        return nodes[name] || (nodes[name] = { name: name, x: 0, y: 0, n: 0, passes: 0 });
+      }
+      D.passes.forEach(function (p) {
+        if (p.team !== state.side || !p.ok || p.min > cutoff) return;
+        if (!starter[p.player]) return;            // passer must be a starter
+        var passer = node(p.player);
+        passer.x += p.x; passer.y += p.y; passer.n++; passer.passes++;
+        if (p.recv && starter[p.recv]) {           // receiver must be a starter too
+          var r = node(p.recv);
+          r.x += p.ex; r.y += p.ey; r.n++; r.passes++;
+          var key = [p.player, p.recv].sort().join("|");
+          links[key] = (links[key] || 0) + 1;
+        }
+      });
+      Object.keys(nodes).forEach(function (k) {
+        var nd = nodes[k]; if (nd.n) { nd.x /= nd.n; nd.y /= nd.n; }
+      });
+      return { nodes: nodes, links: links, cutoff: cutoff };
+    }
+
+    function draw() {
+      var net = compute();
+      var col = state.side === "home" ? D.home.color : D.away.color;
+      linkG.innerHTML = ""; nodeG.innerHTML = "";
+      var maxPasses = 1;
+      Object.keys(net.nodes).forEach(function (k) { maxPasses = Math.max(maxPasses, net.nodes[k].passes); });
+      var maxLink = 1;
+      Object.keys(net.links).forEach(function (k) { maxLink = Math.max(maxLink, net.links[k]); });
+
+      var nLinks = 0;
+      Object.keys(net.links).forEach(function (key) {
+        var count = net.links[key];
+        if (count < state.minLink) return;
+        var parts = key.split("|");
+        var a = net.nodes[parts[0]], b = net.nodes[parts[1]];
+        if (!a || !b) return;
+        nLinks++;
+        var ln = document.createElementNS(NS, "line");
+        ln.setAttribute("x1", tx(state.side, a.x).toFixed(2)); ln.setAttribute("y1", ty(state.side, a.y).toFixed(2));
+        ln.setAttribute("x2", tx(state.side, b.x).toFixed(2)); ln.setAttribute("y2", ty(state.side, b.y).toFixed(2));
+        ln.setAttribute("stroke", col);
+        ln.setAttribute("stroke-opacity", (0.25 + 0.6 * count / maxLink).toFixed(2));
+        ln.setAttribute("stroke-width", (0.3 + 1.5 * count / maxLink).toFixed(2));
+        ln.setAttribute("stroke-linecap", "round");
+        ln.addEventListener("mousemove", function (e) {
+          showTip(e, "<b>" + esc(parts[0]) + " ↔ " + esc(parts[1]) + "</b><br>" + count + " passes");
+        });
+        ln.addEventListener("mouseleave", hideTip);
+        linkG.appendChild(ln);
+      });
+
+      Object.keys(net.nodes).forEach(function (k) {
+        var nd = net.nodes[k];
+        var cx = tx(state.side, nd.x), cy = ty(state.side, nd.y);
+        var r = 1.6 + 2.6 * nd.passes / maxPasses;
+        var num = numMap[state.side][nd.name];
+        var photo = photoMap[state.side][nd.name];
+        var c = drawPitchNode(nodeG, cx, cy, r, col, num, photo, state.showFaces);
+        c.addEventListener("mousemove", function (e) {
+          showTip(e, "<b>" + esc(nd.name) + "</b><br>" + nd.passes + " passes involved");
+        });
+        c.addEventListener("mouseleave", hideTip);
+      });
+      var teamName = state.side === "home" ? D.home.name : D.away.name;
+      note.textContent = teamName + " · " + Object.keys(net.nodes).length + " players · " +
+        nLinks + " passing links (min " + state.minLink + ") · positions up to the first sub (" + net.cutoff + "')";
+      document.getElementById("nwDir").textContent =
+        (state.side === "home" ? teamName + " attacking →" : "← " + teamName + " attacking");
+    }
+
+    function setSide(side) {
+      state.side = side;
+      document.getElementById("nwHome").classList.toggle("on", side === "home");
+      document.getElementById("nwAway").classList.toggle("on", side === "away");
+      draw();
+    }
+    document.getElementById("nwHome").addEventListener("click", function () { setSide("home"); });
+    document.getElementById("nwAway").addEventListener("click", function () { setSide("away"); });
+    document.getElementById("nwMin").addEventListener("input", function () {
+      state.minLink = parseInt(this.value, 10); document.getElementById("nwMinLab").textContent = this.value; draw();
+    });
+    document.getElementById("nwFaces").addEventListener("change", function () {
+      state.showFaces = this.checked; draw();
+    });
+    draw();
+  }
+
+  /* ================= AVERAGE POSITION (windowed, scrubbable) =================
+     Like the pass network but it averages each player's touch positions over a sliding
+     time window the user scrubs (or plays). Players appear/disappear as they're subbed
+     on/off, so you can watch a team's shape shift across the game. */
+  function buildAvgPos(D) {
+    var host = document.getElementById("mv-avgpos");
+    if (!host) return;
+    var maxMin = D.maxMin || 90;
+    var info = { home: {}, away: {} };           // name -> {num, photo, on, off} per side
+    ["home", "away"].forEach(function (sd) {
+      D.lineups[sd].starters.concat(D.lineups[sd].subs).forEach(function (p) {
+        info[sd][p.name] = { num: p.num, photo: p.photo, on: (p.on != null ? p.on : 0), off: (p.off != null ? p.off : maxMin) };
+      });
+    });
+
+    host.innerHTML =
+      '<div class="controls-bar">' +
+        '<button type="button" class="chip-toggle on home" id="apHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
+        '<button type="button" class="chip-toggle away" id="apAway" aria-pressed="false">' + esc(D.away.name) + "</button>" +
+        '<span class="grp">Window <select id="apWin">' +
+          '<option value="10">10 min</option><option value="15" selected>15 min</option>' +
+          '<option value="20">20 min</option><option value="0">Full (0→now)</option></select></span>' +
+        facesToggleHtml("apFaces", false) +
+      "</div>" +
+      '<div class="timeline-scrub">' +
+        '<button class="play-btn" id="apPlay">▶</button>' +
+        '<input type="range" id="apRange" min="0" max="' + maxMin + '" value="' + maxMin + '">' +
+        '<span class="minlab" id="apMinLab"></span>' +
+      "</div>" +
+      '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="-2 -2 ' + (PW + 4) + " " + (PH + 8) + '">' +
+        pitchMarkup() +
+        '<text class="dir-label" x="' + (PW / 2) + '" y="' + (PH + 4) + '" text-anchor="middle" id="apDir">attacking →</text>' +
+        '<g id="apNodes"></g>' +
+      "</svg></div>" +
+      '<div class="legend-row">' +
+        "<span>● node = player's average position in the window · size = touches</span>" +
+        "<span>players appear/disappear as they're subbed on and off</span>" +
+        "<span>scrub or press ▶ to watch the shape change</span>" +
+      "</div>" +
+      '<div class="stat-note" id="apNote"></div>';
+
+    var state = { side: "home", win: 15, upper: maxMin, showFaces: false };
+    var nodeG = document.getElementById("apNodes");
+    var minLab = document.getElementById("apMinLab");
+    var note = document.getElementById("apNote");
+    var NS = "http://www.w3.org/2000/svg";
+
+    function compute() {
+      var lo = state.win === 0 ? 0 : Math.max(0, state.upper - state.win), hi = state.upper, side = state.side;
+      var acc = {};
+      function inWin(m) { return m >= lo && m <= hi; }
+      function add(name, x, y) { if (!info[side][name]) return; var a = acc[name] || (acc[name] = { x: 0, y: 0, n: 0 }); a.x += x; a.y += y; a.n++; }
+      D.passes.forEach(function (p) {
+        if (p.team !== side || !inWin(p.min)) return;
+        add(p.player, p.x, p.y);
+        if (p.recv) add(p.recv, p.ex, p.ey);     // receiver counts at where the ball arrived
+      });
+      (D.dribbles || []).forEach(function (d) { if (d.team === side && inWin(d.min)) add(d.player, d.x, d.y); });
+      (D.shots || []).forEach(function (s) { if (s.team === side && inWin(s.min)) add(s.player, s.x, s.y); });
+      var out = [];
+      Object.keys(acc).forEach(function (name) {
+        var a = acc[name], pi = info[side][name];
+        if (!a.n || !pi || !(pi.on < hi && pi.off > lo)) return;   // must be on the pitch in window
+        out.push({ name: name, x: a.x / a.n, y: a.y / a.n, n: a.n, num: pi.num, photo: pi.photo });
+      });
+      return { players: out, lo: lo, hi: hi };
+    }
+
+    function draw() {
+      var net = compute();
+      var col = state.side === "home" ? D.home.color : D.away.color;
+      nodeG.innerHTML = "";
+      var maxN = 1; net.players.forEach(function (p) { maxN = Math.max(maxN, p.n); });
+      net.players.forEach(function (p) {
+        var cx = tx(state.side, p.x), cy = ty(state.side, p.y);
+        var r = 1.6 + 2.4 * p.n / maxN;
+        var c = drawPitchNode(nodeG, cx, cy, r, col, p.num, p.photo, state.showFaces);
+        (function (pl) {
+          c.addEventListener("mousemove", function (e) {
+            var pi = info[state.side][pl.name] || {};
+            showTip(e, "<b>" + esc(pl.name) + "</b><br>" + pl.n + " touches · on pitch " + pi.on + "–" + pi.off + "'");
+          });
+          c.addEventListener("mouseleave", hideTip);
+        })(p);
+      });
+      var teamName = state.side === "home" ? D.home.name : D.away.name;
+      note.textContent = teamName + " · " + net.players.length + " players on pitch · average positions, minutes " +
+        net.lo + "–" + net.hi + (state.win === 0 ? " (full)" : "");
+      document.getElementById("apDir").textContent =
+        (state.side === "home" ? teamName + " attacking →" : "← " + teamName + " attacking");
+    }
+
+    function setUpper(v) {
+      state.upper = v;
+      var lo = state.win === 0 ? 0 : Math.max(0, v - state.win);
+      minLab.textContent = lo + "–" + v + "'";
+      draw();
+    }
+    function setSide(side) {
+      state.side = side;
+      document.getElementById("apHome").classList.toggle("on", side === "home");
+      document.getElementById("apAway").classList.toggle("on", side === "away");
+      draw();
+    }
+    document.getElementById("apHome").addEventListener("click", function () { setSide("home"); });
+    document.getElementById("apAway").addEventListener("click", function () { setSide("away"); });
+    document.getElementById("apWin").addEventListener("change", function () { state.win = parseInt(this.value, 10); setUpper(state.upper); });
+    document.getElementById("apFaces").addEventListener("change", function () { state.showFaces = this.checked; draw(); });
+    var range = document.getElementById("apRange");
+    range.addEventListener("input", function () { stopPlay(); setUpper(parseInt(this.value, 10)); });
+
+    var timer = null;
+    var playBtn = document.getElementById("apPlay");
+    function stopPlay() { if (timer) { clearInterval(timer); timer = null; playBtn.classList.remove("playing"); playBtn.textContent = "▶"; } }
+    playBtn.addEventListener("click", function () {
+      if (timer) { stopPlay(); return; }
+      if (state.upper >= maxMin) { range.value = 0; setUpper(0); }
+      playBtn.classList.add("playing"); playBtn.textContent = "❚❚";
+      timer = setInterval(function () {
+        var v = state.upper + 1;
+        if (v > maxMin) { stopPlay(); return; }
+        range.value = v; setUpper(v);
+      }, 180);
+    });
+
+    setUpper(state.upper);
+  }
+
+  /* ================= LINE-UPS ================= */
+  function ratingColor(r) {
+    return r >= 7.5 ? "#1a8a1a" : r >= 6.5 ? "#5b9e1e" : r >= 6.0 ? "#9aa6bd" : "#cc4400";
+  }
+  function buildLineups(D) {
+    function badges(p) {
+      var b = "";
+      for (var i = 0; i < (p.g || 0); i++) b += "⚽";
+      if (p.a) b += ' <span class="ast">A' + (p.a > 1 ? "×" + p.a : "") + "</span>";
+      for (var y = 0; y < (p.yc || 0); y++) b += ' <span class="cardm yc"></span>';
+      if (p.rc) b += ' <span class="cardm rc"></span>';
+      return b;
+    }
+    function li(p) {
+      var rt = p.rating != null
+        ? '<span class="rt" style="background:' + ratingColor(p.rating) + '">' + p.rating.toFixed(1) + "</span>"
+        : '<span class="rt none">–</span>';
+      var mins = p.mins != null ? '<span class="mins">' + p.mins + "'</span>" : "";
+      return "<li><span class='no'>" + (p.num == null ? "" : p.num) + "</span>" +
+        photoImg(p) +
+        "<span class='pname'>" + (p.motm ? "<span class='star'>★</span> " : "") + esc(p.name) +
+        "<span class='pos'>" + esc(p.pos) + "</span></span>" +
+        "<span class='badges'>" + badges(p) + "</span>" + mins + rt + "</li>";
+    }
+    function card(side, data) {
+      var name = side === "home" ? D.home.name : D.away.name;
+      return '<div class="lineup-card"><h4>' + esc(name) +
+        '<span class="lh">Min · G/A · Rating</span></h4><ul>' +
+        data.starters.map(li).join("") +
+        (data.subs.length ? '<li class="subhdr">Substitutes used</li>' + data.subs.map(li).join("") : "") +
+        "</ul></div>";
+    }
+    document.getElementById("mv-lineups").innerHTML =
+      '<div class="lineups-grid">' + card("home", D.lineups.home) + card("away", D.lineups.away) + "</div>" +
+      '<div class="legend-row" style="margin-top:14px">' +
+        "<span>⚽ goal</span><span><b class='ast'>A</b> assist</span>" +
+        '<span><i class="cardm yc"></i> yellow</span><span><i class="cardm rc"></i> red</span>' +
+        "<span>rating coloured by value · min = minutes played</span></div>";
+  }
+
+  /* ================= ALL GOALS MAP ================= */
+  // Opta-style per-goal build-up: shirt-number touch nodes, dotted passes, solid
+  // carries/dribbles, red shot, orange move-start, grey keeper-save (from saves[]).
+  // Reconstructed from the same arrays the other maps use; reuses tx()/ty()/pitchMarkup().
+  function agmNorm(s) { return String(s == null ? "" : s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim(); }
+  function agmIni(n) { return n ? n.split(/\s+/).map(function (w) { return w[0]; }).join("").slice(0, 2).toUpperCase() : ""; }
+  function agmT(o) { return (o.min || 0) * 60 + (o.sec || 0); }
+  function agmNumMap(D) {
+    var m = {};
+    ["home", "away"].forEach(function (sd) {
+      var lu = (D.lineups && D.lineups[sd]) || {};
+      [].concat(lu.starters || [], lu.subs || []).forEach(function (p) {
+        if (p && p.name != null && p.num != null) m[agmNorm(p.name)] = p.num;
+      });
+    });
+    return m;
+  }
+  function buildGoalSequences(D) {
+    var ev = [].concat(
+      (D.passes || []).filter(function (p) { return p.ok; })
+        .map(function (p) { return { k: "pass", t: agmT(p), team: p.team, x: p.x, y: p.y, ex: p.ex, ey: p.ey, player: p.player, cross: !!p.cross }; }),
+      (D.dribbles || []).filter(function (d) { return d.ok; })
+        .map(function (d) { return { k: "dribble", t: agmT(d), team: d.team, x: d.x, y: d.y, player: d.player }; })
+    ).sort(function (a, b) { return a.t - b.t; });
+    var saves = D.saves || [];
+    function assistFor(shot) {
+      var g = D.goals || [];
+      for (var i = 0; i < g.length; i++) if (g[i].min === shot.min && agmNorm(g[i].scorer) === agmNorm(shot.player)) return g[i].assist;
+      return null;
+    }
+    var seqs = (D.shots || []).filter(function (s) { return s.goal; }).map(function (shot) {
+      var T = agmT(shot);
+      var chain = ev.filter(function (e) { return e.team === shot.team && e.t <= T && e.t >= T - 35; });
+      var seq = [];
+      for (var i = chain.length - 1; i >= 0; i--) { if (seq.length && seq[0].t - chain[i].t > 6) break; seq.unshift(chain[i]); }
+      var rebound = false;
+      // Rebound: a same-team shot saved/blocked in the ~4s before the goal → splice in
+      // the original effort + keeper save, in time order, before the goal node. Runs
+      // whether or not passes preceded, so rebounds show even with a build-up chain.
+      var prior = null, best = -1;
+      (D.shots || []).forEach(function (s2) { var tt = agmT(s2); if (s2.team === shot.team && !s2.goal && tt < T && T - tt <= 4 && tt > best) { best = tt; prior = s2; } });
+      if (prior) {
+        rebound = true;
+        seq.push({ k: "shot_eff", team: prior.team, x: prior.x, y: prior.y, player: prior.player, xg: prior.xg });
+        var sv = null, sb = -1;
+        saves.forEach(function (v) { var tt = agmT(v); if (v.team !== shot.team && Math.abs(tt - T) <= 2 && tt > sb) { sb = tt; sv = v; } });
+        if (sv) seq.push({ k: "save", opp: true, team: sv.team, x: sv.x, y: sv.y, player: sv.player });  // graceful: omitted if no saves[]
+      }
+      seq.push({ k: "shot", team: shot.team, x: shot.x, y: shot.y, player: shot.player, xg: shot.xg });
+      var ppl = {}; seq.forEach(function (s) { if (s.k !== "save" && s.player) ppl[agmNorm(s.player)] = 1; });
+      return {
+        scorer: shot.player, min: shot.min, side: shot.team, assist: assistFor(shot), rebound: rebound, steps: seq,
+        players: Object.keys(ppl).length,
+        passes: seq.filter(function (s) { return s.k === "pass"; }).length,
+        crosses: seq.filter(function (s) { return s.k === "pass" && s.cross; }).length,
+        dribbles: seq.filter(function (s) { return s.k === "dribble"; }).length, xg: shot.xg
+      };
+    });
+    // Own goals: reconstruct the BENEFICIARY team's build-up (passes/dribbles) in the
+    // seconds before the own goal, then finish on a single red "OG" node at the end they
+    // were attacking (coords were mirrored into their frame in build_match_details).
+    // Own-goal events carry only a minute (no second), so anchor on the end of that minute
+    // to capture the attacking team's touches that forced it.
+    (D.goals || []).forEach(function (g) {
+      if (!g.own || g.x == null) return;
+      var benef = g.team;                                      // side that benefits from the OG
+      var T = (g.min || 0) * 60 + 59;
+      var chain = ev.filter(function (e) { return e.team === benef && e.t <= T && e.t >= T - 30; });
+      var seq = [];
+      for (var k = chain.length - 1; k >= 0; k--) { if (seq.length && seq[0].t - chain[k].t > 6) break; seq.unshift(chain[k]); }
+      seq.push({ k: "shot", team: benef, x: g.x, y: g.y, player: g.scorer, og: true });
+      var ppl = {}; seq.forEach(function (s) { if (s.k !== "save" && s.player && !s.og) ppl[agmNorm(s.player)] = 1; });
+      seqs.push({
+        scorer: "Own goal", ogBy: g.scorer, min: g.min, side: benef, assist: null, rebound: false, own: true,
+        steps: seq,
+        players: Object.keys(ppl).length,
+        passes: seq.filter(function (s) { return s.k === "pass"; }).length,
+        crosses: seq.filter(function (s) { return s.k === "pass" && s.cross; }).length,
+        dribbles: seq.filter(function (s) { return s.k === "dribble"; }).length, xg: null
+      });
+    });
+    seqs.sort(function (a, b) { return (a.min || 0) - (b.min || 0); });
+    return seqs;
+  }
+  function agmLine(x1, y1, x2, y2, cls) {
+    var m = cls === "agm-pass" ? "agmAp" : (cls === "agm-shotln" ? "agmAs" : "agmAc");
+    return '<line class="' + cls + '" x1="' + x1.toFixed(2) + '" y1="' + y1.toFixed(2) + '" x2="' + x2.toFixed(2) +
+      '" y2="' + y2.toFixed(2) + '" marker-end="url(#' + m + ')"/>';
+  }
+  // A cross renders like a pass (same fine dots) but CURVED — a quadratic arc bowed
+  // perpendicular to the line, so it reads as a cross while staying a pass-type delivery.
+  function agmArc(x1, y1, x2, y2, cls) {
+    var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+    var mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    var off = Math.min(7, len * 0.2);                      // bow height, capped
+    var cx = mx + (-dy / len) * off, cy = my + (dx / len) * off;
+    return '<path class="' + cls + '" d="M' + x1.toFixed(2) + ',' + y1.toFixed(2) +
+      ' Q' + cx.toFixed(2) + ',' + cy.toFixed(2) + ' ' + x2.toFixed(2) + ',' + y2.toFixed(2) +
+      '" marker-end="url(#agmAp)"/>';
+  }
+  function agmNode(x, y, label, title, cls) {
+    var dark = (cls === "start" || cls === "shot" || cls === "save");
+    return '<g><title>' + esc(title) + '</title><circle class="agm-node' + (cls ? (" " + cls) : "") +
+      '" cx="' + x.toFixed(2) + '" cy="' + y.toFixed(2) + '" r="1.3"/>' +
+      '<text class="agm-nt' + (dark ? " dark" : "") + '" x="' + x.toFixed(2) + '" y="' + y.toFixed(2) + '">' + esc(label) + "</text></g>";
+  }
+  var AGM_MAX_SEG = 52;  // pitch units (~half length); drop diagram segments longer than this (glitched source coords)
+  function agmSeqSVG(seq, numMap, D) {
+    var defs = '<defs>' +
+      '<marker id="agmAp" markerWidth="3" markerHeight="3" refX="2.4" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" class="agm-mk"/></marker>' +
+      '<marker id="agmAc" markerWidth="3" markerHeight="3" refX="2.4" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" class="agm-mk"/></marker>' +
+      '<marker id="agmAs" markerWidth="3" markerHeight="3" refX="2.4" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" class="agm-mk-shot"/></marker></defs>';
+    var P = seq.steps.map(function (st) {
+      var sd = st.team || seq.side;
+      return { k: st.k, player: st.player, xg: st.xg, team: sd, cross: !!st.cross, og: !!st.og,
+               x: tx(sd, st.x), y: ty(sd, st.y), ex: tx(sd, st.ex != null ? st.ex : st.x), ey: ty(sd, st.ey != null ? st.ey : st.y) };
+    });
+    var teamName = seq.side === "home" ? D.home.name : D.away.name;
+    // Home attacks right (▶); away attacks left (◀) — match the rest of the dashboard.
+    var dirTxt = seq.side === "home" ? (esc(teamName) + " attacking ▶") : ("◀ " + esc(teamName) + " attacking");
+    var a = [defs, pitchMarkup(),
+      '<text class="dir-label" x="' + (PW / 2) + '" y="' + (PH + 4) + '" text-anchor="middle">' + dirTxt + '</text>'];
+    for (var i = 0; i < P.length; i++) {
+      var pt = P[i];
+      if (pt.k === "pass") a.push(pt.cross ? agmArc(pt.x, pt.y, pt.ex, pt.ey, "agm-cross")   // curved dotted = cross
+                                           : agmLine(pt.x, pt.y, pt.ex, pt.ey, "agm-pass")); // straight dotted = pass
+      if (i < P.length - 1) {
+        var nx = P[i + 1];
+        var fx = pt.k === "pass" ? pt.ex : pt.x, fy = pt.k === "pass" ? pt.ey : pt.y;
+        var cls = (nx.k === "save") ? "agm-shotln" : "agm-carry";                   // saved effort→keeper = red; else solid carry
+        var dcon = Math.hypot(nx.x - fx, nx.y - fy);
+        if (dcon > 1.0 && dcon <= AGM_MAX_SEG) a.push(agmLine(fx, fy, nx.x, nx.y, cls)); // skip cross-pitch spans from bad source coords
+      }
+    }
+    var L = P[P.length - 1];
+    var gx = tx(L.team, 99.4), gy = ty(L.team, 50);
+    // Only draw the shot→goal line when the shot is plausibly in the attacking half.
+    // A few feeds carry a glitched goal coordinate (e.g. at the wrong end); without
+    // this guard that produced a line straight across the whole pitch.
+    if (Math.hypot(gx - L.x, gy - L.y) <= AGM_MAX_SEG) a.push(agmLine(L.x, L.y, gx, gy, "agm-shotln"));
+    P.forEach(function (pt, i) {
+      var cls = pt.k === "save" ? "save" : (pt.k === "shot" ? "shot" : (pt.k === "dribble" ? "drib" : (i === 0 ? "start" : "")));
+      var num = numMap[agmNorm(pt.player)];
+      var label = pt.og ? "OG" : ((num != null) ? num : (agmIni(pt.player) || (i + 1)));
+      var ttl = pt.og ? ("Own goal — " + (pt.player || "")) :
+        ((pt.k === "save" ? "Save — " : pt.k === "shot" ? "Goal — " : pt.k === "shot_eff" ? "Shot (saved) — " : "") +
+        (pt.player || ("Touch " + (i + 1))) + (pt.k === "pass" && pt.cross ? " · cross" : "") + (pt.xg != null ? " · xG " + pt.xg.toFixed(2) : ""));
+      a.push(agmNode(pt.x, pt.y, label, ttl, cls));
+    });
+    var ly = Math.max(3.4, L.y - 2.0);                                              // scorer name + xG ABOVE the finishing node
+    a.push('<text class="agm-scorelab" x="' + L.x.toFixed(2) + '" y="' + (ly - 1.7).toFixed(2) + '">' + esc(seq.scorer) + "</text>");
+    if (L.xg != null) a.push('<text class="agm-xglab" x="' + L.x.toFixed(2) + '" y="' + ly.toFixed(2) + '">xG ' + L.xg.toFixed(2) + "</text>");
+    for (var j = 0; j < P.length; j++) if (P[j].k === "save") { a.push('<text class="agm-savelab" x="' + P[j].x.toFixed(2) + '" y="' + (P[j].y - 2.0).toFixed(2) + '" text-anchor="middle">SAVE</text>'); break; }
+    return '<svg class="pitch-svg" viewBox="-2 -2 ' + (PW + 4) + " " + (PH + 8) + '">' + a.join("") + "</svg>";
+  }
+  // Self-contained <style> for export: the live SVG relies on external match.css
+  // classes + CSS vars, which don't travel into a serialized/standalone SVG. Resolve
+  // the theme vars to literal colours and embed the needed rules so the PNG matches.
+  function agmExportStyle() {
+    var rc = getComputedStyle(document.documentElement);
+    function v(n, d) { var x = rc.getPropertyValue(n).trim(); return x || d; }
+    var TEXT = v("--text", "#f5f7fa"), BAD = v("--bad", "#ff2a4d"), WARN = v("--warn", "#ffb454"),
+        MUTED = v("--muted", "#b9bfc9"), CARD2 = v("--card-2", "#1b2440"), BG = v("--bg", "#0c0d10");
+    return "<style>" +
+      ".pitch-bg{fill:#0f3d22}.pitch-line{fill:none;stroke:rgba(255,255,255,.28);stroke-width:.3}" +
+      ".dir-label{fill:rgba(255,255,255,.5);font-size:2.4px;font-weight:700;font-family:sans-serif}" +
+      ".agm-pass{stroke:" + TEXT + ";stroke-width:.5;fill:none;stroke-linecap:round;stroke-dasharray:.15 1.05}" +
+      ".agm-cross{stroke:" + TEXT + ";stroke-width:.5;fill:none;stroke-linecap:round;stroke-dasharray:.15 1.05}" +
+      ".agm-carry{stroke:" + TEXT + ";stroke-width:.34;fill:none}" +
+      ".agm-shotln{stroke:" + BAD + ";stroke-width:.45;fill:none}" +
+      ".agm-mk{fill:" + TEXT + "}.agm-mk-shot{fill:" + BAD + "}" +
+      ".agm-node{fill:" + CARD2 + ";stroke:" + TEXT + ";stroke-width:.22}" +
+      ".agm-node.start{fill:" + WARN + ";stroke:#c98a2e}.agm-node.shot{fill:" + BAD + ";stroke:#c9455a}.agm-node.save{fill:" + MUTED + ";stroke:#6b7488}" +
+      ".agm-nt{font-size:1.35px;font-weight:700;fill:" + TEXT + ";text-anchor:middle;dominant-baseline:central;font-family:sans-serif}.agm-nt.dark{fill:" + BG + "}" +
+      ".agm-scorelab{font-size:2px;font-weight:700;fill:" + TEXT + ";text-anchor:middle;font-family:sans-serif}" +
+      ".agm-xglab{font-size:1.7px;font-weight:700;fill:" + BAD + ";text-anchor:middle;font-family:sans-serif}" +
+      ".agm-savelab{font-size:1.5px;font-weight:600;fill:" + MUTED + ";text-anchor:middle;font-family:sans-serif}" +
+      "</style>";
+  }
+  function agmSanitize(s) { return String(s || "").replace(/[^A-Za-z0-9_]+/g, "_").replace(/^_+|_+$/g, ""); }
+  function agmFmtDate(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ""); if (!m) return s || "";
+    var mo = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return (+m[3]) + " " + mo[(+m[2]) - 1] + " " + m[1];
+  }
+  // Export one goal's SVG to a PNG (dependency-free) with an "Rshiri" watermark.
+  function exportGoalPNG(svgEl, g, D, btn) {
+    try {
+      var rc = getComputedStyle(document.documentElement);
+      function cvar(n, d) { var x = rc.getPropertyValue(n).trim(); return x || d; }
+      var bg = cvar("--card", "#15171c"), text = cvar("--text", "#f5f7fa"), muted = cvar("--muted", "#b9bfc9"),
+          bad = cvar("--bad", "#ff2a4d"), line = cvar("--line", "#23262e");
+      var F = "-apple-system,'Segoe UI',Arial,sans-serif";
+      var clone = svgEl.cloneNode(true);
+      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      clone.insertAdjacentHTML("afterbegin", agmExportStyle());   // embed resolved styles
+      var scale = 12, W = (PW + 4) * scale, SH = (PH + 8) * scale; // svg (pitch) area
+      var band = Math.round(W * 0.11);                            // header band height
+      var H = SH + band;
+      clone.setAttribute("width", W); clone.setAttribute("height", SH);
+      var svgStr = new XMLSerializer().serializeToString(clone);
+      var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
+      var img = new Image();
+      img.onload = function () {
+        var cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+        var ctx = cv.getContext("2d");
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);            // dark card background
+        var pad = Math.round(W * 0.022);
+        // ---- header band ----
+        var hn = (D.home && D.home.name) || "Home", an = (D.away && D.away.name) || "Away";
+        var hs = (D.home && D.home.score != null) ? D.home.score : "", as = (D.away && D.away.score != null) ? D.away.score : "";
+        var title = hn + "  " + hs + "–" + as + "  " + an;   // en-dash score
+        var sub = [(D.stage || "").trim(), agmFmtDate(D.date)].filter(Boolean).join("   ·   ");
+        ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = text; ctx.font = "bold " + Math.round(band * 0.32) + "px " + F;
+        ctx.fillText(title, pad, Math.round(band * 0.40));
+        ctx.fillStyle = muted; ctx.font = Math.round(band * 0.20) + "px " + F;
+        ctx.fillText(sub, pad, Math.round(band * 0.74));
+        // scorer · minute (right side of band, accent red)
+        ctx.textAlign = "right"; ctx.fillStyle = bad; ctx.font = "bold " + Math.round(band * 0.24) + "px " + F;
+        ctx.fillText("⚽ " + (g.scorer || "") + "  " + g.min + "'", W - pad, Math.round(band * 0.55));
+        // divider under band
+        ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, band - 1); ctx.lineTo(W, band - 1); ctx.stroke();
+        // ---- pitch diagram below the band ----
+        ctx.drawImage(img, 0, band, W, SH);
+        // ---- credit, bottom-right corner ----
+        ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+        ctx.fillStyle = "rgba(255,255,255,0.5)"; ctx.font = "bold " + Math.round(W * 0.017) + "px " + F;
+        ctx.fillText("All rights reserved to @RShiri", W - pad, H - Math.round(W * 0.012));
+        var fname = agmSanitize((D.id || "match") + "_" + (g.scorer || "goal") + "_" + g.min) + ".png";
+        cv.toBlob(function (blob) {
+          var a = document.createElement("a"); a.download = fname; a.href = URL.createObjectURL(blob);
+          document.body.appendChild(a); a.click();
+          setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 200);
+          if (btn) { btn.textContent = "✓ Saved"; setTimeout(function () { btn.textContent = "⤓ Download PNG"; }, 1500); }
+        }, "image/png");
+      };
+      img.onerror = function () { if (btn) btn.textContent = "Export failed"; };
+      img.src = url;
+    } catch (e) { if (btn) btn.textContent = "Export failed"; }
+  }
+  function buildAllGoals(D) {
+    var host = document.getElementById("mv-goals");
+    if (!host) return;
+    var seqs = buildGoalSequences(D);
+    if (!seqs.length) { if (host.parentNode) host.parentNode.style.display = "none"; return; }  // 0–0 etc → render nothing
+    var numMap = agmNumMap(D);
+    function meta(g) {
+      if (g.own) {
+        var ohas = (g.passes + g.dribbles) > 0;
+        var olead = ohas
+          ? g.players + " player" + (g.players === 1 ? "" : "s") + " · " + g.passes + " pass" + (g.passes === 1 ? "" : "es") +
+            (g.dribbles ? " · " + g.dribbles + " dribble" + (g.dribbles === 1 ? "" : "s") : "")
+          : "Own goal";
+        return '<div class="agm-meta"><span class="agm-pill lead">' + olead + "</span>" +
+          (g.crosses ? '<span class="agm-pill">' + g.crosses + " cross" + (g.crosses === 1 ? "" : "es") + "</span>" : "") +
+          '<span class="agm-pill">forced own goal by <b>' + esc(g.ogBy || "") + "</b></span></div>";
+      }
+      var counts = g.players + " player" + (g.players === 1 ? "" : "s") + " · " + g.passes + " pass" + (g.passes === 1 ? "" : "es") +
+        " · " + g.dribbles + " dribble" + (g.dribbles === 1 ? "" : "s");
+      var assist = g.assist ? '<span class="agm-pill">assist <b>' + esc(g.assist) + "</b></span>" : '<span class="agm-pill">unassisted</span>';
+      var reb = g.rebound ? '<span class="agm-pill">rebound</span>' : "";
+      var crs = g.crosses ? '<span class="agm-pill">' + g.crosses + " cross" + (g.crosses === 1 ? "" : "es") + "</span>" : "";
+      return '<div class="agm-meta"><span class="agm-pill lead">' + counts + '</span><span class="agm-pill">xG <b>' +
+        (g.xg != null ? g.xg.toFixed(2) : "—") + "</b></span>" + crs + assist + reb + "</div>";
+    }
+    function roster(g) {
+      if (g.own) {
+        var oseen = [], onum = {};
+        g.steps.forEach(function (st) { if (!st.og && st.k !== "save" && st.player && oseen.indexOf(st.player) < 0) { oseen.push(st.player); onum[st.player] = numMap[agmNorm(st.player)]; } });
+        var obuild = oseen.length
+          ? "<b>Build-up:</b> " + oseen.map(function (n) { return esc(n) + (onum[n] != null ? " (#" + onum[n] + ")" : ""); }).join(" · ") + " · "
+          : "";
+        return '<div class="agm-roster">' + obuild + "<b>Own goal</b> by " + esc(g.ogBy || "") + "</div>";
+      }
+      var seen = [], num = {};
+      g.steps.forEach(function (st) { if (st.k !== "save" && st.player && seen.indexOf(st.player) < 0) { seen.push(st.player); num[st.player] = numMap[agmNorm(st.player)]; } });
+      var sv = null; g.steps.forEach(function (s) { if (s.k === "save") sv = s; });
+      var sx = sv ? " · saved by " + esc(sv.player) : "";
+      return '<div class="agm-roster"><b>Players in move:</b> ' +
+        seen.map(function (n) { return esc(n) + (num[n] != null ? " (#" + num[n] + ")" : ""); }).join(" · ") + sx + "</div>";
+    }
+    var legend = '<div class="agm-legend">' +
+      '<span class="it"><span class="agm-lz">7</span>Touch (shirt #)</span>' +
+      '<span class="it"><span class="agm-lz start"></span>Move start</span>' +
+      '<span class="it"><span class="agm-lz save"></span>Keeper save</span>' +
+      '<span class="it"><span class="agm-lz shot"></span>Shot (xG)</span>' +
+      '<span class="it"><span class="agm-lln"></span>Pass</span>' +
+      '<span class="it"><svg class="agm-crosslg" width="20" height="9" viewBox="0 0 20 9"><path d="M1,7 Q10,0 19,7"/></svg>Cross</span>' +
+      '<span class="it"><span class="agm-lln carry"></span>Carry / dribble</span>' +
+      '<span class="it"><span class="agm-lln shot"></span>Shot</span></div>';
+    var tabs = '<div class="agm-tabs">' + seqs.map(function (g, i) {
+      var col = g.side === "home" ? D.home.color : D.away.color;
+      return '<button class="agm-tab" data-i="' + i + '"><span class="sw" style="background:' + col + '"></span><span class="mm">' +
+        g.min + "'</span> " + esc(g.scorer) + "</button>";
+    }).join("") + "</div>";
+    host.innerHTML = tabs + '<div id="agm-feat"></div>';
+    var feat = document.getElementById("agm-feat");
+    function sel(i) {
+      [].forEach.call(host.querySelectorAll(".agm-tab"), function (b, j) { b.classList.toggle("active", j === i); });
+      var g = seqs[i];
+      feat.innerHTML = meta(g) +
+        '<div class="agm-actions"><button type="button" class="agm-dl">⤓ Download PNG</button></div>' +
+        roster(g) + '<div class="pitch-wrap">' + agmSeqSVG(g, numMap, D) + "</div>" + legend;
+      var btn = feat.querySelector(".agm-dl");
+      if (btn) btn.addEventListener("click", function () {
+        exportGoalPNG(feat.querySelector("svg.pitch-svg"), g, D, btn);
+      });
+    }
+    host.querySelector(".agm-tabs").addEventListener("click", function (e) {
+      var b = e.target.closest(".agm-tab"); if (!b) return; sel(+b.getAttribute("data-i"));
+    });
+    var def = 0; seqs.forEach(function (g, i) { if (g.players > seqs[def].players) def = i; });  // open on the richest move
+    sel(def);
+  }
+
+  /* ================= ANIMATED GOAL REPLAYS ================= */
+  // A "movie" version of the All Goals Map: the ball physically travels the build-up —
+  // gliding along passes, curving on crosses, carrying on dribbles, then firing the shot
+  // into the net. Reuses the SAME geometry (tx/ty, pitchMarkup, buildGoalSequences) and
+  // CSS classes as the static map, so the still frame at rest IS the All Goals Map.
+  var AGM_ANIM_LABEL = { pass: "Pass", cross: "Cross", carry: "Carry / dribble", shotln: "Shot", shot: "Shot" };
+  function agmClamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function agmSegClass(t) { return t === "pass" ? "agm-pass" : t === "cross" ? "agm-cross" : t === "carry" ? "agm-carry" : "agm-shotln"; }
+  function agmSegMarker(t) { return t === "pass" ? "agmAp2" : t === "cross" ? "agmAc2" : t === "carry" ? "agmAc2" : "agmAs2"; }
+  function agmSegDpath(m) {
+    if (m.type === "cross") {
+      var dx = m.x2 - m.x1, dy = m.y2 - m.y1, len = Math.hypot(dx, dy) || 1, off = Math.min(7, len * 0.2);
+      var mx = (m.x1 + m.x2) / 2, my = (m.y1 + m.y2) / 2, cx = mx + (-dy / len) * off, cy = my + (dx / len) * off;
+      return "M" + m.x1.toFixed(2) + "," + m.y1.toFixed(2) + " Q" + cx.toFixed(2) + "," + cy.toFixed(2) + " " + m.x2.toFixed(2) + "," + m.y2.toFixed(2);
+    }
+    return "M" + m.x1.toFixed(2) + "," + m.y1.toFixed(2) + " L" + m.x2.toFixed(2) + "," + m.y2.toFixed(2);
+  }
+  // Order the goal's steps into ball-travel "moves": node→(pass)→pass-end→(carry)→next
+  // node … →(shot)→goal. Mirrors agmSeqSVG's segment logic so the path matches exactly.
+  function agmJourney(P) {
+    var mv = [];
+    for (var i = 0; i < P.length; i++) {
+      var pt = P[i];
+      if (pt.k === "pass") {
+        mv.push({ type: pt.cross ? "cross" : "pass", x1: pt.x, y1: pt.y, x2: pt.ex, y2: pt.ey, litNode: null });
+        if (i < P.length - 1) {
+          var nx = P[i + 1], L = Math.hypot(nx.x - pt.ex, nx.y - pt.ey);
+          mv.push({ type: nx.k === "save" ? "shotln" : "carry", x1: pt.ex, y1: pt.ey, x2: nx.x, y2: nx.y, litNode: i + 1, hidden: !(L > 1.0 && L <= AGM_MAX_SEG) });
+        }
+      } else if (i < P.length - 1) {
+        var nx2 = P[i + 1], L2 = Math.hypot(nx2.x - pt.x, nx2.y - pt.y);
+        mv.push({ type: nx2.k === "save" ? "shotln" : "carry", x1: pt.x, y1: pt.y, x2: nx2.x, y2: nx2.y, litNode: i + 1, hidden: !(L2 > 1.0 && L2 <= AGM_MAX_SEG) });
+      }
+    }
+    var Lp = P[P.length - 1], gx = tx(Lp.team, 99.4), gy = ty(Lp.team, 50), sl = Math.hypot(gx - Lp.x, gy - Lp.y);
+    mv.push({ type: "shot", x1: Lp.x, y1: Lp.y, x2: gx, y2: gy, litNode: null, hidden: !(sl <= AGM_MAX_SEG) });
+    mv.forEach(function (m) {
+      var len = Math.hypot(m.x2 - m.x1, m.y2 - m.y1);
+      if (m.hidden) { m.dur = 160; m.dwell = 0; }
+      else if (m.type === "pass" || m.type === "cross") { m.dur = agmClamp(380 + len * 9, 380, 950); m.dwell = 150; }
+      else if (m.type === "shot") { m.dur = 470; m.dwell = 0; }
+      else if (m.type === "shotln") { m.dur = 380; m.dwell = 120; }
+      else { m.dur = agmClamp(360 + len * 30, 360, 1500); m.dwell = 220; }   // carry/dribble — deliberately slower than a pass (you can't dribble at pass speed)
+    });
+    return mv;
+  }
+  // Generic rAF driver. R = { node(i), seg(i,state), action(type), ball(x,y), trail(pts[]) }.
+  // Returns a cancel fn. Used by BOTH the live SVG and the canvas video export.
+  function agmAnimateMove(mv, speed, R, done) {
+    var i = 0, t0 = performance.now(), arrived = false, trail = [], raf = null;
+    R.node(0);
+    function lerp(m, f) { return { x: m.x1 + (m.x2 - m.x1) * f, y: m.y1 + (m.y2 - m.y1) * f }; }
+    function loop(now) {
+      var m = mv[i], dur = Math.max(60, m.dur / speed), e = now - t0, f = Math.min(e, dur) / dur;
+      var pos = m.el ? m.el.getPointAtLength(f * m.len) : lerp(m, f);
+      R.seg(i, true); R.action(m.type); R.ball(pos.x, pos.y);
+      trail.push([pos.x, pos.y]); if (trail.length > 16) trail.shift(); R.trail(trail);
+      if (e >= dur && !arrived) { arrived = true; if (m.litNode != null) R.node(m.litNode); R.seg(i, "done"); }
+      if (e >= dur + (m.dwell || 0) / speed) { i++; arrived = false; t0 = now; if (i >= mv.length) { done(); return; } }
+      raf = requestAnimationFrame(loop);
+    }
+    raf = requestAnimationFrame(loop);
+    return function () { if (raf) cancelAnimationFrame(raf); };
+  }
+  function agmBuildAnimSVG(seq, numMap, D) {
+    function E(n, a) { var e = document.createElementNS("http://www.w3.org/2000/svg", n); if (a) for (var k in a) e.setAttribute(k, a[k]); return e; }
+    var P = seq.steps.map(function (st) {
+      var sd = st.team || seq.side;
+      return { k: st.k, player: st.player, xg: st.xg, team: sd, cross: !!st.cross, og: !!st.og,
+               x: tx(sd, st.x), y: ty(sd, st.y), ex: tx(sd, st.ex != null ? st.ex : st.x), ey: ty(sd, st.ey != null ? st.ey : st.y) };
+    });
+    var mv = agmJourney(P);
+    var teamName = seq.side === "home" ? D.home.name : D.away.name;
+    var dirTxt = seq.side === "home" ? (esc(teamName) + " attacking ▶") : ("◀ " + esc(teamName) + " attacking");
+    var defs = '<defs>' +
+      '<marker id="agmAp2" markerWidth="3" markerHeight="3" refX="2.4" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" class="agm-mk"/></marker>' +
+      '<marker id="agmAc2" markerWidth="3" markerHeight="3" refX="2.4" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" class="agm-mk"/></marker>' +
+      '<marker id="agmAs2" markerWidth="3" markerHeight="3" refX="2.4" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" class="agm-mk-shot"/></marker></defs>';
+    var L = P[P.length - 1], ly = Math.max(3.4, L.y - 2.0), labels = "";
+    labels += '<text class="agm-scorelab" x="' + L.x.toFixed(2) + '" y="' + (ly - 1.7).toFixed(2) + '">' + esc(seq.scorer) + "</text>";
+    if (L.xg != null) labels += '<text class="agm-xglab" x="' + L.x.toFixed(2) + '" y="' + ly.toFixed(2) + '">xG ' + L.xg.toFixed(2) + "</text>";
+    for (var j = 0; j < P.length; j++) if (P[j].k === "save") { labels += '<text class="agm-savelab" x="' + P[j].x.toFixed(2) + '" y="' + (P[j].y - 2.0).toFixed(2) + '" text-anchor="middle">SAVE</text>'; break; }
+    var svg = E("svg", { class: "pitch-svg", viewBox: "-2 -2 " + (PW + 4) + " " + (PH + 8) });
+    var gPitch = E("g", {});
+    gPitch.innerHTML = defs + pitchMarkup() +
+      '<text class="dir-label" x="' + (PW / 2) + '" y="' + (PH + 4) + '" text-anchor="middle">' + dirTxt + "</text>" + labels;
+    svg.appendChild(gPitch);
+    mv.forEach(function (m) {
+      if (m.hidden) { m.len = Math.hypot(m.x2 - m.x1, m.y2 - m.y1); m.el = null; return; }
+      var p = E("path", { class: agmSegClass(m.type), d: agmSegDpath(m), "marker-end": "url(#" + agmSegMarker(m.type) + ")" });
+      svg.appendChild(p); m.el = p; m.len = p.getTotalLength();
+    });
+    var nodeEls = P.map(function (pt, i) {
+      var cls = pt.k === "save" ? "save" : (pt.k === "shot" ? "shot" : (pt.k === "dribble" ? "drib" : (i === 0 ? "start" : "")));
+      var num = numMap[agmNorm(pt.player)], label = pt.og ? "OG" : ((num != null) ? num : (agmIni(pt.player) || (i + 1)));
+      var dark = (cls === "start" || cls === "shot" || cls === "save");
+      var ttl = pt.og ? ("Own goal — " + (pt.player || "")) :
+        ((pt.k === "save" ? "Save — " : pt.k === "shot" ? "Goal — " : pt.k === "shot_eff" ? "Shot (saved) — " : "") +
+        (pt.player || ("Touch " + (i + 1))) + (pt.k === "pass" && pt.cross ? " · cross" : "") + (pt.xg != null ? " · xG " + pt.xg.toFixed(2) : ""));
+      var g = E("g", {});
+      var t = E("title"); t.textContent = ttl; g.appendChild(t);
+      g.appendChild(E("circle", { class: "agm-node" + (cls ? " " + cls : ""), cx: pt.x.toFixed(2), cy: pt.y.toFixed(2), r: 1.3 }));
+      var tx2 = E("text", { class: "agm-nt" + (dark ? " dark" : ""), x: pt.x.toFixed(2), y: pt.y.toFixed(2) }); tx2.textContent = label;
+      g.appendChild(tx2); svg.appendChild(g); return g;
+    });
+    var trail = E("polyline", { class: "agm-trail", points: "" }); svg.appendChild(trail);
+    var ball = E("circle", { class: "agm-ball", cx: P[0].x.toFixed(2), cy: P[0].y.toFixed(2), r: 1.45 }); ball.style.opacity = "0"; svg.appendChild(ball);
+    var glast = mv[mv.length - 1], gx = glast.x2, gy = glast.y2;
+    var goalText = E("text", { class: "agm-goalflash", x: (seq.side === "home" ? gx - 10 : gx + 10).toFixed(2), y: Math.max(6, gy - 7).toFixed(2), "text-anchor": "middle" });
+    goalText.textContent = "Goal!"; goalText.style.opacity = "0"; svg.appendChild(goalText);
+
+    // Scorer-as-player: the finishing node (last shot touch) runs ONTO the ball — i.e. it
+    // travels with the ball through the carry that delivers play to the scorer, then plants
+    // and shoots. Skipped for own goals (no real scorer movement to show).
+    var scorerIdx = P.length - 1, moveScorer = scorerIdx > 0 && !P[scorerIdx].og, carryMoveIdx = null;
+    for (var mi = 0; mi < mv.length; mi++) if (mv[mi].litNode === scorerIdx) { carryMoveIdx = mi; break; }
+    if (carryMoveIdx == null) moveScorer = false;
+    var scorerG = nodeEls[scorerIdx], restX = P[scorerIdx].x, restY = P[scorerIdx].y;
+    if (moveScorer) svg.appendChild(scorerG);   // keep the scorer marker above the ball while it runs with it
+
+    var api = { svg: svg, mv: mv, P: P, gx: gx, gy: gy, onAction: null, onDone: null, _cancel: null };
+    function goalFlash() { var t0 = performance.now(); (function f(now) { var e = (now - t0) / 600; if (e >= 1) { goalText.style.opacity = "1"; return; } goalText.style.opacity = String(e); requestAnimationFrame(f); })(performance.now()); }
+    api.stop = function () { if (api._cancel) { api._cancel(); api._cancel = null; } };
+    api.restState = function () {
+      api.stop();
+      mv.forEach(function (m) { if (m.el) m.el.style.opacity = "1"; });
+      nodeEls.forEach(function (g) { g.style.opacity = "1"; g.removeAttribute("transform"); });
+      ball.style.opacity = "0"; trail.setAttribute("points", ""); goalText.style.opacity = "0";
+    };
+    api.play = function (speed) {
+      api.stop();
+      mv.forEach(function (m) { if (m.el) m.el.style.opacity = "0.16"; });
+      nodeEls.forEach(function (g, i) { g.style.opacity = i === 0 ? "1" : "0.28"; g.removeAttribute("transform"); });
+      if (moveScorer) scorerG.style.opacity = "0";   // scorer appears only once they get on the ball
+      goalText.style.opacity = "0"; trail.setAttribute("points", "");
+      ball.style.opacity = "1"; ball.setAttribute("cx", P[0].x.toFixed(2)); ball.setAttribute("cy", P[0].y.toFixed(2));
+      var curMove = -1;
+      var R = {
+        node: function (i) { if (nodeEls[i]) nodeEls[i].style.opacity = "1"; },
+        seg: function (i, st) { curMove = i; if (mv[i].el) mv[i].el.style.opacity = (st === "done") ? "0.6" : "1"; },
+        action: function (t) { if (api.onAction) api.onAction(t); },
+        ball: function (x, y) {
+          ball.setAttribute("cx", x.toFixed(2)); ball.setAttribute("cy", y.toFixed(2));
+          if (moveScorer && curMove === carryMoveIdx) {   // scorer runs onto the ball and carries it to the shot
+            scorerG.style.opacity = "1";
+            scorerG.setAttribute("transform", "translate(" + (x - restX).toFixed(2) + "," + (y - restY).toFixed(2) + ")");
+          }
+        },
+        trail: function (pts) { trail.setAttribute("points", pts.map(function (p) { return p[0].toFixed(2) + "," + p[1].toFixed(2); }).join(" ")); }
+      };
+      api._cancel = agmAnimateMove(mv, speed, R, function () { api._cancel = null; if (moveScorer) scorerG.removeAttribute("transform"); goalFlash(); if (api.onDone) api.onDone(); });
+    };
+    api.restState();
+    return api;
+  }
+  // Record the replay to a WebM video (dependency-free: MediaRecorder + canvas.captureStream).
+  // Backdrop = the canonical static All Goals Map (agmSeqSVG) rasterised once; the ball +
+  // comet trail are drawn per frame on top, with the same header band + credit as the PNG.
+  function exportGoalVideo(anim, seq, g, D, numMap, btn, speed) {
+    var canRec = window.MediaRecorder && typeof document.createElement("canvas").captureStream === "function";
+    if (!canRec) { if (btn) btn.textContent = "Saving PNG…"; exportGoalPNG(anim.svg, g, D, btn); return; }
+    try {
+      var rc = getComputedStyle(document.documentElement);
+      function cvar(n, d) { var x = rc.getPropertyValue(n).trim(); return x || d; }
+      var bg = cvar("--card", "#15171c"), text = cvar("--text", "#f5f7fa"), muted = cvar("--muted", "#b9bfc9"),
+          bad = cvar("--bad", "#ff2a4d"), line = cvar("--line", "#23262e");
+      var F = "-apple-system,'Segoe UI',Arial,sans-serif";
+      var wrap = document.createElement("div"); wrap.innerHTML = agmSeqSVG(seq, numMap, D);
+      var s = wrap.firstChild; s.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      s.insertAdjacentHTML("afterbegin", agmExportStyle());
+      var scale = 10, W = (PW + 4) * scale, SH = (PH + 8) * scale, band = Math.round(W * 0.11), H = SH + band;
+      s.setAttribute("width", W); s.setAttribute("height", SH);
+      var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(s));
+      var img = new Image();
+      img.onerror = function () { if (btn) btn.textContent = "Export failed"; };
+      img.onload = function () {
+        var cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+        var ctx = cv.getContext("2d");
+        function MX(x) { return (x + 2) * scale; } function MY(y) { return band + (y + 2) * scale; }
+        function drawBase() {
+          ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+          var pad = Math.round(W * 0.022);
+          var hn = (D.home && D.home.name) || "Home", an = (D.away && D.away.name) || "Away";
+          var hs = (D.home && D.home.score != null) ? D.home.score : "", as = (D.away && D.away.score != null) ? D.away.score : "";
+          ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+          ctx.fillStyle = text; ctx.font = "bold " + Math.round(band * 0.32) + "px " + F;
+          ctx.fillText(hn + "  " + hs + "–" + as + "  " + an, pad, Math.round(band * 0.40));
+          ctx.fillStyle = muted; ctx.font = Math.round(band * 0.20) + "px " + F;
+          ctx.fillText([(D.stage || "").trim(), agmFmtDate(D.date)].filter(Boolean).join("   ·   "), pad, Math.round(band * 0.74));
+          ctx.textAlign = "right"; ctx.fillStyle = bad; ctx.font = "bold " + Math.round(band * 0.24) + "px " + F;
+          ctx.fillText("⚽ " + (g.scorer || "") + "  " + g.min + "'", W - pad, Math.round(band * 0.55));
+          ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, band - 1); ctx.lineTo(W, band - 1); ctx.stroke();
+          ctx.drawImage(img, 0, band, W, SH);
+          ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+          ctx.fillStyle = "rgba(255,255,255,0.5)"; ctx.font = "bold " + Math.round(W * 0.017) + "px " + F;
+          ctx.fillText("All rights reserved to @RShiri", W - pad, H - Math.round(W * 0.012));
+        }
+        function drawBall(pos, trail) {
+          if (trail && trail.length > 1) {
+            ctx.strokeStyle = "#fff7c2"; ctx.lineWidth = 0.7 * scale; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.globalAlpha = 0.6;
+            ctx.beginPath(); trail.forEach(function (p, k) { var X = MX(p[0]), Y = MY(p[1]); if (k) ctx.lineTo(X, Y); else ctx.moveTo(X, Y); }); ctx.stroke(); ctx.globalAlpha = 1;
+          }
+          ctx.fillStyle = "#fff"; ctx.strokeStyle = bg; ctx.lineWidth = 0.3 * scale;
+          ctx.beginPath(); ctx.arc(MX(pos[0]), MY(pos[1]), 1.45 * scale, 0, 6.2832); ctx.fill(); ctx.stroke();
+        }
+        drawBase();
+        var stream = cv.captureStream(30);
+        var mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].filter(function (m) { return MediaRecorder.isTypeSupported(m); })[0] || "video/webm";
+        var rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4000000 }), chunks = [];
+        rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+          var blob = new Blob(chunks, { type: mime });
+          var fname = agmSanitize((D.id || "match") + "_" + (g.scorer || "goal") + "_" + g.min) + ".webm";
+          var a = document.createElement("a"); a.download = fname; a.href = URL.createObjectURL(blob);
+          document.body.appendChild(a); a.click();
+          setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 200);
+          if (btn) { btn.textContent = "✓ Saved"; setTimeout(function () { btn.textContent = "⤓ Download video"; }, 1800); }
+        };
+        rec.start();
+        var cur = [anim.P[0].x, anim.P[0].y], curTrail = [];
+        var R = {
+          node: function () {}, seg: function () {}, action: function () {},
+          ball: function (x, y) { cur = [x, y]; },
+          trail: function (pts) { curTrail = pts.slice(); drawBase(); drawBall(cur, curTrail); }
+        };
+        agmAnimateMove(anim.mv, speed, R, function () {
+          var t0 = performance.now();
+          (function gf(now) {
+            var e = (now - t0) / 800; drawBase(); drawBall([anim.gx, anim.gy], curTrail);
+            ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.globalAlpha = Math.min(1, e * 1.4);
+            ctx.fillStyle = bad; ctx.font = "bold " + Math.round(band * 0.55) + "px " + F;
+            ctx.fillText("Goal!", MX(anim.gx) + (seq.side === "home" ? -10 * scale : 10 * scale), MY(anim.gy) - 7 * scale);
+            ctx.globalAlpha = 1;
+            if (e < 1) requestAnimationFrame(gf); else setTimeout(function () { try { rec.stop(); } catch (z) {} }, 140);
+          })(performance.now());
+        });
+        if (btn) btn.textContent = "● Recording…";
+      };
+      img.src = url;
+    } catch (e) { if (btn) btn.textContent = "Export failed"; }
+  }
+  function buildGoalReplays(D) {
+    var host = document.getElementById("mv-goals-anim");
+    if (!host) return;
+    var seqs = buildGoalSequences(D);
+    if (!seqs.length) { if (host.parentNode) host.parentNode.style.display = "none"; return; }
+    var numMap = agmNumMap(D);
+    var legend = '<div class="agm-legend">' +
+      '<span class="it"><span class="agm-lz">7</span>Touch (shirt #)</span>' +
+      '<span class="it"><span class="agm-lz start"></span>Move start</span>' +
+      '<span class="it"><span class="agm-lz shot"></span>Shot (xG)</span>' +
+      '<span class="it"><span class="agm-lln"></span>Pass</span>' +
+      '<span class="it"><svg class="agm-crosslg" width="20" height="9" viewBox="0 0 20 9"><path d="M1,7 Q10,0 19,7"/></svg>Cross</span>' +
+      '<span class="it"><span class="agm-lln carry"></span>Carry / dribble</span>' +
+      '<span class="it"><span class="agm-lln shot"></span>Shot</span></div>';
+    function metaLine(g) {
+      var counts = g.players + " player" + (g.players === 1 ? "" : "s") + " · " + g.passes + " pass" + (g.passes === 1 ? "" : "es") +
+        " · " + g.dribbles + " dribble" + (g.dribbles === 1 ? "" : "s");
+      return '<div class="agm-meta"><span class="agm-pill lead">' + counts + '</span>' +
+        (g.xg != null ? '<span class="agm-pill">xG <b>' + g.xg.toFixed(2) + "</b></span>" : "") +
+        (g.assist ? '<span class="agm-pill">assist <b>' + esc(g.assist) + "</b></span>" : "") + "</div>";
+    }
+    var tabs = '<div class="agm-tabs">' + seqs.map(function (g, i) {
+      var col = g.side === "home" ? D.home.color : D.away.color;
+      return '<button class="agm-tab" data-i="' + i + '"><span class="sw" style="background:' + col + '"></span><span class="mm">' +
+        g.min + "'</span> " + esc(g.scorer) + "</button>";
+    }).join("") + "</div>";
+    host.innerHTML = tabs + '<div id="agm-anim-feat"></div>';
+    var feat = document.getElementById("agm-anim-feat");
+    var current = null;
+    function sel(i) {
+      [].forEach.call(host.querySelectorAll(".agm-tab"), function (b, j) { b.classList.toggle("active", j === i); });
+      if (current) current.stop();
+      var g = seqs[i];
+      feat.innerHTML = metaLine(g) +
+        '<div class="agm-anim-bar">' +
+          '<button type="button" class="agm-dl agm-play">▶ Play</button>' +
+          '<span class="spd">Speed <input type="range" class="agm-spd" aria-label="Replay speed" min="0.5" max="2" step="0.5" value="1"><b class="agm-spdv">1×</b></span>' +
+          '<button type="button" class="agm-dl agm-vid">⤓ Download video</button>' +
+          '<span class="agm-action">Press play</span>' +
+        "</div>" +
+        '<div class="pitch-wrap"></div>' + legend;
+      var anim = agmBuildAnimSVG(g, numMap, D);
+      current = anim;
+      var actionEl = feat.querySelector(".agm-action");
+      anim.onAction = function (t) { actionEl.innerHTML = "now: <b>" + (AGM_ANIM_LABEL[t] || t) + "</b>"; };
+      anim.onDone = function () { actionEl.innerHTML = "now: <b>Goal!</b>"; };
+      feat.querySelector(".pitch-wrap").appendChild(anim.svg);
+      var spd = feat.querySelector(".agm-spd"), spdv = feat.querySelector(".agm-spdv");
+      var speed = 1;
+      spd.addEventListener("input", function () { speed = parseFloat(spd.value); spdv.textContent = speed + "×"; });
+      var playBtn = feat.querySelector(".agm-play");
+      playBtn.addEventListener("click", function () { playBtn.textContent = "↻ Replay"; anim.play(speed); });
+      var vidBtn = feat.querySelector(".agm-vid");
+      vidBtn.addEventListener("click", function () { exportGoalVideo(anim, g, g, D, numMap, vidBtn, speed); });
+    }
+    host.querySelector(".agm-tabs").addEventListener("click", function (e) {
+      var b = e.target.closest(".agm-tab"); if (!b) return; sel(+b.getAttribute("data-i"));
+    });
+    var def = 0; seqs.forEach(function (g, i) { if (g.players > seqs[def].players) def = i; });
+    sel(def);
+  }
+
+  /* ================= PENALTY SHOOTOUT ================= */
+  // A goal-mouth "behind the net" view: every shootout kick plotted where it landed
+  // in the goal frame (WhoScored GoalMouthY/Z), coloured by outcome (scored / saved /
+  // missed) with a team-colour ring. Team chooser + a kick-by-kick list with the
+  // running tally sit alongside. This is the last block on the page (below all graphs).
+  function buildShootout(D) {
+    var host = document.getElementById("mv-shootout");
+    if (!host) return;
+    var pens = D.shootout || [];
+    if (!pens.length) { if (host.parentNode) host.parentNode.style.display = "none"; return; }
+
+    // goal-mouth view mapping (WhoScored: GoalMouthY across, GoalMouthZ up).
+    // Posts sit at GoalMouthY 45.2 / 54.8; crossbar at GoalMouthZ ≈ 38.
+    var GW = 100, GROUND = 50, GY0 = 43, GYR = 14, GZTOP = 48;
+    function gxOf(gy) { return (Math.max(GY0, Math.min(GY0 + GYR, gy)) - GY0) / GYR * GW; }
+    function gyOf(gz) { return GROUND - Math.max(0, Math.min(GZTOP, gz)); }
+    var postL = gxOf(45.2), postR = gxOf(54.8), barY = gyOf(38);
+    var OUT_COL = { goal: "#a855f7", saved: "#ff5b5b", missed: "#ffb020", post: "#ffb020" };
+    var OUT_LBL = { goal: "Scored", saved: "Saved", missed: "Off target", post: "Hit post" };
+    var OUT_ICON = { goal: "⚽", saved: "🧤", missed: "✗", post: "▮" };
+
+    var fr = "#f4f6fb", ng = "rgba(255,255,255,0.14)";
+    var net = [];
+    net.push('<rect x="-2" y="-2" width="' + (GW + 4) + '" height="' + (GROUND + 6) + '" fill="#0d1420"/>');
+    net.push('<rect x="' + postL.toFixed(1) + '" y="' + barY.toFixed(1) + '" width="' + (postR - postL).toFixed(1) +
+      '" height="' + (GROUND - barY).toFixed(1) + '" fill="rgba(255,255,255,0.04)"/>');
+    for (var nx = postL; nx <= postR + 0.01; nx += 3.2)
+      net.push('<line x1="' + nx.toFixed(1) + '" y1="' + barY.toFixed(1) + '" x2="' + nx.toFixed(1) + '" y2="' + GROUND + '" stroke="' + ng + '" stroke-width="0.18"/>');
+    for (var nyy = barY; nyy <= GROUND + 0.01; nyy += 3.0)
+      net.push('<line x1="' + postL.toFixed(1) + '" y1="' + nyy.toFixed(1) + '" x2="' + postR.toFixed(1) + '" y2="' + nyy.toFixed(1) + '" stroke="' + ng + '" stroke-width="0.18"/>');
+    net.push('<line x1="0" y1="' + GROUND + '" x2="' + GW + '" y2="' + GROUND + '" stroke="rgba(255,255,255,0.3)" stroke-width="0.4"/>');
+    net.push('<line x1="' + postL.toFixed(1) + '" y1="' + GROUND + '" x2="' + postL.toFixed(1) + '" y2="' + barY.toFixed(1) + '" stroke="' + fr + '" stroke-width="1.1"/>');
+    net.push('<line x1="' + postR.toFixed(1) + '" y1="' + GROUND + '" x2="' + postR.toFixed(1) + '" y2="' + barY.toFixed(1) + '" stroke="' + fr + '" stroke-width="1.1"/>');
+    net.push('<line x1="' + (postL - 0.55).toFixed(1) + '" y1="' + barY.toFixed(1) + '" x2="' + (postR + 0.55).toFixed(1) + '" y2="' + barY.toFixed(1) + '" stroke="' + fr + '" stroke-width="1.1"/>');
+
+    var hp = D.home.pens, ap = D.away.pens;
+    var summary = "";
+    if (hp != null && ap != null) {
+      var win = hp > ap ? D.home.name : ap > hp ? D.away.name : null;
+      summary = '<div class="so-summary"><b>' + esc(D.home.name) + " " + hp + " – " + ap + " " + esc(D.away.name) + "</b>" +
+        (win ? ' <span class="so-win">' + esc(win) + " win on penalties</span>" : "") + "</div>";
+    }
+
+    host.innerHTML = summary +
+      '<div class="controls-bar">' +
+        '<button type="button" class="chip-toggle on home" id="soHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
+        '<button type="button" class="chip-toggle on away" id="soAway" aria-pressed="true">' + esc(D.away.name) + "</button>" +
+      "</div>" +
+      '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="-2 -2 ' + (GW + 4) + ' ' + (GROUND + 8) + '">' +
+        net.join("") +
+        '<text class="dir-label" x="' + (GW / 2) + '" y="' + (GROUND + 5) + '" text-anchor="middle">Goal-mouth view · placement of each kick</text>' +
+        '<g id="soLayer"></g>' +
+      "</svg></div>" +
+      '<div class="legend-row">' +
+        '<span><i class="dot" style="background:' + OUT_COL.goal + '"></i>Scored</span>' +
+        '<span><i class="dot" style="background:' + OUT_COL.saved + '"></i>Saved</span>' +
+        '<span><i class="dot" style="background:' + OUT_COL.missed + '"></i>Off target / post</span>' +
+        '<span><i class="dot" style="background:#222;border:2px solid var(--c-home)"></i>Team ring</span>' +
+      "</div>" +
+      '<div class="so-list" id="soList"></div>';
+
+    var layer = document.getElementById("soLayer");
+    var state = { home: true, away: true };
+
+    function draw() {
+      layer.innerHTML = "";
+      var NS = "http://www.w3.org/2000/svg";
+      pens.forEach(function (k) {
+        if (!state[k.team]) return;
+        if (k.gy == null || k.gz == null) return;   // no placement coords → list only
+        var cx = gxOf(k.gy), cy = gyOf(k.gz);
+        var ring = k.team === "home" ? D.home.color : D.away.color;
+        var c = document.createElementNS(NS, "circle");
+        c.setAttribute("cx", cx.toFixed(2)); c.setAttribute("cy", cy.toFixed(2));
+        c.setAttribute("r", "2.3");
+        c.setAttribute("fill", OUT_COL[k.outcome] || "#ffb020");
+        c.setAttribute("stroke", ring); c.setAttribute("stroke-width", "0.9");
+        c.style.cursor = "pointer";
+        var t = document.createElementNS(NS, "text");
+        t.setAttribute("x", cx.toFixed(2)); t.setAttribute("y", (cy + 0.9).toFixed(2));
+        t.setAttribute("text-anchor", "middle"); t.setAttribute("font-size", "2.6");
+        t.setAttribute("font-weight", "800"); t.setAttribute("fill", "#0d1420");
+        t.style.pointerEvents = "none";
+        t.textContent = k.order;
+        function tip(e) {
+          showTip(e, "<b>#" + k.order + " " + esc(k.player) + "</b><br>" +
+            esc(k.team === "home" ? D.home.name : D.away.name) + " · " + (OUT_LBL[k.outcome] || k.outcome) +
+            (k.keeper ? "<br>Keeper: " + esc(k.keeper) : ""));
+        }
+        c.addEventListener("mousemove", tip);
+        c.addEventListener("mouseleave", hideTip);
+        layer.appendChild(c);
+        layer.appendChild(t);
+      });
+    }
+
+    // kick-by-kick list with running tally (always shows both teams, in order)
+    var hC = 0, aC = 0;
+    var rows = pens.map(function (k) {
+      if (k.outcome === "goal") { if (k.team === "home") hC++; else aC++; }
+      var col = k.team === "home" ? D.home.color : D.away.color;
+      var name = k.team === "home" ? D.home.name : D.away.name;
+      return '<div class="so-row ' + k.outcome + '">' +
+        '<span class="so-n">' + k.order + "</span>" +
+        '<span class="so-tm" style="background:' + col + '"></span>' +
+        '<span class="so-pl">' + esc(k.player) + ' <span class="so-tn">' + esc(name) + "</span></span>" +
+        '<span class="so-oc">' + (OUT_ICON[k.outcome] || "") + " " + (OUT_LBL[k.outcome] || k.outcome) + "</span>" +
+        '<span class="so-sc">' + hC + "–" + aC + "</span>" +
+        "</div>";
+    }).join("");
+    document.getElementById("soList").innerHTML = rows;
+
+    document.getElementById("soHome").addEventListener("click", function () {
+      state.home = !state.home; this.classList.toggle("on"); draw(); });
+    document.getElementById("soAway").addEventListener("click", function () {
+      state.away = !state.away; this.classList.toggle("on"); draw(); });
+    draw();
+  }
+
+  /* ---- tooltip ---- */
+  function showTip(e, html) {
+    tooltip.innerHTML = html; tooltip.style.opacity = "1";
+    tooltip.style.left = (e.clientX + 14) + "px"; tooltip.style.top = (e.clientY + 14) + "px";
+  }
+  function hideTip() { tooltip.style.opacity = "0"; }
+})();

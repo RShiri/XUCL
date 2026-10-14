@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0c0d10" />
+<title>Premier League — Dashboard &amp; xG Lab</title>
+<link rel="stylesheet" href="https://rshiri.github.io/assets/brand/brand.css" />
+<script src="https://rshiri.github.io/assets/brand/brand.js"></script>
+<script src="portfolio-content.js?v=5aad473f37"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Barlow:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="styles.css?v=5aad473f37" />
+<link rel="stylesheet" href="portfolio-theme.css?v=5aad473f37" />
+</head>
+<body class="epl">
+<header class="site">
+  <div class="header-inner">
+    <div class="brand">
+      <h1 class="title">Premier<span>League</span></h1>
+      <div class="sub">Dashboard &amp; xG Lab</div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Dashboard sections">
+        <button role="tab" id="tab-standings" data-view="standings" aria-controls="view-standings" aria-selected="true" class="active">Standings</button>
+        <button role="tab" id="tab-matches" data-view="matches" aria-controls="view-matches" aria-selected="false" tabindex="-1">Matches</button>
+        <button role="tab" id="tab-players" data-view="players" aria-controls="view-players" aria-selected="false" tabindex="-1">Players</button>
+        <button role="tab" id="tab-standouts" data-view="standouts" aria-controls="view-standouts" aria-selected="false" tabindex="-1">Standouts</button>
+        <button role="tab" id="tab-teamlab" data-view="teamlab" aria-controls="view-teamlab" aria-selected="false" tabindex="-1">Team Lab</button>
+        <button role="tab" id="tab-playerlab" data-view="playerlab" aria-controls="view-playerlab" aria-selected="false" tabindex="-1">Player Lab</button>
+        <button role="tab" id="tab-xg" data-view="xg" aria-controls="view-xg" aria-selected="false" tabindex="-1">xG Analysis</button>
+        <button role="tab" id="tab-data" data-view="data" aria-controls="view-data" aria-selected="false" tabindex="-1">Data</button>
+        <button role="tab" id="tab-projection" data-view="projection" aria-controls="view-projection" aria-selected="false" tabindex="-1">Projection</button>
+    </nav>
+    <div class="header-right">
+      <label class="season-pick">Season <select id="seasonSel"></select></label>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- STANDINGS -->
+  <section id="view-standings" class="view active" role="tabpanel" aria-labelledby="tab-standings">
+    <div class="section-head">
+      <h2>League Table</h2>
+      <p data-he-html="טבלה חיה שנבנית מהמשחקים ששוחקו, מדורגת לפי נקודות, אחר כך הפרש שערים ואחר כך שערי זכות. האזורים האירופיים ואזור הירידה צבועים; עמודת הכושר מציגה את חמש התוצאות האחרונות.">Live standings built from played matches — ranked by points, then goal difference, then goals for.
+         European and relegation zones are shaded; recent form shows the last five results.</p>
+    </div>
+    <div class="stats-strip" id="overviewStats"></div>
+    <section class="insights" id="seasonInsights" aria-label="Season story" hidden></section>
+    <div class="card" style="padding:0;overflow:hidden"><div class="table-scroll" id="standings"></div></div>
+  </section>
+
+  <!-- MATCHES -->
+  <section id="view-matches" class="view" role="tabpanel" aria-labelledby="tab-matches">
+    <div class="section-head">
+      <h2>Matches</h2>
+      <p data-he-html="כל המשחקים והתוצאות, מקובצים לפי מחזור. משחקים שנאספו לעומק מקושרים למרכז המשחק האינטראקטיבי.">Every fixture and result, grouped by matchday. Deep-scraped games link into the interactive Match Centre.</p>
+    </div>
+    <div class="controls">
+      <label>Team
+        <input id="mSearch" type="search" placeholder="Search a team…" autocomplete="off" spellcheck="false" />
+      </label>
+      <label>Status
+        <select id="mStatus">
+          <option value="all">All matches</option>
+          <option value="played">Played only</option>
+          <option value="upcoming">Upcoming only</option>
+        </select>
+      </label>
+      <label>Matchday
+        <select id="mMatchday"></select>
+      </label>
+    </div>
+    <div id="matchList"></div>
+  </section>
+
+  <!-- PLAYERS -->
+  <section id="view-players" class="view" role="tabpanel" aria-labelledby="tab-players">
+    <div class="section-head">
+      <h2>Player Statistics</h2>
+      <p data-he-html="שערים, בישולים, xG וציונים, מסוכמים מכל המשחקים שנאספו לעומק. בחרו טבלת מובילים. ה-xG וה-xA מגיעים מ&lt;b&gt;מודל הבעיטות שלנו&lt;/b&gt;, שאומן על 11,830 בעיטות אמיתיות; לשונית ניתוח xG מסבירה איך הוא בנוי.">Goals, assists, xG and ratings aggregated across every deep-scraped match. Pick a leaderboard.
+         xG and xA come from <b>our own shot model</b>, trained on 11,830 real shots — the xG Analysis tab
+         explains how it's built.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Leaderboard">
+        <button class="seg-btn active" data-preset="ga">G + A</button>
+        <button class="seg-btn" data-preset="g">Goals</button>
+        <button class="seg-btn" data-preset="a">Assists</button>
+        <button class="seg-btn" data-preset="xg">xG</button>
+        <button class="seg-btn" data-preset="xa">xA</button>
+        <button class="seg-btn" data-preset="rating">Rating</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden"><div class="table-scroll" id="playersTable"></div></div>
+  </section>
+
+  <!-- STANDOUTS (player distributions) -->
+  <section id="view-standouts" class="view" role="tabpanel" aria-labelledby="tab-standouts">
+    <div class="section-head">
+      <h2>Standouts</h2>
+      <p data-he-html="בחרו מדד וראו את &lt;b&gt;ההתפלגות של כל הליגה&lt;/b&gt; במבט אחד. העקומה מראה איך כל השחקנים מתפזרים, הקו המקווקו הוא &lt;b&gt;הממוצע&lt;/b&gt;, וכל נקודה היא שחקן אחד. השמות הרחוקים בצד ימין הם &lt;b&gt;החריגים&lt;/b&gt;, אלה שבולטים מעל כולם.">Pick a stat and see the <b>whole league's distribution</b> at once. The curve is how all players
+         spread out, the dashed line is the <b>average</b>, and each dot is one player. The names way out on the
+         right are the <b>anomalies</b> — the ones breaking from the pack.</p>
+    </div>
+
+    <details class="explainer" id="explainer-standouts" open>
+      <summary><h3>How to read this</h3></summary>
+      <p data-he-html="זהו &lt;b&gt;גרף צפיפות&lt;/b&gt;: איפה שהעקומה גבוהה, הרבה שחקנים נמצאים בערך הזה; איפה שהיא שטוחה, כמעט אף אחד. רוב השחקנים מתקבצים סביב הממוצע, ולכן העקומה מגיעה לשיא שם ודועכת. שחקן &lt;b&gt;הרחק מימין&lt;/b&gt; לקבוצה עושה משהו נדיר, ואנחנו מודדים כמה נדיר ב&lt;b&gt;סטיות תקן (σ) מעל הממוצע&lt;/b&gt;: &lt;span dir=&quot;ltr&quot;&gt;+1σ&lt;/span&gt; עוקף כ-84% מהשחקנים, &lt;span dir=&quot;ltr&quot;&gt;+2σ&lt;/span&gt; עוקף כ-98%, ו-&lt;span dir=&quot;ltr&quot;&gt;+3σ&lt;/span&gt; הוא חריג של ממש.">This is a <b>density plot</b>: where the curve is tall, lots of players sit on that value; where it's
+         flat, hardly anyone does. Most players cluster near the average, so the curve peaks there and tails off.
+         A player <b>far to the right</b> of the crowd is doing something rare — we measure exactly how rare in
+         <b>σ (sigma) over average</b>: +1σ beats ~84% of players, +2σ beats ~98%, +3σ is a genuine outlier.</p>
+      <p data-he-html="הנקודות נצבעות ב&lt;span class=&quot;cw-acc&quot; style=&quot;color:var(--goal);font-weight:700&quot;&gt;&lt;/span&gt; כששחקן נמצא 2σ או יותר מעל הממוצע. בחרו שחקן כדי להאיר אותו ב&lt;span style=&quot;color:#fff;font-weight:700&quot;&gt;לבן&lt;/span&gt; ולראות את האחוזון שלו." class="explainer-note">Dots are coloured <span class="cw-acc" style="color:var(--goal);font-weight:700"></span> once a
+         player is 2σ or more above average. Pick a player to spotlight them in <span
+         style="color:#fff;font-weight:700">white</span> and see their percentile.</p>
+    </details>
+
+    <div class="so-controls">
+      <label>Stat
+        <select id="soStat"></select>
+      </label>
+      <label>Position
+        <select id="soPos">
+          <option value="all">All outfield + GK</option>
+          <option value="FWD">Attackers</option>
+          <option value="MID">Midfielders</option>
+          <option value="DEF">Defenders</option>
+          <option value="GK">Goalkeepers</option>
+        </select>
+      </label>
+      <label>Minimum minutes
+        <select id="soMins">
+          <option value="0">Any</option>
+          <option value="450" selected>450+</option>
+          <option value="900">900+</option>
+          <option value="1800">1800+</option>
+        </select>
+      </label>
+      <label>Spotlight player
+        <input id="soPlayer" list="soPlayerList" placeholder="Type a name…" autocomplete="off" spellcheck="false">
+        <datalist id="soPlayerList"></datalist>
+      </label>
+    </div>
+
+    <div class="stats-strip" id="soStats"></div>
+
+    <div class="card full-card">
+      <h3 id="soChartTitle">Distribution</h3>
+      <p class="hint" id="soChartHint">Every qualifying player placed by their value for the chosen stat.</p>
+      <div class="so-chart-wrap" id="soChart"></div>
+      <div class="chart-tip" id="soChartTip" aria-live="polite">Tap any dot to see the player.</div>
+      <div class="insight" id="soSpotlight"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Biggest anomalies</h3>
+      <p data-he-html="השחקנים שהכי רחוקים מעל כולם במדד שנבחר, מדורגים לפי &lt;b&gt;σ מעל הממוצע&lt;/b&gt;. ככל שהעמודה ארוכה יותר, כך הם בולטים יותר." class="hint">The players furthest above the field for the chosen stat, ranked by <b>σ over average</b>.
+         The longer the bar, the more they break from the pack.</p>
+      <div id="soStandouts"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Two-stat scatter</h3>
+      <p data-he-html="מקמו כל שחקן על &lt;b&gt;שני מדדים בבת אחת&lt;/b&gt;, ותנו ל&lt;b&gt;גודל הנקודה&lt;/b&gt; לשאת מדד שלישי. ימין-למעלה = חזק בשניהם; נקודה גדולה &lt;i&gt;וגם&lt;/i&gt; בימין-למעלה היא שחקן שלם באמת. הקווים המקווקווים הם הממוצעים. &lt;span class=&quot;cw-acc-cap&quot; style=&quot;color:var(--goal);font-weight:700&quot;&gt;&lt;/span&gt; = מעל הממוצע בשניהם; השחקן שבחרתם למעלה מופיע כאן ב&lt;span style=&quot;color:#fff;font-weight:700&quot;&gt;לבן&lt;/span&gt;. אפשר להתחיל מתבנית מוכנה:" class="hint">Plot every player on <b>two stats at once</b> and let the <b>dot size</b> carry a third.
+         Top-right = strong in both; a dot that's big <i>and</i> top-right is a genuinely complete player. The
+         dashed lines are the averages. <span class="cw-acc-cap" style="color:var(--goal);font-weight:700"></span> = above average
+         in both; the player you spotlight above shows here in <span
+         style="color:#fff;font-weight:700">white</span> too. Start from a preset:</p>
+      <div class="so-presets" id="soPresets"></div>
+      <div class="so-controls">
+        <label>X axis<select id="soScX"></select></label>
+        <label>Y axis<select id="soScY"></select></label>
+        <label>Dot size<select id="soScSize"></select></label>
+        <label>Position
+          <select id="soScPos">
+            <option value="all">All outfield + GK</option>
+            <option value="FWD">Attackers</option>
+            <option value="MID">Midfielders</option>
+            <option value="DEF">Defenders</option>
+            <option value="GK">Goalkeepers</option>
+          </select>
+        </label>
+        <label>Minimum minutes
+          <select id="soScMins">
+            <option value="0">Any</option>
+            <option value="450">450+</option>
+            <option value="900" selected>900+</option>
+            <option value="1800">1800+</option>
+          </select>
+        </label>
+      </div>
+      <div class="so-chart-wrap" id="soScatter"></div>
+      <div class="chart-tip" id="soScatterTip" aria-live="polite">Tap any dot to see the player.</div>
+      <div class="insight" id="soScInsight"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Player radar</h3>
+      <p data-he-html="איך &lt;b&gt;השחקן שבזרקור&lt;/b&gt; (שנבחר למעלה) מדורג מול שחקנים באותה עמדה (450+ דקות) בכל תחום מרכזי. כל חישור הוא &lt;b&gt;אחוזון&lt;/b&gt;: רחוק יותר מהמרכז = טוב יותר מיותר שחקנים (100% = הטוב ביותר בתפקיד). שחקני שדה ושוערים מקבלים פרופיל שמתאים לתפקיד." class="hint">How the <b>spotlight player</b> (picked at the top) ranks against peers in the same position
+         (450+ minutes) across every key area. Each spoke is a <b>percentile</b> — further out = better than more
+         of their peers (100% = best in that role). Outfielders and goalkeepers get the profile that fits the job.</p>
+      <div class="so-radar-wrap" id="soRadar"></div>
+    </div>
+
+    <h2 style="margin:34px 0 4px;font-size:20px">Leaderboards</h2>
+    <p data-he-html="שמונת הראשונים בכל קטגוריה. בטבלאות ל-90 דקות יש רף מינימום דקות שגדל עם העונה (450 כשכבר שוחק מספיק כדורגל), כדי שהופעות קצרות לא יעוותו אותן." class="hint" style="margin:0 0 16px">Top eight in each category. Per-90 boards use a minimum-minutes floor
+       that grows with the season (450 once enough football has been played) so cameo appearances don't skew them.</p>
+    <div class="stats-strip" id="playerLeaders"></div>
+    <div class="lboards" id="playerBoards"></div>
+  </section>
+
+  <!-- TEAM LAB (shot map + style fingerprint) -->
+  <section id="view-teamlab" class="view" role="tabpanel" aria-labelledby="tab-teamlab">
+    <div class="section-head">
+      <h2>Team Lab</h2>
+      <p data-he-html="מאיפה מגיעה כל הזדמנות, ואיך כל קבוצה אוהבת לשחק. בחרו קבוצה כדי לראות את &lt;b&gt;מפת הבעיטות שלה&lt;/b&gt; ו&lt;b&gt;טביעת אצבע סגנונית&lt;/b&gt; מול שאר הליגה, או השאירו על &lt;i&gt;כל הקבוצות&lt;/i&gt; לתמונה של כל הליגה: מאיפה נוצרים השערים. הספירה כאן היא &lt;b&gt;של בעיטות בלבד&lt;/b&gt;: שערים עצמיים אינם בעיטות, ולכן סכומי השערים נמוכים מעט מהתוצאות שבשאר האתר.">Where every chance comes from, and how each team likes to play. Pick a team to see <b>its shot map</b>
+         and a <b>style fingerprint</b> against the rest of the league — or leave it on <i>All teams</i> for the
+         whole-league picture of where goals are made. Counts here are <b>shots only</b> — own goals
+         aren't shots, so goal totals run slightly below the match scores used elsewhere.</p>
+    </div>
+
+    <div class="so-controls">
+      <label>Team
+        <select id="tlTeam"></select>
+      </label>
+      <label>Compare with
+        <select id="tlTeamB"></select>
+      </label>
+      <label>Third team
+        <select id="tlTeamC"></select>
+      </label>
+      <label>Shots
+        <select id="tlFilter">
+          <option value="all">All shots</option>
+          <option value="ot">On target</option>
+          <option value="goal">Goals only</option>
+        </select>
+      </label>
+      <label>Situation
+        <select id="tlSit">
+          <option value="all">All situations</option>
+          <option value="open">Open play</option>
+          <option value="set">Set pieces</option>
+          <option value="pen">Penalties</option>
+        </select>
+      </label>
+      <label>View
+        <select id="tlMode">
+          <option value="dots">Shot dots</option>
+          <option value="heat">xG heatmap</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="stats-strip" id="tlStats"></div>
+
+    <div class="card full-card">
+      <h3 id="tlMapTitle">Shot map</h3>
+      <p data-he-html="ההתקפה &lt;b&gt;↑&lt;/b&gt; (לכיוון השער העליון). במצב &lt;b&gt;נקודות בעיטה&lt;/b&gt; כל נקודה היא בעיטה, בגודל לפי xG: &lt;span style=&quot;color:var(--goal);font-weight:700&quot;&gt;שערים ב&lt;span class=&quot;cw-acc&quot;&gt;&lt;/span&gt;&lt;/span&gt;, &lt;span style=&quot;color:var(--info);font-weight:700&quot;&gt;בעיטות למסגרת ב&lt;span class=&quot;cw-info&quot;&gt;&lt;/span&gt;&lt;/span&gt;, ומחוץ למסגרת באפור. עברו ל&lt;b&gt;מפת חום xG&lt;/b&gt; כדי לצבוע את המגרש לפי המקומות שבהם מתרכזת איכות ההזדמנויות. בחרו קבוצה (או שתיים) ב&lt;b&gt;השוואה&lt;/b&gt; כדי להציב מפות בעיטות זו לצד זו." class="hint">Attacking <b>↑</b> (toward the top goal). In <b>Shot dots</b> mode each dot is a shot,
+         sized by xG: <span style="color:var(--goal);font-weight:700">goals <span class="cw-acc"></span></span>,
+         <span style="color:var(--info);font-weight:700">on-target <span class="cw-info"></span></span>, off-target grey. Switch to
+         <b>xG heatmap</b> to shade the pitch by where chance-quality is concentrated. Pick a
+         <b>Compare</b> team (or two) to line up shot maps side by side.</p>
+      <div class="tl-maps" id="tlMaps"></div>
+      <div class="chart-tip" id="tlMapTip" aria-live="polite">Tap any shot to see its details.</div>
+    </div>
+
+    <div class="card full-card" id="tlStyleCard">
+      <h3 id="tlStyleTitle">Style fingerprint</h3>
+      <p data-he-html="כל חישור הוא &lt;b&gt;אחוזון&lt;/b&gt; מול כל שאר הקבוצות (רחוק יותר = יותר מהתכונה הזאת). הצורה של קבוצה מספרת איך היא מנצחת: קבוצות החזקת כדור בולטות למעלה משמאל, קבוצות ישירות וקליניות בולטות לכיוון איכות הבעיטות ואיום מצבים נייחים, וקבוצות קמצניות לכיוון יציבות הגנתית. בהשוואה בין קבוצות, הצורות מוצגות זו על זו בצבעים שונים." class="hint">Each spoke is a <b>percentile</b> versus all other teams (further out = more of that trait).
+         A team's shape tells you how they win: possession sides bulge top-left, direct/clinical sides bulge
+         toward shot quality and set-piece threat, stingy sides toward defensive solidity. Comparing teams
+         overlays them in different colours.</p>
+      <div class="so-radar-wrap" id="tlRadar"></div>
+      <div class="tl-legend" id="tlLegend"></div>
+    </div>
+
+    <div class="card full-card" id="tlBoxCard">
+      <h3>Box entries · per game</h3>
+      <p data-he-html="כמה פעמים קבוצה מכניסה את הכדור לרחבת היריב, וכמה פעמים היא נותנת ליריב להיכנס לרחבה שלה. &lt;b&gt;כניסה&lt;/b&gt; היא מסירה מוצלחת במשחק פתוח או דריבל מוצלח שמתחילים מחוץ לרחבה ומסתיימים בתוכה (בלי קרנות). &lt;b&gt;מאזן&lt;/b&gt; = כניסות פחות כניסות שאופשרו, למשחק. נספרים רק משחקים שנאספו לעומק. בגרף, &lt;b&gt;למעלה ומימין&lt;/b&gt; פירושו טוב מממוצע הליגה בשני המדדים; הקישו על סמל כדי לראות את המספרים. לחצו על כותרת עמודה כדי למיין." class="hint">How often a side gets the ball into the opponent's penalty area, and how often it lets the
+         opponent into its own. An <b>entry</b> is a completed open-play pass or a successful take-on that starts
+         outside the box and ends inside it (corners left out). <b>Net</b> = entries − entries allowed, per game.
+         Counts only deep-scraped matches. In the chart, <b>up-and-right</b> is better than the league average on
+         both counts; tap a crest for its numbers. Click a table header to sort.</p>
+      <div class="bx-wrap" id="boxScatter"></div>
+      <div class="table-scroll" id="boxTable"></div>
+    </div>
+
+    <div class="card full-card" id="tlDistCard">
+      <h3>Distance covered · avg km per game</h3>
+      <p data-he-html="כמה כל קבוצה רצה במשחק, בממוצע: כל הקבוצה, כולל מחליפים. מרחק הוא נתון מעקב, ולכן הוא לא יכול להגיע מאיסוף האירועים. זה נתון הקבוצה &lt;i&gt;Total distance per match&lt;/i&gt; של FotMob, שנמשך על ידי &lt;code&gt;epl/fetch_team_stats.py&lt;/code&gt;." class="hint">How far each side runs per match, on average: the whole team, substitutes included.
+         Distance is tracking data, so it can't come from the event scrape. It's FotMob's
+         <i>Total distance per match</i> team stat, pulled by <code>epl/fetch_team_stats.py</code>.</p>
+      <div class="table-scroll" id="distTable"></div>
+    </div>
+
+    <h2 style="margin:34px 0 4px;font-size:20px">Season totals</h2>
+    <p data-he-html="הסיכום העונתי של כל מועדון, ניתן למיון. קצבים למשחק (Sh/g, SoT/g, BigCh/g) וממוצעים (Poss%, Pass%) נספרים רק ממשחקים שנאספו לעומק; שערים ונקודות נספרים מכל משחק ששוחק." class="hint" style="margin:0 0 12px">Every club's season aggregate — sortable. Per-game rates (Sh/g, SoT/g,
+       BigCh/g) and averages (Poss%, Pass%) count only deep-scraped games; goals/points count every played match.</p>
+    <div class="controls">
+      <label>Team
+        <input id="tlSearch" type="search" placeholder="Search a team…" autocomplete="off" spellcheck="false" />
+      </label>
+    </div>
+    <div class="card" style="padding:0; overflow:hidden">
+      <div class="table-scroll"><div id="teamTable"></div></div>
+    </div>
+  </section>
+
+  <!-- XG -->
+  <section id="view-xg" class="view" role="tabpanel" aria-labelledby="tab-xg">
+    <div class="section-head">
+      <h2>xG Efficiency Lab</h2>
+      <p data-he-html="האם קבוצות כובשות כמו שאיכות ההזדמנויות שלהן אומרת שהן צריכות? הגרפים האלה משווים &lt;b&gt;שערים צפויים (xG)&lt;/b&gt; למה שקרה בפועל. &lt;span id=&quot;xgNote&quot; class=&quot;hint&quot;&gt;&lt;/span&gt;">Do teams score as much as the quality of their chances says they should? These charts compare
+         <b>expected goals (xG)</b> with what actually happened. <span id="xgNote" class="hint"></span></p>
+    </div>
+    <details class="explainer" id="explainer-xg" open>
+      <summary><h3>New here? What is xG?</h3></summary>
+      <p data-he-html="&lt;b&gt;שערים צפויים (xG)&lt;/b&gt; מדרגים כל בעיטה לפי הסיכוי שהיא תיכנס, מ-0 עד 1. נגיעה מקרוב יכולה להיות 0.7 xG; בעיטת ניסיון מ-30 מטר, 0.03. סוכמים את בעיטות הקבוצה ומקבלים כמה שערים מסיים &lt;i&gt;ממוצע&lt;/i&gt; היה כובש מההזדמנויות האלה: מדד טוב יותר מהתוצאה לבדה לשאלה &quot;למי הגיע&quot;."><b>Expected goals (xG)</b> rates every shot by how likely it was to be scored, from 0 to 1. A tap-in might be
+         0.7 xG; a hopeful 30-metre strike 0.03. Sum a team's shots and you get how many goals an <i>average</i>
+         finisher would score from those chances — a better "who deserved it" number than the scoreline alone.</p>
+      <p data-he-html="&lt;b&gt;מאיפה מגיע ה-xG עצמו? בנינו את המודל בעצמנו.&lt;/b&gt; כל בעיטה מדורגת במודל רגרסיה לוגיסטית שאומן על &lt;b&gt;11,830 בעיטות אמיתיות&lt;/b&gt;, כל עונת 2025/26 של הליגה הספרדית ועוד מונדיאל 2026, מול מה שקרה להן בפועל. הוא שוקל את &lt;b&gt;המרחק&lt;/b&gt; של הבעיטה, את &lt;b&gt;הזווית שהשער פותח&lt;/b&gt; מהנקודה הזאת, אם זו הייתה &lt;b&gt;נגיחה&lt;/b&gt;, אם זו &lt;b&gt;הזדמנות גדולה&lt;/b&gt; לפי Opta, ואת &lt;b&gt;מצב המשחק&lt;/b&gt; (משחק פתוח, בעיטה חופשית, קרן, מצב נייח או מתפרצת). כיול סיומת לכל ליגה שומר שסכום ה-xG יתאים לשערים שנכבשו בפועל, ופנדלים קבועים על 0.76. אותו מודל רץ בדשבורדים של הפרמייר ליג, הליגה הספרדית והמונדיאל, כך שהמספרים ניתנים להשוואה בכל מקום."><b>Where does the xG itself come from? We built the model ourselves.</b> Every shot is scored by a
+         logistic-regression model trained on <b>11,830 real shots</b> — the whole 2025/26 La Liga season plus the
+         2026 World Cup — against what actually happened to them. It weighs the shot's <b>distance</b>, the
+         <b>angle the goal mouth opens up</b> from that spot, whether it was a <b>header</b>, an Opta
+         <b>big chance</b>, and the <b>situation</b> (open play, free kick, corner, set piece or fast break). A
+         per-league finishing calibration then keeps summed xG in line with goals actually scored — penalties are
+         fixed at 0.76. The same model runs across our Premier League, La Liga and World Cup dashboards, so the
+         numbers compare cleanly everywhere.</p>
+      <p data-he-html="ה-xG של הפרמייר ליג מחושב מנתוני הבעיטות של WhoScored שנאספו לעומק. עד שמשחק נאסף לעומק הוא נכנס לטבלה, אבל לא לגרפים האלה." class="explainer-note">Premier League xG is computed from the deep-scraped WhoScored shot data. Until a match is
+         deep-scraped it contributes to the table but not to these charts.</p>
+    </details>
+    <div class="stats-strip" id="xgStats"></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Did chances turn into goals?</h3>
+        <p data-he-html="כל נקודה היא הופעה של קבוצה אחת במשחק אחד: כמה שערים קבוצה ממוצעת הייתה מצפה לכבוש מההזדמנויות שלה (לרוחב →) מול כמה היא כבשה בפועל (למעלה ↑). הקו המקווקו הוא &quot;כבשה בדיוק כמה שההזדמנויות היו שוות&quot;. &lt;b&gt;מעל הקו = סיומת קלינית; מתחת = הזדמנויות מבוזבזות.&lt;/b&gt; הקו ה&lt;span class=&quot;cw-acc&quot;&gt;&lt;/span&gt; הוא המגמה הכללית." class="hint">Every dot is one team's performance in one match: how many goals an average team would expect
+           from their chances (across →) versus how many they actually scored (up ↑). The dashed line is "scored exactly
+           what the chances were worth". <b>Above the line = clinical finishing; below = chances wasted.</b> The <span class="cw-acc"></span>
+           line is the overall trend.</p>
+        <div class="scatter-wrap" id="scatter"></div>
+      </div>
+      <div class="card">
+        <h3>How closely do goals follow xG?</h3>
+        <p data-he-html="אם ה-xG היה מושלם, השערים היו עוקבים אחריו בדיוק. זה מודד כמה חזק הקשר הזה היה העונה, וכמה כישרון סיומת או מזל מוסיפים רעש מעליו." class="hint">If xG were perfect, goals would track it exactly. This measures how strong that link has been
+           this season — and how much finishing skill or luck is adding noise on top.</p>
+        <div id="corrBox"></div>
+        <div class="insight" id="corrInsight"></div>
+      </div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Games by chance quality</h3>
+      <p data-he-html="כל הופעת קבוצה משויכת לקבוצה לפי כמות ה-xG שהפיקה. העמודה היא &lt;b&gt;מספר המשחקים&lt;/b&gt; שבהם נוצרה איכות הזדמנויות כזאת; מתחת לכל עמודה, &lt;b&gt;xG ממוצע ← שערים ממוצעים&lt;/b&gt; שנכבשו בפועל במשחקים האלה. &lt;b style=&quot;color:var(--good)&quot;&gt;&lt;span class=&quot;cw-acc-cap&quot;&gt;&lt;/span&gt; = ההזדמנויות הניבו יותר מהצפוי&lt;/b&gt;, &lt;b style=&quot;color:var(--bad)&quot;&gt;אדום = פחות מהצפוי&lt;/b&gt;, &lt;span class=&quot;cw-info&quot;&gt;&lt;/span&gt; ≈ בדיוק כצפוי. רוב הכדורגל קורה בקבוצות הנמוכות; משחקים עם הזדמנויות גדולות נדירים יותר, וכאן רואים אם הם נוצלו." class="hint">Every team-match sorted into a bucket by how much xG it produced. The bar is <b>how many
+         games</b> created that much chance quality; under each bar, <b>avg xG → avg goals</b> actually scored from
+         those games. <b style="color:var(--good)"><span class="cw-acc-cap"></span> = those chances over-delivered</b>,
+         <b style="color:var(--bad)">red = under-delivered</b>, <span class="cw-info"></span> ≈ spot on. Most football lives in the low
+         buckets — big-chance games are rarer, and this shows whether they were cashed in.</p>
+      <div id="xgDist"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Finishing: goals minus xG</h3>
+      <p data-he-html="לכל מועדון, סך השערים פחות סך ה-xG. &lt;b style=&quot;color:var(--good)&quot;&gt;&lt;span class=&quot;cw-acc-cap&quot;&gt;&lt;/span&gt; = קלינית&lt;/b&gt; (כבשה יותר ממה שההזדמנויות היו שוות: סיומת חדה או מזל); &lt;b style=&quot;color:var(--bad)&quot;&gt;אדום = בזבזנית&lt;/b&gt; (כבשה פחות: סיומת חלשה או חוסר מזל). סביב אפס פירושו שכבשה בערך כצפוי." class="hint">For each club, total goals minus total xG. <b style="color:var(--good)"><span class="cw-acc-cap"></span> = clinical</b>
+         (scored more than their chances were worth — sharp finishing or good luck);
+         <b style="color:var(--bad)">red = wasteful</b> (scored fewer — poor finishing or unlucky).
+         Around zero means they scored about what was expected.</p>
+      <div class="bars" id="finishingBars"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Attack vs defence quality</h3>
+      <p data-he-html="כל מועדון ממוקם לפי כמה &lt;b&gt;ההתקפה&lt;/b&gt; שלו מסוכנת (ימינה יותר = יותר הזדמנויות, וטובות יותר, ש&lt;b&gt;נוצרו&lt;/b&gt; למשחק) וכמה &lt;b&gt;ההגנה&lt;/b&gt; שלו קשוחה (למעלה יותר = פחות הזדמנויות, וחלשות יותר, ש&lt;b&gt;אופשרו&lt;/b&gt; למשחק). הקווים המקווקווים הם ממוצע הליגה, והם מחלקים את המגרש לארבעה סוגי קבוצות; מקרא הצבעים מתחת מסביר כל אחד. ימין-למעלה = חזקה בשני הכיוונים; שמאל-למטה = פרוצה וקהה." class="hint">Each club is placed by how dangerous its <b>attack</b> is (further right = more/better chances
+         <b>created</b> per game) and how mean its <b>defence</b> is (higher up = fewer/worse chances <b>allowed</b>
+         per game). The dashed lines are the league average, splitting the pitch into four types of team — the
+         colour key below explains each. Top-right = strong both ways; bottom-left = leaky and blunt.</p>
+      <div class="scatter-wrap" id="quadrant"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Are teams getting the points they deserve?</h3>
+      <p data-he-html="&lt;b&gt;נקודות צפויות&lt;/b&gt; הופכות את ה-xG של כל משחק לנקודות שקבוצה ממוצעת הייתה משיגה מההזדמנויות האלה. השוו לנקודות האמיתיות: מעל הקו = מנצחת יותר ממה שהתצוגות מצדיקות (קליניות או מזל); מתחת = הגיע לה יותר ממה שקיבלה." class="hint"><b>Expected points</b> turns each game's xG into the points an average team would win from
+         those chances. Compare it with real points: above the line = winning more than the performances merit
+         (clinical or lucky); below = deserved more than they've got.</p>
+      <div class="scatter-wrap" id="xpts"></div>
+      <div class="insight" id="xptsInsight"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Quality vs quantity of shots</h3>
+      <p data-he-html="בעיטות למשחק (לרוחב →) מול xG ממוצע לבעיטה (למעלה ↑ = הזדמנויות טובות יותר). &lt;b&gt;ימין-למעלה&lt;/b&gt; = הרבה הזדמנויות טובות; &lt;b&gt;שמאל-למעלה&lt;/b&gt; = מעט אבל מצוינות; &lt;b&gt;ימין-למטה&lt;/b&gt; = הרבה בעיטות מרחוק; &lt;b&gt;שמאל-למטה&lt;/b&gt; = מתקשה ליצור משהו." class="hint">Shots per game (across →) vs average xG per shot (up ↑ = better chances). <b>Top-right</b> =
+         lots of good chances; <b>top-left</b> = few but excellent looks; <b>bottom-right</b> = high-volume
+         long-range shooting; <b>bottom-left</b> = struggling to create anything.</p>
+      <div class="scatter-wrap" id="shotquality"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Is there a home advantage?</h3>
+      <p data-he-html="ה-xG הממוצע שמועדונים מייצרים בבית לעומת בחוץ. פער ברור מרמז שהקבוצה המארחת נוטה לייצר הזדמנויות טובות יותר: יתרון הביתיות הקלאסי, במונחים של איכות הזדמנויות." class="hint">Average xG created by clubs playing at home vs away. A clear gap suggests the home side tends to
+         create better chances — the classic home advantage, in chance-quality terms.</p>
+      <div id="homeAway"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Team-by-team xG ledger</h3>
+      <p data-he-html="הפירוט המלא; לחצו על כותרת עמודה כדי למיין. &lt;b&gt;xG&lt;/b&gt; = איכות ההזדמנויות שנוצרו; &lt;b&gt;xGA&lt;/b&gt; = איכות ההזדמנויות שאופשרו; &lt;b&gt;G−xG&lt;/b&gt; = סיומת התקפית (＋ = קלינית); &lt;b&gt;xGA−GA&lt;/b&gt; = שוער והגנה מול ההזדמנויות שהיו (＋ = מנעו יותר מהצפוי); &lt;b&gt;xGD&lt;/b&gt; = xG פחות xGA, כלומר בכמה קבוצה יצרה יותר הזדמנויות מיריבותיה (הפרש השערים &quot;המגיע&quot;)." class="hint">The full breakdown — click any column header to sort. <b>xG</b> = quality of chances created;
+         <b>xGA</b> = quality of chances allowed; <b>G−xG</b> = attacking finishing (＋ = clinical);
+         <b>xGA−GA</b> = goalkeeping/defending vs the chances faced (＋ = kept out more than expected);
+         <b>xGD</b> = xG minus xGA, i.e. how much a team out-chanced opponents overall ("deserved" goal difference).</p>
+      <div class="table-scroll" id="ledger"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Did the team that "deserved" it actually win?</h3>
+      <p data-he-html="בכל משחק עם xG אנחנו בודקים אם הצד עם יותר xG (ההזדמנויות הטובות יותר) קיבל את התוצאה. שיעור התאמה גבוה פירושו שה-xG משקף את המציאות; אי-התאמות (✘) הן המשחקים שהלכו נגד מהלך המשחק, ולרוב הוכרעו בבעיטת פלא, פנדל או כרטיס אדום." class="hint">For every game with xG, we check whether the side with more xG (the better chances) got the
+         result. A high match rate means xG is tracking reality; mismatches (✘) are the games that defied the
+         underlying play — often decided by a worldie, a penalty, or a red card.</p>
+      <div class="table-scroll" id="agreement"></div>
+    </div>
+
+    <div class="card full-card">
+      <h3>Unluckiest results (deserved more)</h3>
+      <p data-he-html="משחקים שבהם הצד ש&lt;b&gt;יצר יותר&lt;/b&gt; מהיריב בפער ה-xG הגדול ביותר עדיין לא ניצח: הוא יצר את ההזדמנויות הטובות יותר אבל לא קיבל את התוצאה. התצוגות הגדולות של &quot;היינו צריכים לנצח&quot;." class="hint">Games where the side that <b>out-created</b> their opponent by the most xG still failed to win —
+         they made the better chances but didn't get the result. The biggest "should have won this" performances.</p>
+      <div class="table-scroll" id="unlucky"></div>
+    </div>
+  </section>
+
+  <!-- DATA -->
+  <section id="view-data" class="view" role="tabpanel" aria-labelledby="tab-data">
+    <div class="section-head">
+      <h2>Full Database</h2>
+      <p data-he-html="כל הנתונים שמאחורי האתר: תוצאות משחקים, נתוני קבוצה לכל משחק וטבלת הליגה, מיוצאים מהמקורות שנאספו (לוח המשחקים של FotMob ואירועי WhoScored). הורידו את הטבלאות כ-CSV, את כל המאגר כמסד נתונים SQLite, או עיינו בכל התוצאות למטה.">The complete dataset behind this site — game results, per-game team stats and league standings, exported
+         from the scraped sources (FotMob schedule + WhoScored events). Download the tables as CSV, the whole thing
+         as a SQLite database, or browse every result below.</p>
+    </div>
+    <div class="data-grid" id="dataDownloads"></div>
+    <div class="card full-card" style="margin-top:18px">
+      <h3>SQLite database</h3>
+      <p data-he-html="קובץ אחד עם כל הטבלאות (matches, team_match_stats, players, standings), מוכן לשאילתות SQL בכל כלי (DB Browser for SQLite, פייתון ועוד)." class="hint">One file with every table (matches, team_match_stats, players, standings), ready for SQL
+         queries in any tool (DB Browser for SQLite, Python, etc.).</p>
+      <a class="png-btn" id="sqliteLink" href="database/epl.sqlite" download>⬇ epl.sqlite</a>
+    </div>
+    <div class="card full-card" style="margin-top:18px">
+      <h3>Raw match files</h3>
+      <p data-he-html="קובצי ה-JSON המקוריים של WhoScored לכל משחק, כולל זרם האירועים המלא, נמצאים ב-&lt;code&gt;epl/matches/&lt;/code&gt; ב-Pipeline (לא נשמרים ב-git בגלל הגודל)." class="hint" id="rawNote">The original scraped WhoScored JSON for every match — including the full event
+         stream — lives in <code>epl/matches/</code> in the pipeline (git-ignored due to size).</p>
+    </div>
+    <div class="card full-card" style="margin-top:18px">
+      <h3>Every result</h3>
+      <p data-he-html="כל משחק ששוחק, עם תוצאה, xG (כשנאסף לעומק) וקישור לאינפוגרפיקת ה-PNG שלו." class="hint">Every played match with score, xG (where deep-scraped) and a link to its infographic PNG.</p>
+      <div class="table-scroll" id="dataTable"></div>
+    </div>
+  </section>
+
+  <!-- PLAYER LAB (choose a team, then a player; optional compare) -->
+  <section id="view-playerlab" class="view" role="tabpanel" aria-labelledby="tab-playerlab">
+    <div class="section-head">
+      <h2>Player Lab</h2>
+      <p data-he-html="לחצו על &lt;b&gt;סמלי המועדונים&lt;/b&gt; כדי לסנן, ואז בחרו &lt;b&gt;שחקן&lt;/b&gt;, ואם תרצו גם שחקן שני להשוואה. סיכומי עונה, רדאר אחוזונים מול הליגה, עמודות ראש בראש ומפות בעיטות, דריבלים ומסירות. ה-xG, ה-xA וה-xGI מגיעים מ&lt;b&gt;מודל הבעיטות שלנו&lt;/b&gt;; לשונית ניתוח xG מסבירה איך הוא בנוי.">Click the <b>club badges</b> to filter, then pick a <b>player</b> — and optionally a second player
+         to compare. Season totals, a percentile radar vs the league, head-to-head bars, and
+         shot / take-on / pass maps. xG, xA and xGI come from <b>our own shot model</b> — see the
+         xG Analysis tab for how it's built.</p>
+    </div>
+    <div class="pl-badges-wrap">
+      <span class="pl-badges-label">Teams</span>
+      <div class="pl-badges" id="plBadges"></div>
+    </div>
+    <div class="controls pl-controls">
+      <label>Player <select id="plMain"></select></label>
+      <label>Compare <select id="plCompare"></select></label>
+      <button type="button" class="pl-share" id="plShare" title="Copy a link that opens this player">Copy link</button>
+    </div>
+    <div class="pl-selected-head" id="plSelectedHead"></div>
+    <label class="pl-pctl-toggle"><input type="checkbox" id="plPctlToggle"> Show league percentile per stat (450+ min)</label>
+    <div class="stats-strip pl-stats" id="plStats"></div>
+    <div class="pl-grid">
+      <div class="card">
+        <h3 class="pl-h">Percentile radar <span class="pl-sub">vs league players (450+ min)</span></h3>
+        <div id="plRadar"></div>
+        <div class="pl-legend" id="plRadarLegend"></div>
+      </div>
+      <div class="card" id="plBarsCard" style="display:none">
+        <h3 class="pl-h" id="plCompareTitle"></h3>
+        <div id="plCompareBody"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="pl-maps-head">
+        <span class="pl-name-a" id="plHeatNameA"></span>
+        <span class="pl-name-b" id="plHeatNameB"></span>
+      </div>
+      <div class="pl-heat-grid" id="plHeatGrid"></div>
+    </div>
+  </section>
+
+  <!-- PROJECTION -->
+  <section id="view-projection" class="view" role="tabpanel" aria-labelledby="tab-projection">
+    <div class="section-head">
+      <h2>Season Projection</h2>
+      <p data-he-html="איפה הטבלה תיגמר? מודל Poisson שנבנה משערי העונה (עוצמות התקפה והגנה בבית ובחוץ) מדמה את המשחקים שנותרו אלפי פעמים, כדי להעריך את הנקודות בסוף העונה ואת הסיכויים לאליפות, לסיום בחמישייה הראשונה או במקום אירופי, ולירידה.">Where does the table finish? A Poisson model built from this season's goals (home/away attack &amp; defence
+         strengths) simulates the remaining fixtures thousands of times to estimate final points and the odds of the
+         title, a top-five/European finish, and relegation.</p>
+    </div>
+    <div id="projChamp"></div>
+    <div class="card" style="padding:0;overflow:hidden;margin-top:16px"><div class="table-scroll" id="projTable"></div></div>
+  </section>
+
+  <div class="footer-note" id="footNote" aria-live="polite"></div>
+</main>
+
+<div class="tooltip" id="tooltip" role="tooltip"></div>
+
+<!-- Static, cacheable scripts. data/index.js is tiny (season list + cache version); the season
+     bundle data/<season>.js is fetched on demand by app.js (build_split.py writes both). -->
+<script src="data/index.js?v=2f2a46ccd4"></script>
+<script src="database/manifest.js"></script>
+<script src="app.js?v=5aad473f37"></script>
+</body>
+</html>
