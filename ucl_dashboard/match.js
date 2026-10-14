@@ -5,6 +5,7 @@
   "use strict";
 
   var LOGO = "../team_logos/ucl/";
+  function logoFile(name) { return encodeURIComponent(String(name).replace(/\//g, "-")); }  // "Bodø/Glimt" → Bodø-Glimt.png
   var PW = 100, PH = 64; // pitch SVG units (length x width)
   var tooltip = document.getElementById("tooltip");
 
@@ -43,7 +44,7 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function logoImg(team) {
-    return '<img src="' + LOGO + encodeURIComponent(team) + '.png" alt="" width="44" height="44" loading="lazy" ' +
+    return '<img src="' + LOGO + logoFile(team) + '.png" alt="" width="44" height="44" loading="lazy" ' +
       'onerror="this.style.visibility=\'hidden\'">';
   }
   // Player headshot (FotMob, matched by team+surname at build time — see
@@ -324,7 +325,7 @@
         shots: D.shots || [],
         passes: D.passes || [],
         lineups: D.lineups || null,
-        crests: { home: LOGO + encodeURIComponent(D.home.name) + ".png", away: LOGO + encodeURIComponent(D.away.name) + ".png" },
+        crests: { home: LOGO + logoFile(D.home.name) + ".png", away: LOGO + logoFile(D.away.name) + ".png" },
         source: "Data: WhoScored · xG: our own shot model"
       };
       var slug = function (s) { return String(s).replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); };
@@ -739,7 +740,7 @@
     if (Math.abs(finH - finA) < 8) { var mid = (yH + yA) / 2; yH = finH >= finA ? mid - 14 : mid + 14; yA = finH >= finA ? mid + 14 : mid - 14; }
     function crest(name, col, y, pct) {
       var ex = sx(90);
-      return '<image href="' + LOGO + encodeURIComponent(name) + '.png" x="' + (ex - 15).toFixed(1) + '" y="' + (y - 15).toFixed(1) + '" width="30" height="30"/>' +
+      return '<image href="' + LOGO + logoFile(name) + '.png" x="' + (ex - 15).toFixed(1) + '" y="' + (y - 15).toFixed(1) + '" width="30" height="30"/>' +
         '<text x="' + (ex + 18).toFixed(1) + '" y="' + (y + 4.5).toFixed(1) + '" text-anchor="start" font-size="13.5" font-weight="bold" fill="' + col + '">' + fmtPct(pct) + '%</text>';
     }
     svg.push(crest(D.home.name, colH, yH, finH));

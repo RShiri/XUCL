@@ -53,7 +53,7 @@ def main() -> None:
         raise SystemExit("No team ids found — run ucl/build_schedule.py first.")
     ok = skip = fail = 0
     for team, tid in sorted(ids.items()):
-        dest = os.path.join(OUT_DIR, team + ".png")
+        dest = os.path.join(OUT_DIR, team.replace("/", "-") + ".png")  # "Bodø/Glimt" → "Bodø-Glimt.png"
         if os.path.exists(dest) and os.path.getsize(dest) > 500:
             skip += 1
             continue
