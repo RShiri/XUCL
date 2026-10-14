@@ -1,9 +1,11 @@
-/* Premier League dashboard front-end. Consumes window.LL_DATA (data.js) + window.LL_PLAYERS
+/* Champions League dashboard front-end. Consumes window.LL_DATA (data.js) + window.LL_PLAYERS
    (players.js). No build step, no network at view time. One payload per season with a
-   season switcher; a round-robin league so we render a single standings table + a
-   remaining-fixtures projection instead of the WC group tables / knockout bracket.
+   season switcher. Cloned from XEPL; the competition changed shape in 2024-25, so the
+   Standings view is format-aware: eight group tables (2022-23, 2023-24) or one 36-club
+   league-phase table (2024-25 on), plus the knockout bracket (with the playoff round in the
+   new format). The projection runs on the league phase only.
    The xG analysis lab reuses the WC2026 scatter engine verbatim and lights up as
-   matches get deep-scraped (see epl/backfill.py). */
+   matches get deep-scraped (see ucl/backfill.py). */
 (function () {
   "use strict";
   /* Per-season data bundles (build_split.py): data/index.js is loaded statically and lists the
@@ -11,7 +13,7 @@
      visit downloads one season, not all of them. */
   var IDX = window.LL_INDEX;
   if (!IDX || !IDX.seasons) {
-    document.body.innerHTML = "<p style='padding:40px'>data/index.js failed to load — run epl_dashboard/build_split.py.</p>";
+    document.body.innerHTML = "<p style='padding:40px'>data/index.js failed to load — run ucl_dashboard/build_split.py.</p>";
     return;
   }
   window.LL_DATA = window.LL_DATA || { seasons: {} };
@@ -65,7 +67,7 @@
       document.body.removeAttribute("aria-busy");
       document.body.classList.remove("is-loading");
       delete seasonLoading[key];
-      if (foot) foot.textContent = "Could not load data/" + key + ".js — rebuild with epl_dashboard/build_split.py.";
+      if (foot) foot.textContent = "Could not load data/" + key + ".js — rebuild with ucl_dashboard/build_split.py.";
     };
     document.head.appendChild(sc);
   }
@@ -76,14 +78,46 @@
      four. Below the UCL cut: Europa next, Conference play-off after that, relegation bottom 3.
      Purely cosmetic shading + a legend — the exact Europa/Conference split can shift with cup
      winners, but the UCL cut is the one that visibly differs by season. */
-  function uclSpots(s) { return (s === "2024-25" || s === "2025-26") ? 5 : 4; }
+  /* Qualification zones. New format (league phase): 1-8 straight to the round of 16, 9-24 to
+     the knockout playoff, 25-36 out. Old format (groups of four): top two to the round of 16,
+     third into the Europa League knockouts, fourth out. The classes reuse the league forks'
+     zone colours: z-ucl = through, z-uel = second chance, z-rel = out. */
+  function isGroups() { return D.format === "groups"; }
   function zoneOf(rank, total) {
-    var ucl = uclSpots(season);
-    if (rank <= ucl) return "z-ucl";
-    if (rank === ucl + 1) return "z-uel";
-    if (rank === ucl + 2) return "z-uecl";
-    if (rank > total - 3) return "z-rel";
-    return "";
+    if (isGroups()) return rank <= 2 ? "z-ucl" : rank === 3 ? "z-uel" : "z-rel";
+    if (rank <= 8) return "z-ucl";
+    if (rank <= 24) return "z-uel";
+    return "z-rel";
+  }
+  var STAGE = {
+    group: ["Group stage", "שלב הבתים"], league: ["League phase", "שלב הליגה"], first: ["First phase", "שלב ראשון"],
+    PO: ["Knockout playoff", "פלייאוף"], R16: ["Round of 16", "שמינית הגמר"], QF: ["Quarter-finals", "רבע הגמר"],
+    SF: ["Semi-finals", "חצי הגמר"], F: ["Final", "הגמר"], W: ["Winner", "זכתה"]
+  };
+  var STAGE_SHORT = { PO: "PO", R16: "R16", QF: "QF", SF: "SF", F: "Final" };
+  var KO_ORDER = ["PO", "R16", "QF", "SF", "F"];
+  function isFirst(m) { return m.stage === "group" || m.stage === "league"; }
+  function stageText(st) { return (STAGE[st] || [st])[0]; }
+  function stageHtml(st) {
+    var e = STAGE[st] || [st, st];
+    return '<span data-he="' + esc(e[1]) + '">' + esc(e[0]) + "</span>";
+  }
+  // Round key for grouping/filtering matches: first-phase matchday "md3", knockouts by stage.
+  function roundKey(m) { return isFirst(m) ? "md" + m.matchday : (m.stage || "ko"); }
+  function roundOrder(k) { return k.indexOf("md") === 0 ? +k.slice(2) : 100 + KO_ORDER.indexOf(k); }
+  function roundHtml(k) {
+    if (k.indexOf("md") === 0) {
+      var n = k.slice(2), pre = isGroups() ? ["Group stage · ", "שלב הבתים · "] : ["League phase · ", "שלב הליגה · "];
+      return '<span data-he="' + esc(pre[1] + "מחזור " + n) + '">' + esc(pre[0] + "Matchday " + n) + "</span>";
+    }
+    return stageHtml(k);
+  }
+  function roundText(k) { return k.indexOf("md") === 0 ? "Matchday " + k.slice(2) : stageText(k); }
+  function reachChip(team) {
+    var r = (D.reach || {})[team];
+    if (!r || D.status !== "finished") return "";
+    var cls = r === "W" ? "rc rc-w" : r === "F" ? "rc rc-f" : r === "first" ? "rc rc-out" : "rc";
+    return '<span class="' + cls + '">' + stageHtml(r === "first" ? (isGroups() ? "group" : "league") : r) + "</span>";
   }
 
   /* ---------------- tiny DOM helpers ---------------- */
@@ -244,7 +278,7 @@
     [["v", c.played || 0, "Matches played"],
      ["v", (c.total || 0) - (c.played || 0), "Still to come"],
      ["v", c.teams || 0, "Teams"],
-     ["v", "MD " + (c.current_matchday || 0), "Current matchday"],
+     ["v", D.stageNow && !isFirst({ stage: D.stageNow }) ? (STAGE_SHORT[D.stageNow] || D.stageNow) : "MD " + (c.current_matchday || 0), "Current stage"],
      ["v", c.with_xg || 0, "Matches with xG"]
     ].forEach(function (it) {
       var s = el("div", "stat");
@@ -269,12 +303,21 @@
     }
     function f1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
     var a = rows[0], b = rows[1], T = function (t) { return "<b>" + esc(t) + "</b>"; };
-    if (b) {
+    if (D.champion) {
+      var fin = ((D.rounds || {}).F || [])[0], fm = fin && (D.matches || []).filter(function (m) { return m.id === fin.legs[0]; })[0];
+      var sc = fm ? fm.home + " " + fm.hs + "-" + fm.as + " " + fm.away + (fin.pens ? " (" + fin.pens.join("-") + " pens)" : fin.aet ? " (aet)" : "") : "";
+      var scHe = fm ? fm.home + " " + fm.hs + "-" + fm.as + " " + fm.away + (fin.pens ? " (" + fin.pens.join("-") + " בפנדלים)" : fin.aet ? " (בהארכה)" : "") : "";
+      tile("Champions", "אלופה", D.champion,
+        T(D.champion) + " won the final" + (sc ? ": " + esc(sc) : "") + ".",
+        T(D.champion) + " זכתה בגמר" + (scHe ? ": " + esc(scHe) : "") + ".");
+    }
+    if (b && !isGroups()) {
       var gap = a.Pts - b.Pts;
-      tile(done ? "Champions" : "Top of the table", done ? "אלופה" : "בראש הטבלה", a.team,
-        T(a.team) + (done ? " won the league with " : " lead on ") + a.Pts + " pts, " +
+      var lpDone = (D.matches || []).filter(isFirst).every(function (m) { return m.played; }) && c.matchdays >= 8;
+      tile(lpDone ? "Won the league phase" : "Top of the league phase", lpDone ? "ניצחה בשלב הליגה" : "בראש שלב הליגה", a.team,
+        T(a.team) + (lpDone ? " topped the league phase with " : " lead on ") + a.Pts + " pts, " +
           (gap ? gap + " clear of " + esc(b.team) : "level with " + esc(b.team) + " on points") + ".",
-        T(a.team) + (done ? " זכתה באליפות עם " : " מובילה עם ") + a.Pts + " נק', " +
+        T(a.team) + (lpDone ? " סיימה ראשונה בשלב הליגה עם " : " מובילה עם ") + a.Pts + " נק', " +
           (gap ? gap + " לפני " + esc(b.team) : "בשוויון נקודות עם " + esc(b.team)) + ".");
     }
     var pts = teamPoints().filter(function (r) { return r.n >= 3; });
@@ -317,32 +360,105 @@
       return '<span class="fd f-' + r + '" title="' + r + '">' + r + "</span>";
     }).join("") + "</span>";
   }
-  function renderStandings() {
-    var host = document.getElementById("standings");
-    var rows = D.standings || [];
-    if (!rows.length) { host.innerHTML = emptyHtml("No results yet this season", "Standings appear after the first matchday."); return; }
+  function standingsTable(rows, opts) {
+    opts = opts || {};
     var total = rows.length;
     var body = rows.map(function (r) {
       return '<tr class="' + zoneOf(r.rank, total) + '">' +
         '<td class="pos">' + r.rank + "</td>" +
         '<td class="team"><div class="team-cell">' + logoImg(r.team) + '<span class="nm">' + esc(r.team) + "</span></div></td>" +
         "<td>" + r.P + "</td><td>" + r.W + "</td><td>" + r.D + "</td><td>" + r.L + "</td>" +
-        "<td>" + r.GF + "</td><td>" + r.GA + "</td><td>" + (r.GD > 0 ? "+" + r.GD : r.GD) + "</td>" +
+        (opts.compact ? "" : "<td>" + r.GF + "</td><td>" + r.GA + "</td>") + "<td>" + (r.GD > 0 ? "+" + r.GD : r.GD) + "</td>" +
         '<td class="pts">' + r.Pts + "</td>" +
-        "<td>" + (r.ppda != null ? r.ppda.toFixed(1) : "–") + "</td>" +
-        '<td class="form-cell">' + formDots(r.form) + "</td></tr>";
+        (opts.compact ? "" : "<td>" + (r.ppda != null ? r.ppda.toFixed(1) : "–") + "</td>") +
+        (opts.compact ? "" : '<td class="form-cell">' + formDots(r.form) + "</td>") +
+        (opts.reach ? "<td>" + reachChip(r.team) + "</td>" : "") + "</tr>";
     }).join("");
-    host.innerHTML =
-      "<table class='standings'><thead><tr><th>#</th><th class='team'>Team</th>" +
-      "<th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>" +
-      "<th title='Passes allowed per defensive action in your defensive two-thirds — season average, lower = more intense pressing'>PPDA</th>" +
-      "<th class='form-cell'>Form</th>" +
-      "</tr></thead><tbody>" + body + "</tbody></table>" +
-      "<div class='zone-legend'>" +
-      "<span><i class='z-ucl'></i>Champions League</span>" +
-      "<span><i class='z-uel'></i>Europa League</span>" +
-      "<span><i class='z-uecl'></i>Conference play-off</span>" +
-      "<span><i class='z-rel'></i>Relegation</span></div>";
+    return "<table class='standings'><thead><tr><th>#</th><th class='team'>Team</th>" +
+      "<th>P</th><th>W</th><th>D</th><th>L</th>" + (opts.compact ? "" : "<th>GF</th><th>GA</th>") + "<th>GD</th><th>Pts</th>" +
+      (opts.compact ? "" : "<th title='Passes allowed per defensive action in your defensive two-thirds — season average, lower = more intense pressing'>PPDA</th>" +
+        "<th class='form-cell'>Form</th>") +
+      (opts.reach ? "<th><span data-he='הגיעה עד'>Went on to</span></th>" : "") +
+      "</tr></thead><tbody>" + body + "</tbody></table>";
+  }
+  function renderStandings() {
+    var host = document.getElementById("standings");
+    var rows = D.standings || [];
+    var title = document.getElementById("standingsTitle"), note = document.getElementById("standingsNote");
+    if (title) title.innerHTML = isGroups() ? '<span data-he="שלב הבתים">Group Stage</span>' : '<span data-he="שלב הליגה">League Phase</span>';
+    if (note) note.innerHTML = isGroups()
+      ? '<span data-he-html="פורמט ישן (עד 2023-24): 32 קבוצות בשמונה בתים של ארבע, שישה משחקים לכל קבוצה. שתי הראשונות עולות לשמינית הגמר, השלישית יורדת לנוקאאוט של הליגה האירופית. שובר שוויון: קודם מפגשים ישירים בין הקבוצות השוות, אחר כך הפרש שערים ושערי זכות.">Old format (to 2023-24): 32 clubs in eight groups of four, six games each. The top two reach the round of 16, third drops into the Europa League knockouts. Tiebreak: head-to-head between the tied clubs first, then goal difference and goals scored.</span>'
+      : '<span data-he-html="פורמט חדש (מ־2024-25): טבלה אחת של 36 קבוצות, שמונה משחקים לכל קבוצה מול שמונה יריבות שונות. מקומות 1 עד 8 עולים ישר לשמינית הגמר, 9 עד 24 משחקים פלייאוף דו־משחקי, 25 עד 36 מודחים. שוברי שוויון: הפרש שערים, שערי זכות, שערי חוץ, ניצחונות, ניצחונות חוץ.">New format (from 2024-25): one table of 36 clubs, eight games each against eight different opponents. 1st to 8th go straight to the round of 16, 9th to 24th play a two-legged playoff, 25th to 36th are out. Tiebreaks: goal difference, goals scored, away goals, wins, away wins.</span>';
+    if (!rows.length) { host.innerHTML = emptyHtml("No results yet this season", "Standings appear after the first matchday."); renderBracket(); return; }
+    var finished = D.status === "finished";
+    var legend;
+    if (isGroups()) {
+      var G = D.groups || {};
+      host.innerHTML = '<div class="ucl-groups">' + Object.keys(G).sort().map(function (g) {
+        return '<div class="card ucl-group" style="padding:0;overflow:hidden"><h3 class="ucl-group-h"><span data-he="' + esc("בית " + g) + '">Group ' + g + "</span></h3>" +
+          '<div class="table-scroll">' + standingsTable(G[g], { compact: true, reach: finished }) + "</div></div>";
+      }).join("") + "</div>";
+      legend = "<span><i class='z-ucl'></i><span data-he='1-2: שמינית הגמר'>1-2: round of 16</span></span>" +
+        "<span><i class='z-uel'></i><span data-he='3: ליגה אירופית'>3rd: Europa League</span></span>" +
+        "<span><i class='z-rel'></i><span data-he='4: הודחה'>4th: out</span></span>";
+    } else {
+      host.innerHTML = '<div class="card" style="padding:0;overflow:hidden"><div class="table-scroll">' + standingsTable(rows, { reach: finished }) + "</div></div>";
+      legend = "<span><i class='z-ucl'></i><span data-he='1-8: שמינית הגמר'>1-8: round of 16</span></span>" +
+        "<span><i class='z-uel'></i><span data-he='9-24: פלייאוף'>9-24: knockout playoff</span></span>" +
+        "<span><i class='z-rel'></i><span data-he='25-36: הודחה'>25-36: out</span></span>";
+    }
+    host.innerHTML += "<div class='zone-legend'>" + legend + "</div>";
+    renderBracket();
+  }
+
+  /* ---- Knockout bracket: one column per round, two-legged ties with aggregate ---- */
+  function renderBracket() {
+    var host = document.getElementById("bracket");
+    if (!host) return;
+    var R = D.rounds || {}, order = KO_ORDER.filter(function (k) { return R[k] && R[k].length; });
+    var hint = document.getElementById("bracketNote");
+    if (hint) hint.innerHTML = isGroups()
+      ? '<span data-he="שני משחקים לכל מפגש עד לגמר החד־פעמי. כלל שערי החוץ בוטל מ־2021-22, אז שוויון בסיכום הולך להארכה ולפנדלים.">Two legs per tie until the one-off final. The away-goals rule was scrapped in 2021-22, so a level aggregate goes to extra time and penalties.</span>'
+      : '<span data-he="הפורמט החדש מוסיף סיבוב פלייאוף (מקומות 9 עד 24) לפני שמינית הגמר. שני משחקים לכל מפגש עד לגמר החד־פעמי.">The new format adds a knockout playoff (9th to 24th) before the round of 16. Two legs per tie until the one-off final.</span>';
+    if (!order.length) {
+      host.innerHTML = emptyHtml(D.format === "league" ? "The knockouts haven't started" : "No knockout data",
+        D.format === "league" ? "The playoff round starts in February, after the league phase ends." : "");
+      return;
+    }
+    var byId = {}; (D.matches || []).forEach(function (m) { byId[m.id] = m; });
+    // Line each round up with the next: the two ties feeding a later tie sit side by side,
+    // in the order of that tie's clubs, so the bracket reads like a draw sheet.
+    var sorted = {};
+    order.slice().reverse().forEach(function (k, i, rev) {
+      var next = i ? sorted[rev[i - 1]] : null;
+      if (!next) { sorted[k] = R[k].slice(); return; }
+      var left = R[k].slice(), out = [];
+      next.forEach(function (T) {
+        [T.a, T.b].forEach(function (club) {
+          for (var j = 0; j < left.length; j++) {
+            if (left[j].a === club || left[j].b === club) { out.push(left.splice(j, 1)[0]); return; }
+          }
+        });
+      });
+      sorted[k] = out.concat(left);
+    });
+    host.innerHTML = '<div class="ucl-bracket">' + order.map(function (k) {
+      return '<div class="ucl-round"><h4>' + stageHtml(k) + '</h4><div class="ucl-ties">' + sorted[k].map(function (t) {
+        var row = function (team, g) {
+          return '<div class="ut-row' + (t.winner === team ? " win" : "") + '">' + logoImg(team) + '<span class="nm">' + esc(team) + "</span><b>" + (t.legs.some(function (id) { return byId[id] && byId[id].played; }) ? g : "") + "</b></div>";
+        };
+        var legs = t.legs.map(function (id) {
+          var m = byId[id]; if (!m) return "";
+          var txt = m.played ? esc(m.home) + " " + m.hs + "-" + m.as + " " + esc(m.away) : esc(m.home) + " v " + esc(m.away) + " · " + esc(fmtDate(m.date));
+          return m.has_events ? '<a href="match.html?season=' + encodeURIComponent(season) + "&id=" + encodeURIComponent(m.id) + '">' + txt + "</a>" : txt;
+        }).join("<br>");
+        var extra = [];
+        if (t.aet) extra.push("aet");
+        if (t.pens) extra.push("pens " + t.pens.join("-"));
+        return '<div class="ucl-tie' + (k === "F" ? " final" : "") + '">' + row(t.a, t.agg[0]) + row(t.b, t.agg[1]) +
+          '<div class="ut-legs">' + legs + (extra.length ? "<br>" + extra.join(" · ") : "") + "</div></div>";
+      }).join("") + "</div></div>";
+    }).join("") + "</div>";
   }
 
   /* ---- Matches (grouped by matchday) ---- */
@@ -352,6 +468,12 @@
     var t = m.kickoff ? new Date(m.kickoff) : null;
     var time = (t && !isNaN(t)) ? t.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
     return '<span class="sc up">' + (time || "vs") + "</span>";
+  }
+  function matchMeta(m) {
+    var bits = [];
+    if (m.group) bits.push("Group " + m.group);
+    if (m.leg) bits.push(m.leg === 1 ? "1st leg" : "2nd leg");
+    return bits.length ? bits.join(" · ") + " · " : "";
   }
   function matchRow(m) {
     var link = m.has_events ? ("match.html?season=" + encodeURIComponent(season) + "&id=" + encodeURIComponent(m.id)) : null;
@@ -365,7 +487,8 @@
     var open = link ? '<a class="match-card-link" href="' + link + '">' : "<div class='" + cls + "'>";
     var close = link ? "</a>" : "</div>";
     if (link) open = '<a class="' + cls + '" href="' + link + '">';
-    return open + '<div class="mc-date">' + fmtDate(m.date) + "</div>" + inner + xg + close;
+    var ko = m.played && (m.aet || m.pens) ? '<div class="mc-xg">' + (m.pens ? "Penalties " + m.pens.join("-") : "After extra time") + "</div>" : "";
+    return open + '<div class="mc-date">' + esc(matchMeta(m)) + fmtDate(m.date) + "</div>" + inner + xg + ko + close;
   }
   function renderMatches() {
     var q = (mSearch.value || "").toLowerCase().trim();
@@ -375,31 +498,33 @@
     var ms = (D.matches || []).filter(function (m) {
       if (mode === "played" && !m.played) return false;
       if (mode === "upcoming" && m.played) return false;
-      if (mdFilter !== "all" && String(m.matchday) !== mdFilter) return false;
+      if (mdFilter !== "all" && roundKey(m) !== mdFilter) return false;
       if (q && (m.home + " " + m.away).toLowerCase().indexOf(q) < 0) return false;
       return true;
     });
-    if (!ms.length) { list.innerHTML = emptyHtml("No matches match these filters", "Clear the search or pick another matchday."); return; }
-    // group by matchday
+    if (!ms.length) { list.innerHTML = emptyHtml("No matches match these filters", "Clear the search or pick another round."); return; }
+    // group by round: first-phase matchday, then each knockout round
     var byMd = {};
-    ms.forEach(function (m) { (byMd[m.matchday] = byMd[m.matchday] || []).push(m); });
-    var out = Object.keys(byMd).map(Number).sort(function (a, b) { return a - b; }).map(function (md) {
-      var group = byMd[md].sort(function (a, b) { return (a.kickoff || a.date).localeCompare(b.kickoff || b.date); });
-      return '<div class="md-block"><h3 class="md-head">Matchday ' + md + "</h3>" +
+    ms.forEach(function (m) { var k = roundKey(m); (byMd[k] = byMd[k] || []).push(m); });
+    var out = Object.keys(byMd).sort(function (a, b) { return roundOrder(a) - roundOrder(b); }).map(function (md) {
+      var group = byMd[md].sort(function (a, b) { return (a.kickoff || a.date).localeCompare(b.kickoff || b.date) || String(a.group || "").localeCompare(String(b.group || "")); });
+      return '<div class="md-block"><h3 class="md-head">' + roundHtml(md) + "</h3>" +
         '<div class="match-grid">' + group.map(matchRow).join("") + "</div></div>";
     }).join("");
     list.innerHTML = out;
   }
   function populateMatchdayFilter() {
-    var mds = {};
-    (D.matches || []).forEach(function (m) { if (m.matchday) mds[m.matchday] = 1; });
-    var opts = ['<option value="all">All matchdays</option>'].concat(
-      Object.keys(mds).map(Number).sort(function (a, b) { return a - b; }).map(function (md) {
-        return '<option value="' + md + '">Matchday ' + md + "</option>";
+    var keys = {};
+    (D.matches || []).forEach(function (m) { if (m.stage) keys[roundKey(m)] = 1; });
+    var opts = ['<option value="all">All rounds</option>'].concat(
+      Object.keys(keys).sort(function (a, b) { return roundOrder(a) - roundOrder(b); }).map(function (k) {
+        return '<option value="' + k + '">' + esc(roundText(k)) + "</option>";
       }));
     mMatchday.innerHTML = opts.join("");
-    var cur = (D.counts || {}).current_matchday;
-    if (cur) mMatchday.value = String(cur);
+    // land on the latest round with a result
+    var played = (D.matches || []).filter(function (m) { return m.played && m.stage; })
+      .sort(function (a, b) { return roundOrder(roundKey(a)) - roundOrder(roundKey(b)); });
+    if (played.length) mMatchday.value = roundKey(played[played.length - 1]);
   }
 
   /* ---- xG analysis lab (reuses teamScatter; lights up post-backfill) ---- */
@@ -408,7 +533,7 @@
      D.xgRecords (one row per team-match: xgf/xga/gf/ga/opp/home) plus
      the per-match team `stats` block for the shot-quality chart.
      Derived stats recompute per season (see computeXgDerived). ======= */
-  var COL = { green: "#a855f7", blue: "#9fd0ff", orange: "#ffb454", red: "#ff2a4d" };
+  var COL = { green: "#3b82f6", blue: "#9fd0ff", orange: "#ffb454", red: "#ff2a4d" };
   var R = [], AGG = [], xgVals = [], goalVals = [], rPearson = 0, fit = { slope: 0, intercept: 0 };
   var ledgerSort = { key: "xgd", dir: -1 };
   var dbSort = { key: "gf", dir: -1 };
@@ -483,13 +608,13 @@
       if (g > 0) svg.push('<text x="' + (sx(0) - 8) + '" y="' + (sy(g) + 3) + '" fill="#b9bfc9" font-size="10" text-anchor="end">' + g + "</text>");
     }
     svg.push('<line x1="' + sx(0) + '" y1="' + sy(0) + '" x2="' + sx(maxV) + '" y2="' + sy(maxV) + '" stroke="#b9bfc9" stroke-width="1.2" stroke-dasharray="5 4"/>');
-    svg.push('<line x1="' + sx(0) + '" y1="' + sy(fit.intercept) + '" x2="' + sx(maxV) + '" y2="' + sy(fit.slope * maxV + fit.intercept) + '" stroke="#a855f7" stroke-width="2"/>');
+    svg.push('<line x1="' + sx(0) + '" y1="' + sy(fit.intercept) + '" x2="' + sx(maxV) + '" y2="' + sy(fit.slope * maxV + fit.intercept) + '" stroke="#3b82f6" stroke-width="2"/>');
     svg.push('<text x="' + (W / 2) + '" y="' + (H - 6) + '" fill="#f5f7fa" font-size="12" text-anchor="middle">Expected goals (xG)</text>');
     svg.push('<text x="14" y="' + (H / 2) + '" fill="#f5f7fa" font-size="12" text-anchor="middle" transform="rotate(-90 14 ' + (H / 2) + ')">Actual goals</text>');
     R.forEach(function (r, i) {
       var jx = ((i * 7) % 5 - 2) * 1.2, jy = ((i * 3) % 5 - 2) * 1.2;
       var cx = sx(r.xgf) + jx, cy = sy(r.gf) + jy, over = r.gf - r.xgf;
-      var col = over > 0.4 ? "#a855f7" : over < -0.4 ? "#ff2a4d" : "#9fd0ff";
+      var col = over > 0.4 ? "#3b82f6" : over < -0.4 ? "#ff2a4d" : "#9fd0ff";
       svg.push('<circle class="pt" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="5.5" fill="' + col +
         '" fill-opacity="0.78" stroke="#0c0d10" stroke-width="1" data-team="' + esc(r.team) + '" data-opp="' + esc(r.opp) +
         '" data-g="' + r.gf + '" data-xg="' + r.xgf.toFixed(2) + '"/>');
@@ -534,7 +659,7 @@
       svg.push('<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - padB + 14) + '" fill="#b9bfc9" font-size="9.5" text-anchor="middle">' + lab + "</text>");
       if (!bk.n) return;
       var ax = bk.xg / bk.n, ag = bk.g / bk.n, d = ag - ax;
-      var col = d > 0.15 ? "#a855f7" : d < -0.15 ? "#ff2a4d" : "#9fd0ff";
+      var col = d > 0.15 ? "#3b82f6" : d < -0.15 ? "#ff2a4d" : "#9fd0ff";
       var y = by(bk.n);
       var info = lab + " xG · " + bk.n + " team-games · avg xG " + ax.toFixed(2) + " → avg goals " + ag.toFixed(2) +
                  " (" + (d >= 0 ? "+" : "") + d.toFixed(2) + ")";
@@ -911,7 +1036,7 @@
   }
   /* ---- Standouts distribution view (KDE density + anomalies + 2-stat scatter + radar).
      Ported from the WC2026 dashboard; stat / preset / radar lists trimmed to the
-     metrics the Premier League players.js carries. All client-side from window.LL_PLAYERS. ---- */
+     metrics the Champions League players.js carries. All client-side from window.LL_PLAYERS. ---- */
   var SO_STATS = [
     ["ga", "Goals + assists", 0], ["g", "Goals", 0], ["a", "Assists", 0],
     ["xg", "Expected goals (xG)", 2], ["xg_diff", "Finishing (goals − xG)", 2],
@@ -1018,7 +1143,7 @@
       var dy = baseY - 4 - jit(p.pid) * Math.max(6, band - 6);
       var isSpot = spotPid && p.pid === spotPid, anom = z >= 2;
       var r = isSpot ? 5.5 : anom ? 3.4 : 2.3;
-      var fill = isSpot ? "#ffffff" : anom ? "#a855f7" : "#9fd0ff";
+      var fill = isSpot ? "#ffffff" : anom ? "#3b82f6" : "#9fd0ff";
       var op = isSpot ? 1 : anom ? 0.92 : 0.5;
       var stroke = (isSpot || anom) ? ' stroke="#0c0d10" stroke-width="0.8"' : "";
       var info = p.name + " · " + p.team + " — " + soFmt(v, dp) + " (" + (z >= 0 ? "+" : "") + z.toFixed(1) + "σ)";
@@ -1044,7 +1169,7 @@
       tier = (L.x - lastX < 86) ? tier + 1 : 0; lastX = L.x;
       var ly = Math.max(padT + 6, L.y - 8 - tier * 13);
       var lx = Math.max(padL + 18, Math.min(W - padR - 18, L.x));
-      svg.push('<line x1="' + L.x.toFixed(1) + '" y1="' + L.y.toFixed(1) + '" x2="' + lx.toFixed(1) + '" y2="' + ly.toFixed(1) + '" stroke="' + (L.gold ? "#ffffff" : "#a855f7") + '" stroke-width="0.7" stroke-opacity="0.6"/>');
+      svg.push('<line x1="' + L.x.toFixed(1) + '" y1="' + L.y.toFixed(1) + '" x2="' + lx.toFixed(1) + '" y2="' + ly.toFixed(1) + '" stroke="' + (L.gold ? "#ffffff" : "#3b82f6") + '" stroke-width="0.7" stroke-opacity="0.6"/>');
       svg.push('<text x="' + lx.toFixed(1) + '" y="' + (ly - 3).toFixed(1) + '" fill="' + (L.gold ? "#ffb020" : "#ff7a90") + '" font-size="10.5" text-anchor="middle">' + esc(L.txt) + "</text>");
     });
     svg.push("</svg>");
@@ -1115,7 +1240,7 @@
     setHTML("soStandouts", '<div class="so-bars">' + top.map(function (t) {
       var pct = Math.max(2, 100 * t.z / maxZ), hot = t.z >= 2;
       return '<div class="so-bar-row"><div class="nm">' + logoImg(t.p.team) + "<span>" + esc(t.p.name) + "</span></div>" +
-        '<div class="so-bar-track"><div class="so-bar-fill" style="width:' + pct.toFixed(1) + "%;background:" + (hot ? "#a855f7" : "var(--accent-2)") + '"></div></div>' +
+        '<div class="so-bar-track"><div class="so-bar-fill" style="width:' + pct.toFixed(1) + "%;background:" + (hot ? "#3b82f6" : "var(--accent-2)") + '"></div></div>' +
         '<div class="so-bar-val">' + soFmt(t.v, dp) + ' <span class="so-z">' + (t.z >= 0 ? "+" : "") + t.z.toFixed(1) + "σ</span></div></div>";
     }).join("") + "</div>");
   }
@@ -1190,7 +1315,7 @@
       var cx = sx(vx), cy = sy(vy), r = radius(p);
       var elite = vx > mx && vy > my;
       var isSpot = spotPid && p.pid === spotPid;
-      var fill = isSpot ? "#ffffff" : elite ? "#a855f7" : "#9fd0ff";
+      var fill = isSpot ? "#ffffff" : elite ? "#3b82f6" : "#9fd0ff";
       var op = isSpot ? 1 : elite ? 0.85 : 0.5;
       var stroke = (isSpot || elite) ? ' stroke="#0c0d10" stroke-width="0.9"' : "";
       var info = p.name + " · " + p.team + " — " + soStatLabel(xKey) + " " + soFmt(vx, dpx) +
@@ -1599,14 +1724,14 @@
     });
   }
   /* ---- Team Lab: avg km covered per game, per club (D.distance, from FotMob's team stat via
-     epl/fetch_team_stats.py → build_data.py). Bars diverge from the league average: right = runs more. ---- */
+     ucl/fetch_team_stats.py → build_data.py). Bars diverge from the league average: right = runs more. ---- */
   function renderDistanceTable() {
     var host = document.getElementById("distTable");
     if (!host) return;
     var dist = D.distance, rows = (dist && dist.teams) || [];
     if (!rows.length) {
       host.innerHTML = emptyHtml("No distance data for this season yet",
-        "Run epl/fetch_team_stats.py --season " + season + " on a machine with FotMob access, then rebuild.");
+        "Run ucl/fetch_team_stats.py --season " + season + " on a machine with FotMob access, then rebuild.");
       return;
     }
     var kms = rows.map(function (r) { return r.km; });
@@ -1635,7 +1760,7 @@
      coords attack toward x=100; the pitch is drawn goal-at-top. ---- */
   var SHOTS = [];
   var tlState = { team: "all", teamB: "none", teamC: "none", filter: "all", sit: "all", mode: "dots" };
-  var TL_COLORS = ["#9fd0ff", "#a855f7", "#ffffff"];
+  var TL_COLORS = ["#9fd0ff", "#3b82f6", "#ffffff"];
 
   function tlMatchSit(s, sit) {
     if (sit === "all") return true;
@@ -1697,7 +1822,7 @@
     } else {
       shots.slice().sort(function (a, b) { return (a.g ? 1 : 0) - (b.g ? 1 : 0); }).forEach(function (s) {
         var r = 2.3 + 6 * Math.sqrt(Math.max(0, s.xg));
-        var fill = s.g ? "#a855f7" : s.ot ? "#9fd0ff" : "#7c89a8";
+        var fill = s.g ? "#3b82f6" : s.ot ? "#9fd0ff" : "#7c89a8";
         var op = s.g ? 0.95 : s.ot ? 0.6 : 0.35;
         var stroke = s.g ? ' stroke="#0c0d10" stroke-width="0.8"' : "";
         var info = s.t + " vs " + s.o + " — xG " + s.xg.toFixed(2) + (s.g ? " (GOAL)" : s.ot ? " (on target)" : "") + " · " + s.s + " · " + s.m + "'";
@@ -1922,7 +2047,9 @@
     return Math.pow(lambda, k) * Math.exp(-lambda) / f;
   }
   function computeStrengths() {
-    var played = (D.matches || []).filter(function (m) { return m.played; });
+    // Champions League: strengths from this season's league-phase goals (knockout games are
+    // between stronger sides and two-legged, so they'd skew a model that only projects the table).
+    var played = (D.matches || []).filter(function (m) { return m.played && isFirst(m); });
     if (played.length < 20) return null;   // too little signal
     var homeG = 0, awayG = 0, n = played.length;
     played.forEach(function (m) { homeG += m.hs; awayG += m.as; });
@@ -1963,7 +2090,7 @@
   function runProjection() {
     var S = computeStrengths();
     if (!S) return null;
-    var remaining = (D.matches || []).filter(function (m) { return !m.played; });
+    var remaining = (D.matches || []).filter(function (m) { return !m.played && isFirst(m); });
     var base = {};
     (D.standings || []).forEach(function (r) { base[r.team] = r.Pts; });
     var teams = Object.keys(base);
@@ -1978,9 +2105,10 @@
       }
       exp[m.home] += 3 * pH + pD; exp[m.away] += 3 * pA + pD;
     });
-    // Monte-Carlo for title / UCL / European / relegation probabilities. UCL cut is season-aware
-    // (5 in 2024-25 & 2025-26, else 4) to match zoneOf; "European" = UCL + Europa + Conference.
-    var uclN = uclSpots(season);
+    // Monte-Carlo for the league-phase outcomes: 1st, top 8 (straight to the round of 16), top 24
+    // (at least the playoff) and 25th-36th (out). The fields keep the league forks' names
+    // (title / top5 / europe / rel) so the table renderer stays the same shape.
+    var uclN = 8;
     var N = 3000, tally = {};
     teams.forEach(function (t) { tally[t] = { title: 0, top5: 0, europe: 0, rel: 0, ptsSum: 0 }; });
     var gd0 = {}; (D.standings || []).forEach(function (r) { gd0[r.team] = r.GD; });
@@ -2001,8 +2129,8 @@
         tally[t].ptsSum += pts[t];
         if (rk === 1) tally[t].title++;
         if (rk <= uclN) tally[t].top5++;
-        if (rk <= uclN + 2) tally[t].europe++;
-        if (rk > teams.length - 3) tally[t].rel++;
+        if (rk <= 24) tally[t].europe++;
+        if (rk > 24) tally[t].rel++;
       });
     }
     var proj = teams.map(function (t) {
@@ -2016,22 +2144,35 @@
   function pct(x) { return x <= 0 ? "–" : x >= 0.995 ? "99%+" : (x * 100).toFixed(x < 0.1 ? 1 : 0) + "%"; }
   function bar(x, cls) { return '<div class="pbar"><span class="' + cls + '" style="width:' + Math.max(2, x * 100).toFixed(0) + '%"></span><em>' + pct(x) + "</em></div>"; }
   function renderProjection() {
-    var uclN = uclSpots(season);
+    var uclN = 8;
     var host = document.getElementById("projTable");
     var banner = document.getElementById("projChamp");
     if (D.status === "not_started") {
       host.innerHTML = '<p class="hint">This season has not started yet. Add the fixture schedule and the projection will populate.</p>';
       if (banner) banner.innerHTML = ""; return;
     }
+    // Only the 36-club league phase has a table to project. Old-format groups and a finished
+    // league phase have nothing left to simulate; a league phase whose fixture list isn't
+    // complete (openfootball seed: only played rounds) can't be simulated honestly either.
+    var first = (D.matches || []).filter(isFirst);
+    var left = first.filter(function (m) { return !m.played; }).length;
+    if (isGroups() || !left || first.length < 144) {
+      if (banner) banner.innerHTML = "";
+      host.innerHTML = '<p class="hint" style="padding:14px 18px;margin:0">' + (isGroups()
+        ? '<span data-he="הפורמט הישן של שלב הבתים: אין טבלת ליגה אחת להקרין. ראו את טבלאות הבתים ואת עץ הנוקאאוט בלשונית הטבלה.">Old group-stage format: there is no single league table to project. See the group tables and the knockout bracket under Standings.</span>'
+        : !left ? '<span data-he="שלב הליגה של העונה הזו הסתיים, אז אין מה להקרין. התוצאה הסופית בלשונית הטבלה, יחד עם עץ הנוקאאוט.">This season\'s league phase is over, so there is nothing left to project. The final table and the knockout bracket are under Standings.</span>'
+        : '<span data-he="התחזית צריכה את כל 144 משחקי שלב הליגה, וכרגע ידועים רק ' + first.length + '. הריצו ucl/build_schedule.py במחשב עם גישה ל־FotMob כדי למשוך את כל לוח המשחקים.">The projection needs all 144 league-phase fixtures; only ' + first.length + ' are on file. Run ucl/build_schedule.py on a machine that can reach FotMob to pull the full fixture list.</span>') + "</p>";
+      return;
+    }
     var P = runProjection();
     if (!P) { host.innerHTML = '<p class="hint">Not enough matches played yet to project.</p>'; if (banner) banner.innerHTML = ""; return; }
     if (banner) {
       var champ = P[0];
       // Broadcast lower-third: lime label tab, crest plate, condensed italic name, tick meter.
-      banner.innerHTML = '<div class="champ-card"><div class="champ-lbl">Projected champion</div>' +
+      banner.innerHTML = '<div class="champ-card"><div class="champ-lbl">Projected league-phase winner</div>' +
         '<div class="champ-plate">' + logoImg(champ.team, "champ-crest") + "</div>" +
         '<div><div class="champ-team">' + esc(champ.team) + "</div>" +
-        '<div class="champ-odds">' + pct(champ.title) + ' title chance <span>· ~' + champ.projPts.toFixed(0) + " pts</span></div>" +
+        '<div class="champ-odds">' + pct(champ.title) + ' chance of 1st <span>· ~' + champ.projPts.toFixed(0) + " pts</span></div>" +
         '<div class="champ-meter" style="--pct:' + Math.round(100 * (champ.title || 0)) + '"><i></i></div></div></div>';
     }
     var body = P.map(function (r, i) {
@@ -2045,9 +2186,9 @@
     }).join("");
     host.innerHTML =
       "<table class='proj'><thead><tr><th>#</th><th class='team'>Team</th><th>Pts now</th><th>Proj pts</th>" +
-      "<th>Title</th><th>Top " + uclN + "</th><th>Top " + (uclN + 2) + "</th><th>Relegated</th></tr></thead><tbody>" + body + "</tbody></table>" +
+      "<th>1st</th><th>Top 8</th><th>Top 24</th><th>Out</th></tr></thead><tbody>" + body + "</tbody></table>" +
       "<p class='hint'>Poisson model on this season's goals (home/away attack &amp; defence strengths, shrunk toward league average), " +
-      "Monte-Carlo over the " + (D.matches.filter(function (m) { return !m.played; }).length) + " remaining fixtures (3,000 sims).</p>";
+      "Monte-Carlo over the " + left + " remaining league-phase fixtures (3,000 sims). Top 8 = straight to the round of 16, top 24 = at least the playoff.</p>";
   }
 
   /* ---- Players ---- */
@@ -2084,12 +2225,12 @@
     var ms = (D.matches || []).filter(function (m) { return m.played; })
       .sort(function (a, b) { return (b.kickoff || b.date).localeCompare(a.kickoff || a.date); });
     var body = ms.map(function (m) {
-      return "<tr><td>" + (m.matchday || "") + "</td><td>" + fmtDate(m.date) + "</td>" +
+      return "<tr><td>" + (isFirst(m) ? (m.group ? m.group + " · " : "") + "MD" + m.matchday : (STAGE_SHORT[m.stage] || "") + (m.leg ? " L" + m.leg : "")) + "</td><td>" + fmtDate(m.date) + "</td>" +
         "<td class='team'>" + esc(m.home) + "</td><td class='sc'>" + m.hs + "–" + m.as + "</td><td class='team'>" + esc(m.away) + "</td>" +
         "<td>" + (m.xg_home != null ? m.xg_home.toFixed(2) : "–") + "</td><td>" + (m.xg_away != null ? m.xg_away.toFixed(2) : "–") + "</td>" +
         "<td>" + (m.png ? '<a href="' + esc(m.png) + '" target="_blank">PNG</a>' : "–") + "</td></tr>";
     }).join("");
-    host.innerHTML = "<table><thead><tr><th>MD</th><th>Date</th><th>Home</th><th>Score</th><th>Away</th><th>xG H</th><th>xG A</th><th>Info</th></tr></thead><tbody>" + body + "</tbody></table>";
+    host.innerHTML = "<table><thead><tr><th>Round</th><th>Date</th><th>Home</th><th>Score</th><th>Away</th><th>xG H</th><th>xG A</th><th>Info</th></tr></thead><tbody>" + body + "</tbody></table>";
   }
 
   /* ================= wiring ================= */
@@ -2121,11 +2262,11 @@
     var active = document.querySelector("nav.tabs button.active");
     if (active) renderHeavyIfNeeded(active.dataset.view);
     var hud = document.getElementById("hudStatus");
-    if (hud) hud.innerHTML = "MD <b>" + (D.counts.current_matchday || 0) + "</b> · <b>" + (D.counts.played || 0) + "</b>/" +
+    if (hud) hud.innerHTML = (D.stageNow && !isFirst({ stage: D.stageNow }) ? "<b>" + esc(STAGE_SHORT[D.stageNow] || "") + "</b>" : "MD <b>" + (D.counts.current_matchday || 0) + "</b>") + " · <b>" + (D.counts.played || 0) + "</b>/" +
       (D.counts.total || 0) + " played · <b>" + (D.counts.with_xg || 0) + "</b> xG · upd " + esc(String(ALL.generated || "").slice(5, 16));
     var foot = document.getElementById("footNote");
     if (foot) foot.textContent = "Season " + season + " · generated " + ALL.generated + " · " +
-      (D.counts.played || 0) + " matches played · " + (D.counts.with_xg || 0) + " with xG · Premier League analytics pipeline.";
+      (D.counts.played || 0) + " matches played · " + (D.counts.with_xg || 0) + " with xG · Champions League analytics pipeline.";
   }
 
   /* ======================= PLAYER LAB ======================= */
@@ -2134,7 +2275,7 @@
   // read the season aggregates already in players.js; the action maps read a per-team
   // event file (player_lab/<slug>.js) fetched on demand — like match pages load their
   // matches_detail. No tackles map (league matches_detail carries no tackle events).
-  var PL_ACC = "#a855f7", PL_BLUE = "#9fd0ff", PL_MUTED = "#b9bfc9", PL_RED = "#ff2a4d";
+  var PL_ACC = "#3b82f6", PL_BLUE = "#9fd0ff", PL_MUTED = "#b9bfc9", PL_RED = "#ff2a4d";
   var PL = { main: null, cmp: null, teams: {} };   // main/cmp store "Team @@ Player"
   var PL_MAPS = [["shots", "Shots"], ["dribbles", "Take-ons"], ["passes", "Passes"], ["prog", "Progressive passes"]];
   var PL_RADAR = [
@@ -2250,7 +2391,7 @@
     s += '<rect x="0.3" y="0.3" width="' + (PL_HPW - 0.6) + '" height="' + (PL_HPH - 0.6) + '" fill="none" stroke="#23262e" stroke-width="0.4"/>';
     s += '<rect x="' + (midx - boxW / 2).toFixed(1) + '" y="0.3" width="' + boxW + '" height="' + boxD + '" fill="none" stroke="#23262e" stroke-width="0.4"/>';
     s += '<rect x="' + (midx - sixW / 2).toFixed(1) + '" y="0.3" width="' + sixW + '" height="' + sixD + '" fill="none" stroke="#23262e" stroke-width="0.4"/>';
-    s += '<rect x="' + (midx - goalW / 2).toFixed(1) + '" y="-1.6" width="' + goalW + '" height="1.6" fill="none" stroke="#a855f7" stroke-width="0.5"/>';
+    s += '<rect x="' + (midx - goalW / 2).toFixed(1) + '" y="-1.6" width="' + goalW + '" height="1.6" fill="none" stroke="#3b82f6" stroke-width="0.5"/>';
     s += '<path d="M ' + (midx - 7.3) + " " + boxD + " A 9.15 9.15 0 0 0 " + (midx + 7.3) + " " + boxD + '" fill="none" stroke="#23262e" stroke-width="0.4"/>';
     return s + inner + "</svg>";
   }
@@ -2266,7 +2407,7 @@
     if (!host) return;
     events = events || [];
     if (events.length > 400) { var st = Math.ceil(events.length / 400); events = events.filter(function (_, ix) { return ix % st === 0; }); }
-    var gid = "plg" + (_plGid++), GREEN = "#a855f7", RED = PL_RED, half = kind === "shots";
+    var gid = "plg" + (_plGid++), GREEN = "#3b82f6", RED = PL_RED, half = kind === "shots";
     function di(t) { return ' data-info="' + esc(t) + '"'; }
     function opp(e) { var o = e[e.length - 1]; return o ? " — vs " + o : ""; }
     function pt(wx, wy) { return half ? [plMapX(wy), plMapY(wx)] : [wx, 64 - wy * 0.64]; }
@@ -2294,7 +2435,7 @@
         }
         b = pt(e[2], e[3]); ex = b[0]; ey = b[1]; ok = e[4]; prog = kind === "prog" ? 1 : e[5]; mn = e[6];
         info = mn + "' — " + (ok ? "Complete" : "Incomplete") + (prog ? " · progressive" : "") + opp(e);
-        var col = ok ? (prog ? GREEN : "#7c3aed") : RED, mk = "url(#" + gid + (ok ? "g" : "r") + ")";
+        var col = ok ? (prog ? GREEN : "#1d4ed8") : RED, mk = "url(#" + gid + (ok ? "g" : "r") + ")";
         s += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + ex.toFixed(1) + '" y2="' + ey.toFixed(1) +
           '" stroke="' + col + '" stroke-width="' + (prog ? 0.45 : 0.28) + '" stroke-opacity="0.72"' + (ok ? "" : ' stroke-dasharray="0.9 0.9"') + ' marker-end="' + mk + '"' + di(info) + "/>";
       });

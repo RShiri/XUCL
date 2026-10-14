@@ -18,7 +18,7 @@
   var W = 1800, H = 1262, SCALE = 2, PAD = 30;
   var C = {
     bg: "#0c0d10", plate: "#15171c", plate2: "#1c1f26", well: "#090a0d", line: "rgba(255,255,255,0.10)",
-    text: "#f5f7fa", muted: "#b9bfc9", muted2: "#737b88", lime: "#a855f7", limeDim: "#7c3aed",
+    text: "#f5f7fa", muted: "#b9bfc9", muted2: "#737b88", lime: "#3b82f6", limeDim: "#1d4ed8",
     red: "#ff2a4d", info: "#9fd0ff", warn: "#ffb020", pitch: "#0f3d22", pitchLine: "rgba(255,255,255,0.45)"
   };
   var DISP = '"Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif';
@@ -175,7 +175,7 @@
 
       /* ---------- header ---------- */
       var mid = W / 2;
-      var tab = "Premier League" + (M.matchday ? " · Matchday " + M.matchday : "");
+      var tab = "Champions League" + (M.matchday ? " · Matchday " + M.matchday : (M.stage ? " · " + M.stage : ""));
       ctx.font = font(700, 15, false, DISP);
       var tabW = 44; for (var ti = 0; ti < tab.length; ti++) tabW += ctx.measureText(tab[ti].toUpperCase()).width + 1.8;
       ctx.fillStyle = C.lime; ctx.beginPath(); ctx.moveTo(mid - tabW / 2, 0); ctx.lineTo(mid + tabW / 2, 0); ctx.lineTo(mid + tabW / 2 - 10, 28); ctx.lineTo(mid - tabW / 2 + 10, 28); ctx.closePath(); ctx.fill();
@@ -375,8 +375,8 @@
 
       /* footer */
       ctx.fillStyle = C.line; ctx.fillRect(PAD, H - 34, W - PAD * 2, 1);
-      tracked(ctx, "rshiri.github.io/XEPL", PAD, H - 12, { size: 13, color: C.lime, tracking: 1.8 });
-      tracked(ctx, (M.source || "Data: WhoScored · xG: our own shot model") + (M.season ? "   ·   Premier League " + M.season.replace("-", "/") : ""), W - PAD, H - 12, { size: 12, color: C.muted2, align: "right", tracking: 1.2 });
+      tracked(ctx, "rshiri.github.io/XUCL", PAD, H - 12, { size: 13, color: C.lime, tracking: 1.8 });
+      tracked(ctx, (M.source || "Data: WhoScored · xG: our own shot model") + (M.season ? "   ·   Champions League " + M.season.replace("-", "/") : ""), W - PAD, H - 12, { size: 12, color: C.muted2, align: "right", tracking: 1.2 });
       return cv;
     });
   }

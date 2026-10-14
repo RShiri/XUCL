@@ -1,9 +1,9 @@
-# Rendered infographic PNGs are produced locally into epl/output (git-ignored);
-# the tracked, published copies live in epl_png/.
-epl/output/
+# Rendered infographic PNGs are produced locally into ucl/output (git-ignored);
+# the tracked, published copies live in ucl_png/.
+ucl/output/
 
 # Internal scraper cookie / matchCentre caches
-epl/matches/**/match_*_cache.json
+ucl/matches/**/match_*_cache.json
 
 # Private configuration / credentials
 .env
@@ -27,8 +27,8 @@ env/
 *.log
 
 # Raw WhoScored match JSONs are huge (~2MB each); the dashboard uses the derived
-# epl_dashboard/matches_detail/*.js instead. Keep raw scrapes local only.
-epl/matches/20*/*.json
+# ucl_dashboard/matches_detail/*.js instead. Keep raw scrapes local only.
+ucl/matches/20*/*.json
 # Scratch id lists written by the resilient scraper (harvest cache / gap-fill candidates)
-epl/matches/**/_*.txt
-epl_dashboard/matches_detail/.calibrated
+ucl/matches/**/_*.txt
+ucl_dashboard/matches_detail/.calibrated

@@ -14,17 +14,17 @@ directly *after* their marker, so the newest is always on top:
 
 Usage from Python (never raises — logging must not break a scrape)::
 
-    from epl.progress_log import log_scrape, log_platform, log_lesson
+    from ucl.progress_log import log_scrape, log_platform, log_lesson
     log_scrape("2026-27", target="MD3 · 10 matches", saved=9, failed=1,
                duration_s=612, trigger="dashboard button")
 
 From the shell::
 
-    py epl/progress_log.py scrape --season 2026-27 --saved 9 --failed 1 --note "..."
-    py epl/progress_log.py platform "Switched WhoScored fixtures URL to the archived-season form"
-    py epl/progress_log.py lesson --worked "Plain Selenium fallback survives Chrome 149"
-    py epl/progress_log.py lesson --failed "Re-running build_schedule wiped the 0-0 fixes"
-    py epl/progress_log.py show --limit 15
+    py ucl/progress_log.py scrape --season 2026-27 --saved 9 --failed 1 --note "..."
+    py ucl/progress_log.py platform "Switched WhoScored fixtures URL to the archived-season form"
+    py ucl/progress_log.py lesson --worked "Plain Selenium fallback survives Chrome 149"
+    py ucl/progress_log.py lesson --failed "Re-running build_schedule wiped the 0-0 fixes"
+    py ucl/progress_log.py show --limit 15
 """
 from __future__ import annotations
 
@@ -36,27 +36,27 @@ import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PROGRESS_FILE = Path(os.environ.get("EPL_PROGRESS_FILE") or (ROOT / "PROGRESS.md"))
+PROGRESS_FILE = Path(os.environ.get("UCL_PROGRESS_FILE") or (ROOT / "PROGRESS.md"))
 
 MARK_PLATFORM = "<!-- progress:platform -->"
 MARK_LESSONS = "<!-- progress:lessons -->"
 MARK_SCRAPES = "<!-- progress:scrapes -->"
 
-PROJECT = "XEPL"
-COMPETITION = "Premier League"
+PROJECT = "XUCL"
+COMPETITION = "Champions League"
 
 _TEMPLATE = f"""# PROGRESS — {PROJECT}
 
 Running log of the {COMPETITION} pipeline: every scrape, every platform change, and the
 lessons behind both. Newest entries first in each section. Rows under **Scrape log** are
-appended automatically by `epl/progress_log.py` (called from `run_match.py`,
+appended automatically by `ucl/progress_log.py` (called from `run_match.py`,
 `scrape_whoscored.py`, `backfill.py` and the dashboard's Scraper button) — write the
 Platform and Lessons sections by hand, or with:
 
 ```
-py epl/progress_log.py platform "what changed"
-py epl/progress_log.py lesson --worked "what to keep doing"
-py epl/progress_log.py lesson --failed "what not to repeat"
+py ucl/progress_log.py platform "what changed"
+py ucl/progress_log.py lesson --worked "what to keep doing"
+py ucl/progress_log.py lesson --failed "what not to repeat"
 ```
 
 ## Platform updates & changes

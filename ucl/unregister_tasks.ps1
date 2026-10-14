@@ -1,16 +1,16 @@
 <#
 .SYNOPSIS
-    Removes all EPL scheduled tasks created by register_tasks.ps1.
+    Removes all UCL scheduled tasks created by register_tasks.ps1.
 
 .EXAMPLE
-    powershell -ExecutionPolicy Bypass -File epl\unregister_tasks.ps1
+    powershell -ExecutionPolicy Bypass -File ucl\unregister_tasks.ps1
 #>
 
 $ErrorActionPreference = "SilentlyContinue"
 
-$tasks = Get-ScheduledTask -TaskPath "\EPL\*"
+$tasks = Get-ScheduledTask -TaskPath "\UCL\*"
 if (-not $tasks) {
-    Write-Host "No EPL tasks found." -ForegroundColor Yellow
+    Write-Host "No UCL tasks found." -ForegroundColor Yellow
     return
 }
 
@@ -21,4 +21,4 @@ foreach ($t in $tasks) {
     $count++
 }
 Write-Host ("-" * 50)
-Write-Host "Removed $count EPL task(s)." -ForegroundColor Cyan
+Write-Host "Removed $count UCL task(s)." -ForegroundColor Cyan

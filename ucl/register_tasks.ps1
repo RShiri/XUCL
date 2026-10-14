@@ -1,17 +1,17 @@
 <#
 .SYNOPSIS
-    Registers one Windows Scheduled Task per upcoming Premier League match in a season.
+    Registers one Windows Scheduled Task per upcoming Champions League match in a season.
 
     Each task fires once at kick-off + 3h (local time) and runs the one-shot:
 
-        python -m epl.run_match --fotmob-id <ID> --season <SEASON>
+        python -m ucl.run_match --fotmob-id <ID> --season <SEASON>
 
     which deep-scrapes the finished match (FotMob + WhoScored + Understat), renders the
     PNG, refreshes the dashboard data, and pushes it to GitHub.
 
 .DESCRIPTION
-    Reads epl/schedules/SCHEDULE_<Season>.json (from build_schedule.py). Tasks live in
-    the Task Scheduler folder "\EPL\". StartWhenAvailable means a run missed because the
+    Reads ucl/schedules/SCHEDULE_<Season>.json (from build_schedule.py). Tasks live in
+    the Task Scheduler folder "\UCL\". StartWhenAvailable means a run missed because the
     PC was off catches up on next wake.
 
 .PARAMETER Season      Season to schedule, e.g. 2025-26 (default) or 2026-27.
@@ -20,8 +20,8 @@
 .PARAMETER WhatIf      Show what would be registered without creating tasks.
 
 .EXAMPLE
-    powershell -ExecutionPolicy Bypass -File epl\register_tasks.ps1 -Season 2025-26
-    powershell -ExecutionPolicy Bypass -File epl\register_tasks.ps1 -Season 2026-27 -DaysAhead 14
+    powershell -ExecutionPolicy Bypass -File ucl\register_tasks.ps1 -Season 2025-26
+    powershell -ExecutionPolicy Bypass -File ucl\register_tasks.ps1 -Season 2026-27 -DaysAhead 14
 #>
 
 param(
@@ -33,14 +33,14 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$ScriptDir    = Split-Path -Parent $MyInvocation.MyCommand.Path      # ...\epl
+$ScriptDir    = Split-Path -Parent $MyInvocation.MyCommand.Path      # ...\ucl
 $RepoRoot     = Split-Path -Parent $ScriptDir                        # repo root
 $ScheduleJson = Join-Path $ScriptDir ("schedules\SCHEDULE_" + $Season + ".json")
 $PythonExe    = "C:\Users\puzik\AppData\Local\Python\pythoncore-3.14-64\python.exe"
-$TaskFolder   = "\EPL"
+$TaskFolder   = "\UCL"
 
 if (-not (Test-Path $ScheduleJson)) {
-    Write-Error "Schedule not found: $ScheduleJson. Run: py epl\build_schedule.py --season $Season"
+    Write-Error "Schedule not found: $ScheduleJson. Run: py ucl\build_schedule.py --season $Season"
     exit 1
 }
 if (-not (Test-Path $PythonExe)) {
@@ -54,7 +54,7 @@ $now    = Get-Date
 $cutoff = $now.AddDays($DaysAhead)
 
 Write-Host ""
-Write-Host "Premier League Task Registration - season $Season" -ForegroundColor Cyan
+Write-Host "Champions League Task Registration - season $Season" -ForegroundColor Cyan
 Write-Host ("=" * 70)
 Write-Host "Python      : $PythonExe"
 Write-Host "Working dir : $RepoRoot"
@@ -77,9 +77,9 @@ foreach ($g in $games) {
     $hName = ($g.home -replace '[^A-Za-z0-9]', '')
     $aName = ($g.away -replace '[^A-Za-z0-9]', '')
     $fid   = $g.fotmob_id
-    $taskName = "EPL_" + $Season.Replace('-','') + "_" + $fid + "_" + $hName + "_vs_" + $aName
+    $taskName = "UCL_" + $Season.Replace('-','') + "_" + $fid + "_" + $hName + "_vs_" + $aName
 
-    $pyArgs = "-m epl.run_match --fotmob-id " + $fid + " --season " + $Season
+    $pyArgs = "-m ucl.run_match --fotmob-id " + $fid + " --season " + $Season
     if ($NoPost) { $pyArgs = $pyArgs + " --no-post" }
 
     $label = "MD$($g.matchday)  $fid  $($g.home) vs $($g.away)  scrape $($scrapeAt.ToString('yyyy-MM-dd HH:mm'))"
@@ -90,7 +90,7 @@ foreach ($g in $games) {
     $trigger  = New-ScheduledTaskTrigger -Once -At $scrapeAt
     $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Minutes 25) -WakeToRun
 
-    Register-ScheduledTask -TaskName $taskName -TaskPath $TaskFolder -Action $action -Trigger $trigger -Settings $settings -Description ("Premier League auto scrape+render+push " + $g.home + " vs " + $g.away) -Force | Out-Null
+    Register-ScheduledTask -TaskName $taskName -TaskPath $TaskFolder -Action $action -Trigger $trigger -Settings $settings -Description ("Champions League auto scrape+render+push " + $g.home + " vs " + $g.away) -Force | Out-Null
     Write-Host ("[OK]     " + $label) -ForegroundColor Green
     $registered++
 }
@@ -99,6 +99,6 @@ Write-Host ("=" * 70)
 Write-Host "Registered : $registered" -ForegroundColor Cyan
 Write-Host "Skipped (past) $skippedPast  (beyond window) $skippedFar  (no kickoff time) $skippedNoTime"
 Write-Host ""
-Write-Host "View tasks:   Get-ScheduledTask -TaskPath '\EPL\*'"
-Write-Host "Remove all:   powershell -ExecutionPolicy Bypass -File epl\unregister_tasks.ps1"
+Write-Host "View tasks:   Get-ScheduledTask -TaskPath '\UCL\*'"
+Write-Host "Remove all:   powershell -ExecutionPolicy Bypass -File ucl\unregister_tasks.ps1"
 Write-Host ""

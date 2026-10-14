@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  var LOGO = "../team_logos/epl/";
+  var LOGO = "../team_logos/ucl/";
   var PW = 100, PH = 64; // pitch SVG units (length x width)
   var tooltip = document.getElementById("tooltip");
 
@@ -210,7 +210,7 @@
      Two clubs whose primaries are near-identical (Liverpool #C8102E vs Nottingham Forest #DD0000)
      would make every home/away-coloured mark on the page indistinguishable. Measure the CIE76 ΔE
      between the two; below the threshold, move the away side to its secondary kit colour
-     (LL_INDEX.teamColors, from epl/team_colors.py), then to a neutral fallback that also reads
+     (LL_INDEX.teamColors, from ucl/team_colors.py), then to a neutral fallback that also reads
      against the pitch. */
   function hexRgb(h) {
     h = String(h || "").replace("#", "");
@@ -337,7 +337,7 @@
 
   /* ================= BOOT ================= */
   function boot(D) {
-    document.title = D.home.name + " " + D.home.score + "-" + D.away.score + " " + D.away.name + " · EPL";
+    document.title = D.home.name + " " + D.home.score + "-" + D.away.score + " " + D.away.name + " · UCL";
     var cols = teamColours(D);
     D.home.color = cols.home; D.away.color = cols.away;   // every downstream mark reads these
     document.documentElement.style.setProperty("--c-home", cols.home);
@@ -396,19 +396,21 @@
     if (hasShootout) buildShootout(D);
   }
 
-  // "Matchday 3 · Sat 29 Aug 2026 · Premier League 2026/27". The detail files still carry a
+  // "Matchday 3 · Sat 29 Aug 2026 · Champions League 2026/27". The detail files still carry a
   // "Group Stage" label inherited from the World Cup port; the matchday from the season
   // bundle replaces it.
   function metaLine(D) {
     var rec = matchRecord(), parts = [];
-    if (rec && rec.matchday) parts.push("Matchday " + rec.matchday);
+    var KO = { PO: "Knockout playoff", R16: "Round of 16", QF: "Quarter-final", SF: "Semi-final", F: "Final" };
+    if (rec && KO[rec.stage]) parts.push(KO[rec.stage] + (rec.leg ? ", leg " + rec.leg : ""));
+    else if (rec && rec.matchday) parts.push((rec.group ? "Group " + rec.group + " · " : "") + "Matchday " + rec.matchday);
     else if (D.stage && !/group stage/i.test(D.stage)) parts.push(D.stage);
     if (D.date) {
       var dt = new Date(D.date + "T00:00:00");
       parts.push(isNaN(dt) ? D.date : dt.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" }));
     }
     if (D.venue) parts.push(D.venue);
-    if (SEASON) parts.push("Premier League " + SEASON.replace("-", "/"));
+    if (SEASON) parts.push("Champions League " + SEASON.replace("-", "/"));
     return parts.map(esc).join(" · ");
   }
 
@@ -930,7 +932,7 @@
       host.innerHTML = '<div class="shot-detail empty">No on-target shots with goal-placement data for this match.</div>';
       return;
     }
-    var GOAL_COL = "#a855f7", SAVE_COL = "#5a9bff";
+    var GOAL_COL = "#3b82f6", SAVE_COL = "#5a9bff";
     host.innerHTML =
       '<div class="controls-bar">' +
         '<button type="button" class="chip-toggle on home" id="otHome" aria-pressed="true">' + esc(D.home.name) + "</button>" +
@@ -1051,8 +1053,8 @@
         '<g id="passLayer"></g>' +
       "</svg></div>" +
       '<div class="legend-row">' +
-        '<span><i class="dot" style="background:#a855f7"></i>completed · progressive/key</span>' +
-        '<span><i class="dot" style="background:#7c3aed"></i>completed · normal</span>' +
+        '<span><i class="dot" style="background:#3b82f6"></i>completed · progressive/key</span>' +
+        '<span><i class="dot" style="background:#1d4ed8"></i>completed · normal</span>' +
         '<span><i class="dot" style="background:#ff2a4d"></i>incomplete · forward/key</span>' +
         '<span><i class="dot" style="background:#a83646"></i>incomplete · normal</span>' +
         '<span>dashed = incomplete · dot = start</span>' +
@@ -1096,7 +1098,7 @@
         // two reds for incomplete (bright = forward/key attempt, dim = normal).
         var dangerous = p.prog || p.key || p.assist || p.through;
         var col = p.ok
-          ? (dangerous ? "#a855f7" : "#7c3aed")
+          ? (dangerous ? "#3b82f6" : "#1d4ed8")
           : (dangerous ? "#ff2a4d" : "#a83646");
         var ln = document.createElementNS(SVGNS, "line");
         var cls = "pass-line" + (p.assist ? " assist" : p.key || p.prog ? " key" : "");
@@ -1185,7 +1187,7 @@
       "</div>" +
       '<div class="pitch-wrap"><svg class="pitch-svg" viewBox="-2 -2 ' + (PW + 4) + " " + (PH + 8) + '">' +
         '<defs>' +
-          '<marker id="drArrG" markerWidth="4" markerHeight="4" refX="3.1" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 Z" fill="#a855f7"/></marker>' +
+          '<marker id="drArrG" markerWidth="4" markerHeight="4" refX="3.1" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 Z" fill="#3b82f6"/></marker>' +
           '<marker id="drArrR" markerWidth="4" markerHeight="4" refX="3.1" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 Z" fill="#ff2a4d"/></marker>' +
         "</defs>" +
         pitchMarkup() +
@@ -1194,7 +1196,7 @@
         '<g id="dribLayer"></g>' +
       "</svg></div>" +
       '<div class="legend-row">' +
-        '<span><i class="dot" style="background:#a855f7"></i>successful</span>' +
+        '<span><i class="dot" style="background:#3b82f6"></i>successful</span>' +
         '<span><i class="dot" style="background:transparent;border:1px solid #ff2a4d"></i>unsuccessful</span>' +
         '<span>● = where the take-on happened · → carry direction (next touch)</span>' +
       "</div>" +
@@ -1242,7 +1244,7 @@
         if (!filt(p)) return;
         shown++; if (p.ok) ok++;
         var cx = tx(p.team, p.x), cy = ty(p.team, p.y);
-        var col = p.ok ? "#a855f7" : "#ff2a4d";
+        var col = p.ok ? "#3b82f6" : "#ff2a4d";
         if (p._ex != null) {
           var ax = tx(p.team, p._ex), ay = ty(p.team, p._ey);
           var arr = document.createElementNS(SVGNS, "line");
@@ -2253,7 +2255,7 @@
     function gxOf(gy) { return (Math.max(GY0, Math.min(GY0 + GYR, gy)) - GY0) / GYR * GW; }
     function gyOf(gz) { return GROUND - Math.max(0, Math.min(GZTOP, gz)); }
     var postL = gxOf(45.2), postR = gxOf(54.8), barY = gyOf(38);
-    var OUT_COL = { goal: "#a855f7", saved: "#ff5b5b", missed: "#ffb020", post: "#ffb020" };
+    var OUT_COL = { goal: "#3b82f6", saved: "#ff5b5b", missed: "#ffb020", post: "#ffb020" };
     var OUT_LBL = { goal: "Scored", saved: "Saved", missed: "Off target", post: "Hit post" };
     var OUT_ICON = { goal: "⚽", saved: "🧤", missed: "✗", post: "▮" };
 

@@ -1,5 +1,5 @@
 """
-Premier League 2025/26 — primary/secondary colours for all 20 clubs, for the PNG renderer.
+Champions League — primary/secondary colours per club, for the PNG renderer.
 Sourced from each club's official kit/crest palette. ``get_team_colors`` matches by
 exact name, then case-insensitively, then accent-folded, then falls back to a neutral grey.
 
@@ -12,7 +12,7 @@ Every club that has ever been in a scraped season stays here, even after relegat
 
 import unicodedata
 
-EPL_TEAM_COLORS: dict[str, dict[str, str]] = {
+UCL_TEAM_COLORS: dict[str, dict[str, str]] = {
     "Arsenal":                {"primary": "#EF0107", "secondary": "#FFFFFF"},
     "Aston Villa":            {"primary": "#95BFE5", "secondary": "#670E36"},
     "AFC Bournemouth":        {"primary": "#DA291C", "secondary": "#000000"},
@@ -54,7 +54,7 @@ EPL_TEAM_COLORS: dict[str, dict[str, str]] = {
 }
 
 # Drop-in alias so the ported renderer.py (which imports WC2026_TEAM_COLORS) works unchanged.
-WC2026_TEAM_COLORS = EPL_TEAM_COLORS
+WC2026_TEAM_COLORS = UCL_TEAM_COLORS
 
 
 def _fold(name: str) -> str:
@@ -66,16 +66,16 @@ def _fold(name: str) -> str:
 def get_team_colors(team_name: str, fallback_home: bool = True) -> dict[str, str]:
     """Return {'primary': hex, 'secondary': hex} for a team."""
     name_clean = (team_name or "").strip()
-    if name_clean in EPL_TEAM_COLORS:
-        return EPL_TEAM_COLORS[name_clean]
+    if name_clean in UCL_TEAM_COLORS:
+        return UCL_TEAM_COLORS[name_clean]
     lower = name_clean.lower()
-    for k, v in EPL_TEAM_COLORS.items():
+    for k, v in UCL_TEAM_COLORS.items():
         if k.lower() == lower:
             return v
     # Accent-fold before giving up: a feed occasionally sends a diacritic variant of an
     # otherwise-known name, and a miss here silently renders the club grey in the PNGs.
     folded = _fold(name_clean)
-    for k, v in EPL_TEAM_COLORS.items():
+    for k, v in UCL_TEAM_COLORS.items():
         if _fold(k) == folded:
             return v
     return {"primary": "#6b7a99" if fallback_home else "#4a5870", "secondary": "#FFFFFF"}

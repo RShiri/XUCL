@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """One command to (re)build the whole web dashboard.
 
-    py epl_dashboard/build_site.py            # build everything once
-    py epl_dashboard/build_site.py --watch    # rebuild whenever a match JSON changes
-    py epl_dashboard/build_site.py --serve     # build once, then serve on :8777
-    py epl_dashboard/build_site.py --watch --serve
+    py ucl_dashboard/build_site.py            # build everything once
+    py ucl_dashboard/build_site.py --watch    # rebuild whenever a match JSON changes
+    py ucl_dashboard/build_site.py --serve     # build once, then serve on :8777
+    py ucl_dashboard/build_site.py --watch --serve
 
 Rebuilds every per-match detail file (matches_detail/*.js) and the index data.js.
 The renderer already rebuilds individual games automatically; this is the manual /
@@ -19,7 +19,7 @@ import argparse
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-sys.path.insert(0, os.path.join(ROOT, "epl"))
+sys.path.insert(0, os.path.join(ROOT, "ucl"))
 
 import render_missing
 import build_match_details
@@ -30,12 +30,12 @@ import build_shots
 import build_player_lab
 import build_split
 
-MATCH_DIR = os.path.join(ROOT, "epl", "matches")
+MATCH_DIR = os.path.join(ROOT, "ucl", "matches")
 
 
 def build_once():
     t0 = time.time()
-    render_missing.main()   # PNGs for bulk-scraped matches, published to epl_png/
+    render_missing.main()   # PNGs for bulk-scraped matches, published to ucl_png/
     build_match_details.main()
     build_players.main()
     build_shots.main()
@@ -91,7 +91,7 @@ def serve():
 
     # ThreadingHTTPServer so the browser's keep-alive connections don't block.
     httpd = http.server.ThreadingHTTPServer(("", port), NoCacheHandler)
-    url = f"http://localhost:{port}/epl_dashboard/index.html"
+    url = f"http://localhost:{port}/ucl_dashboard/index.html"
     print(f"Serving the dashboard at {url}")
     try:
         httpd.serve_forever()

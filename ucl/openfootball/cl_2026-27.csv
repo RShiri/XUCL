@@ -1,0 +1,37 @@
+date,phase,md,home,home_cc,away,away_cc,hg,ag
+2026-09-08,first,1,AEK Athens,GRE,LASK,AUT,1,0
+2026-09-08,first,1,Club Brugge,BEL,Aston Villa,ENG,2,3
+2026-09-08,first,1,Borussia Dortmund,GER,Villarreal,ESP,3,2
+2026-09-08,first,1,Porto,POR,Manchester City,ENG,0,2
+2026-09-08,first,1,Lille,FRA,Real Betis,ESP,2,3
+2026-09-08,first,1,Real Madrid,ESP,Inter,ITA,2,1
+2026-09-09,first,1,Barcelona,ESP,Feyenoord,NED,5,1
+2026-09-09,first,1,VfB Stuttgart,GER,Viking,NOR,3,1
+2026-09-09,first,1,Liverpool,ENG,Atlético Madrid,ESP,2,1
+2026-09-09,first,1,Paris Saint-Germain,FRA,Slovan Bratislava,SVK,6,1
+2026-09-09,first,1,Sporting CP,POR,Galatasaray,TUR,3,1
+2026-09-09,first,1,Napoli,ITA,Arsenal,ENG,0,1
+2026-09-10,first,1,Fenerbahçe,TUR,Roma,ITA,1,1
+2026-09-10,first,1,PSV,NED,Shakhtar Donetsk,UKR,1,1
+2026-09-10,first,1,Como,ITA,RB Leipzig,GER,4,1
+2026-09-10,first,1,Bayern München,GER,Bodø/Glimt,NOR,5,0
+2026-09-10,first,1,Manchester United,ENG,Sabah,AZE,4,0
+2026-09-10,first,1,Slavia Praha,CZE,Lens,FRA,2,3
+2026-10-13,first,2,Lens,FRA,Sporting CP,POR,0,2
+2026-10-13,first,2,Sabah,AZE,Slavia Praha,CZE,2,0
+2026-10-13,first,2,Arsenal,ENG,Lille,FRA,3,0
+2026-10-13,first,2,Atlético Madrid,ESP,Manchester United,ENG,2,0
+2026-10-13,first,2,Galatasaray,TUR,Barcelona,ESP,1,4
+2026-10-13,first,2,Inter,ITA,Club Brugge,BEL,3,4
+2026-10-13,first,2,RB Leipzig,GER,PSV,NED,1,0
+2026-10-13,first,2,Viking,NOR,Bayern München,GER,3,3
+2026-10-13,first,2,Villarreal,ESP,Napoli,ITA,3,1
+2026-10-14,first,2,LASK,AUT,Liverpool,ENG,,
+2026-10-14,first,2,Feyenoord,NED,Como,ITA,,
+2026-10-14,first,2,Roma,ITA,Real Madrid,ESP,,
+2026-10-14,first,2,Aston Villa,ENG,Fenerbahçe,TUR,,
+2026-10-14,first,2,Shakhtar Donetsk,UKR,AEK Athens,GRE,,
+2026-10-14,first,2,Bodø/Glimt,NOR,Borussia Dortmund,GER,,
+2026-10-14,first,2,Manchester City,ENG,Paris Saint-Germain,FRA,,
+2026-10-14,first,2,Real Betis,ESP,Porto,POR,,
+2026-10-14,first,2,Slovan Bratislava,SVK,VfB Stuttgart,GER,,

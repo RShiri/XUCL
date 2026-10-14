@@ -1,5 +1,5 @@
 """
-Premier League – Match Analytics Dashboard Renderer
+Champions League – Match Analytics Dashboard Renderer
 Mirrors the rendering architecture of BCNPROJECT webup (generate_all_assets.py,
 shotmap_whoscored.py) while producing a white-canvas, 3-column infographic
 sized for X/Twitter high-resolution image posts.
@@ -34,7 +34,7 @@ from matplotlib.patches import FancyBboxPatch
 from matplotlib.lines import Line2D
 from mplsoccer import Pitch, VerticalPitch
 
-from epl.team_colors import get_team_colors
+from ucl.team_colors import get_team_colors
 
 # ── Coordinate + shot helpers (inlined — renderer is self-contained) ────────
 _REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -47,7 +47,7 @@ sys.path.insert(0, str(_REPO_ROOT))
 from xg_core_v3.score import XGScorer   # v3: 23-feature, event-based (needs the whole match)
 
 _XG_SCORER = XGScorer()
-_XG_LEAGUE = "EPL"
+_XG_LEAGUE = "UCL"
 
 
 def _ws_to_sb_x(ws_x: float) -> float:
@@ -201,7 +201,7 @@ FONT_BOLD    = "DejaVu Sans"
 FIG_W, FIG_H = 30, 17
 FIG_DPI      = 200
 
-logging.basicConfig(level=logging.INFO, format="[EPL] %(message)s")
+logging.basicConfig(level=logging.INFO, format="[UCL] %(message)s")
 log = logging.getLogger(__name__)
 
 
@@ -222,7 +222,7 @@ def _load_logo(team_name: str, size: tuple[int, int] = (80, 80)):
     """Return a PIL Image for the team logo, or None if not found."""
     try:
         from PIL import Image
-        logo_dir = _REPO_ROOT / "team_logos" / "epl"
+        logo_dir = _REPO_ROOT / "team_logos" / "ucl"
         for ext in ("png", "jpg", "svg"):
             p = logo_dir / f"{team_name}.{ext}"
             if p.exists():
@@ -250,7 +250,7 @@ def _place_flag(ax: plt.Axes, team_name: str,
         from PIL import Image
         import numpy as _np
 
-        logo_dir = _REPO_ROOT / "team_logos" / "epl"
+        logo_dir = _REPO_ROOT / "team_logos" / "ucl"
         for ext in ("png", "jpg"):
             p = logo_dir / f"{team_name}.{ext}"
             if p.exists():
@@ -329,9 +329,9 @@ def _draw_header(fig: plt.Figure, ax: plt.Axes, match_data: dict) -> None:
     if away_d.get("primary_color"):
         away_colors["primary"] = away_d["primary_color"]
 
-    stage       = meta.get("stage", "Premier League")
+    stage       = meta.get("stage", "Champions League")
     matchday    = meta.get("matchday")
-    stage_label = "Premier League" + (f" — Matchday {matchday}" if matchday else (f" — {stage}" if stage else ""))
+    stage_label = "Champions League" + (f" — Matchday {matchday}" if matchday else (f" — {stage}" if stage else ""))
     date_str    = meta.get("date", "")
     venue       = meta.get("venue", "")
     city = meta.get("city", "")
@@ -1282,7 +1282,7 @@ def render_wc_dashboard(match_data: dict, output_path: str) -> str:
 def _load_dashboard_module(name: str, filename: str):
     import importlib.util
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    path = os.path.join(repo_root, "epl_dashboard", filename)
+    path = os.path.join(repo_root, "ucl_dashboard", filename)
     if not os.path.exists(path):
         return None
     spec = importlib.util.spec_from_file_location(name, path)
@@ -1294,14 +1294,14 @@ def _load_dashboard_module(name: str, filename: str):
 def _refresh_web_dashboard_db(match_data: dict | None = None, match_id: str | None = None) -> None:
     """Rebuild the interactive match page + the index data.js (best-effort).
 
-    Set EPL_SKIP_DASHBOARD_REFRESH=1 to skip it entirely — batch runs (backfill) do this
+    Set UCL_SKIP_DASHBOARD_REFRESH=1 to skip it entirely — batch runs (backfill) do this
     and rebuild once at the end instead. Per-match it re-reads every season and regenerates
     every derived file, which for a large batch is many full rebuilds competing with a
     running Chrome.
 
     ``match_id`` forces the detail filename (the slot-coded id for knockout games) so it
     matches the PNG and the dashboard match id; when omitted it's derived from team names."""
-    if os.environ.get("EPL_SKIP_DASHBOARD_REFRESH") == "1":
+    if os.environ.get("UCL_SKIP_DASHBOARD_REFRESH") == "1":
         log.info("Dashboard refresh skipped (batch mode; rebuilt once at the end).")
         return
     try:

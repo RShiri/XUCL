@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Fetch FotMob's season team stat "Total distance per match" (km) for the Premier League.
+Fetch FotMob's season team stat "Total distance per match" (km) for the Champions League.
 
 Distance covered is tracking data, not event data — WhoScored/Opta events never carry it,
 so the rich per-match scrape can't produce it. FotMob publishes it as a league-level
 *team* stat (League → Stats → Teams → "Total distance per match"), one row per club with
 the average km and the number of matches it covers. This script pulls that list in one or
-two requests and writes ``epl/team_stats/DISTANCE_<season>.json``; ``build_data.py`` then
+two requests and writes ``ucl/team_stats/DISTANCE_<season>.json``; ``build_data.py`` then
 attaches it to the season so the dashboard's Team Lab can show an "Avg km per game" table.
 
 How the stat is located (FotMob has renamed things before, so nothing is hard-coded to one URL):
@@ -20,8 +20,8 @@ script exits non-zero. ``--dump`` prints every team stat the league payload adve
 future rename is a one-line fix to ``_NAME_HINTS``/``_CANDIDATE_STATS``.
 
 Usage:
-    py epl/fetch_team_stats.py --season 2026-27
-    py epl/fetch_team_stats.py --season 2026-27 --dump
+    py ucl/fetch_team_stats.py --season 2026-27
+    py ucl/fetch_team_stats.py --season 2026-27 --dump
 """
 
 from __future__ import annotations
@@ -256,7 +256,7 @@ def fetch_distance(season: str, dump: bool = False) -> "dict | None":
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="FotMob team distance-per-match → epl/team_stats/.")
+    ap = argparse.ArgumentParser(description="FotMob team distance-per-match → ucl/team_stats/.")
     ap.add_argument("--season", required=True, help="e.g. 2026-27")
     ap.add_argument("--dump", action="store_true", help="List every stat the league payload links to.")
     args = ap.parse_args()

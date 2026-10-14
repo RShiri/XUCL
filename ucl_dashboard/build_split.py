@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Split the generated dashboard data into ONE cacheable bundle per season.
 
-    py epl_dashboard/build_split.py
+    py ucl_dashboard/build_split.py
 
 Reads the monolithic builder outputs (data.js, players.js, shots.js) and writes:
 
@@ -24,7 +24,7 @@ cached copy for its full Cache-Control lifetime after a push that fixed somethin
 Re-running this is idempotent: it replaces any existing ?v=... rather than appending another one.
 
 Ported from laliga_dashboard/build_split.py — same content-hash cache-busting scheme and
-output shape, adapted to this dashboard's file layout (EPL already uses the LL_DATA / LL_PLAYERS
+output shape, adapted to this dashboard's file layout (UCL already uses the LL_DATA / LL_PLAYERS
 / LL_SHOTS / LL_INDEX global names, so no renaming was needed there).
 """
 import hashlib
@@ -50,10 +50,10 @@ def _read_js(path):
 
 def _team_colors():
     try:
-        from epl.team_colors import EPL_TEAM_COLORS
+        from ucl.team_colors import UCL_TEAM_COLORS
     except Exception:
         return {}
-    return {t: [c.get("primary", ""), c.get("secondary", "")] for t, c in EPL_TEAM_COLORS.items()}
+    return {t: [c.get("primary", ""), c.get("secondary", "")] for t, c in UCL_TEAM_COLORS.items()}
 
 
 def _dump(obj):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Build a Premier League season schedule (fixtures + results) from FotMob.
+Build a Champions League season schedule (fixtures + results) from FotMob.
 
 FotMob's per-league season view (``www.fotmob.com/api/data/leagues?id=<league>&season=``)
 returns the whole season — every match, team ids, kick-off time, round number and, for
@@ -10,20 +10,25 @@ when the season view comes back empty; the original ``api.fotmob.com/matches?dat
 XML feed is tried last; it became a LIVE-ONLY feed in 2026 (root ``<live>/<exmatches>``,
 ``?date`` ignored) and rarely has anything for a past or future date any more, but is
 kept as a last resort in case the newer endpoints move too. No token, no browser
-required. This module keeps only the Premier League (FotMob league id 47, name
-"Premier League", country code ENG — see ``_is_epl``/``_is_our_league``), de-duplicates
-by match id and writes ``epl/schedules/SCHEDULE_<season>.json``.
+required. This module keeps only the Champions League (FotMob league id 42, name
+"Champions League", international — see ``_is_ucl``/``_is_our_league``), de-duplicates
+by match id, labels every fixture's stage (``ucl/stages.py``: group / league phase,
+playoff, R16, QF, SF, final; group letter and leg) and writes
+``ucl/schedules/SCHEDULE_<season>.json``.
+
+From a sandboxed session where FotMob is blocked, ``ucl/import_openfootball.py`` writes the
+same file from openfootball instead (no FotMob ids, so no rich layer joins until this runs).
 
 That JSON is the spine of the dashboard: the standings table, the results/fixtures
 list and the matchday grouping are all derived from it. The rich per-match data
 (xG, shot/pass/dribble maps, player stats) is layered on later by the browser
-scrapers (see ``epl/run_match.py`` / ``epl/backfill.py``); this file needs
+scrapers (see ``ucl/run_match.py`` / ``ucl/backfill.py``); this file needs
 none of that.
 
 Usage:
-    py epl/build_schedule.py --season 2026-27          # incremental: only what's new
-    py epl/build_schedule.py --season 2026-27 --full   # the whole season window
-    py epl/build_schedule.py --season 2025-26 --start 2025-08-01 --end 2026-06-15
+    py ucl/build_schedule.py --season 2026-27          # incremental: only what's new
+    py ucl/build_schedule.py --season 2026-27 --full   # the whole season window
+    py ucl/build_schedule.py --season 2025-26 --start 2025-08-01 --end 2026-06-15
 
 By default the sweep is **incremental**: it starts a few days before the last finished match
 already in ``SCHEDULE_<season>.json`` and runs to a fortnight past today, then merges into that
@@ -45,6 +50,9 @@ from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from ucl.stages import assign_stages, format_of  # noqa: E402
+
 # The Windows console here is a legacy codepage (cp1255); force UTF-8 so any accented
 # club names and glyphs print instead of crashing.
 if hasattr(sys.stdout, "reconfigure"):
@@ -55,20 +63,20 @@ if hasattr(sys.stderr, "reconfigure"):
 _HERE = Path(__file__).resolve().parent
 SCHED_DIR = _HERE / "schedules"
 
-# FotMob league id for the Premier League (override with EPL_FOTMOB_LEAGUE_ID). The XML
-# feed tags the English top flight as name "Premier League" id 47; the second tier is the
-# EFL Championship (id 48), which the id/name filter naturally excludes.
-FOTMOB_LEAGUE_ID = os.environ.get("EPL_FOTMOB_LEAGUE_ID", "47")
-FOTMOB_LEAGUE_NAMES = {"premier league", "premierleague", "epl"}
+# FotMob league id for the Champions League (override with UCL_FOTMOB_LEAGUE_ID). Qualifying
+# rounds sit under the same competition on FotMob; ``_drop_qualifying`` keeps only the main
+# tournament (first phase onward). The Europa League is 73, the Conference League 10216.
+FOTMOB_LEAGUE_ID = os.environ.get("UCL_FOTMOB_LEAGUE_ID", "42")
+FOTMOB_LEAGUE_NAMES = {"champions league", "uefa champions league", "championsleague"}
 
 # Season → (start, end) sweep window. Wide enough to catch pre-season openers and any
 # rescheduled final-round games; extra empty days just cost a cheap HTTP request.
 SEASON_WINDOWS: dict[str, tuple[str, str]] = {
-    "2022-23": ("2022-08-01", "2023-06-15"),
-    "2023-24": ("2023-08-01", "2024-06-15"),
-    "2024-25": ("2024-08-01", "2025-06-15"),
-    "2025-26": ("2025-08-01", "2026-06-15"),
-    "2026-27": ("2026-08-01", "2027-06-15"),
+    "2022-23": ("2022-09-01", "2023-06-15"),
+    "2023-24": ("2023-09-01", "2024-06-05"),
+    "2024-25": ("2024-09-01", "2025-06-05"),
+    "2025-26": ("2025-09-01", "2026-06-05"),
+    "2026-27": ("2026-09-01", "2027-06-10"),
 }
 
 _UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
@@ -123,31 +131,28 @@ def _iso_from_any(raw: str) -> str:
         return ""
 
 
-def _is_epl(league) -> bool:
+def _is_ucl(league) -> bool:
     """XML <league> element check (legacy feed)."""
     lid = str(league.get("id", ""))
     name = league.get("name", "").strip().lower()
     ccode = (league.get("ccode", "") or "").strip().upper()
     if lid == str(FOTMOB_LEAGUE_ID):
         return True
-    # id can drift between seasons; fall back to the exact name — but ONLY for the English
-    # entry. At least a dozen countries run a league literally named "Premier League" (RUS,
-    # EGY, WAL, CAN, KAZ, UKR, BLR, AZE, …), so the name alone pulls in thousands of foreign
-    # matches. Gate the fallback on the England country code (still excludes the Championship,
-    # and "Premier League 2"/"U18" are excluded by the exact-name set).
-    return name in FOTMOB_LEAGUE_NAMES and ccode == "ENG"
+    # id can drift; fall back to the exact name, gated on FotMob's international code so the
+    # women's / youth / AFC / CAF / CONCACAF "Champions League"s never slip in.
+    return name in FOTMOB_LEAGUE_NAMES and ccode in ("INT", "")
 
 
 def _is_our_league(league: dict) -> bool:
-    """JSON league dict check (site API, /api/data/matches). Same England gate as _is_epl —
+    """JSON league dict check (site API, /api/data/matches). Same England gate as _is_ucl —
     a JSON payload that happens to carry no ccode/country field falls back to id-only
-    matching rather than risk pulling in a foreign "Premier League"."""
+    matching rather than risk pulling in another confederation's "Champions League"."""
     lid = str(league.get("primaryId") or league.get("id") or "")
     if lid == str(FOTMOB_LEAGUE_ID):
         return True
     name = str(league.get("name", "")).strip().lower()
     ccode = str(league.get("ccode") or league.get("country") or "").strip().upper()
-    return name in FOTMOB_LEAGUE_NAMES and ccode in ("ENG", "ENGLAND")
+    return name in FOTMOB_LEAGUE_NAMES and ccode in ("INT", "INTERNATIONAL")
 
 
 # ── Fixture sources ──────────────────────────────────────────────────────────────
@@ -268,6 +273,24 @@ def _match_from_json(m: dict) -> "dict | None":
     kickoff = _iso_from_any(st.get("utcTime") or m.get("utcTime") or m.get("time") or "")
     rec = _record(mid, matchday, kickoff, home_name, away_name,
                   home_id, away_id, status, home_score, away_score)
+    # Extra time / penalties decide knockout ties. FotMob reports them in status.reason
+    # ("AET" / "Pen") and, for shoot-outs, the shoot-out score (field name varies by payload).
+    reason = st.get("reason") if isinstance(st.get("reason"), dict) else {}
+    short = str(reason.get("short") or reason.get("shortKey") or "").lower()
+    if finished and ("aet" in short or "pen" in short or "extra" in short):
+        rec["aet"] = True
+    pens = reason.get("penalties") or st.get("penalties") or m.get("penalties")
+    if finished and isinstance(pens, (list, tuple)) and len(pens) == 2:
+        try:
+            rec["pens"] = [int(pens[0]), int(pens[1])]
+            rec["aet"] = True
+        except (TypeError, ValueError):
+            pass
+    # Group letter when the payload names one ("Group A" / "A").
+    grp = str(m.get("group") or m.get("groupName") or "").strip()
+    g = grp[-1:].upper() if grp else ""
+    if g in "ABCDEFGH" and g:
+        rec["group"] = g
     return rec if rec["home"] and rec["away"] else None
 
 
@@ -292,7 +315,9 @@ def fetch_season_matches(season: str, verbose: bool = True) -> "list[dict]":
     # games. Among the longest lists, prefer whichever actually reports rounds.
     best = max(lists, key=lambda lst: (len(lst),
                                        sum(1 for m in lst if _round_of(m) is not None)))
-    out = _fill_missing_rounds([r for r in (_match_from_json(m) for m in best) if r], verbose)
+    # Matchdays, groups and knockout rounds are labelled later by ucl.stages.assign_stages; the
+    # league forks' _fill_missing_rounds assumes one round-robin and would mis-number knockouts.
+    out = [r for r in (_match_from_json(m) for m in best) if r]
     if verbose:
         print(f"  {len(out)} fixture(s) parsed "
               f"({sum(1 for r in out if r['finished'])} finished).")
@@ -431,14 +456,14 @@ def fetch_day_matches(day: date, verbose: bool = False) -> "list[dict]":
 
 
 def _from_xml(body: str) -> "list[dict] | None":
-    """Parse the legacy XML feed. None means 'this body isn't XML' (vs. [] = no EPL that day)."""
+    """Parse the legacy XML feed. None means 'this body isn't XML' (vs. [] = no UCL that day)."""
     try:
         root = ET.fromstring(body)
     except Exception:
         return None
     out = []
     for league in root.iter("league"):
-        if not _is_epl(league):
+        if not _is_ucl(league):
             continue
         for m in league.iter("match"):
             try:
@@ -551,6 +576,15 @@ def _drop_superseded_placeholders(records) -> "list[dict]":
     return [r for r in records if not (r.get("_placeholder") and key(r) in real_fixtures)]
 
 
+def _first_phase_end(r: dict) -> str:
+    """Last first-phase date for the season a fixture falls in (see ucl.stages)."""
+    from ucl.stages import FIRST_PHASE_END
+    d = r.get("date") or ""
+    y = int(d[:4]) if d[:4].isdigit() else 0
+    season = f"{y}-{str(y + 1)[2:]}" if d[5:7] >= "07" else f"{y - 1}-{str(y)[2:]}"
+    return FIRST_PHASE_END.get(season, f"{season[:4]}-12-31")
+
+
 def _dedupe_and_canonicalise(by_id: "dict[int, dict]") -> "list[dict]":
     """Two cleanup passes over one freshly-fetched batch (run before merging into what's
     already on disk, so a stale name or duplicate never has the chance to linger):
@@ -579,9 +613,13 @@ def _dedupe_and_canonicalise(by_id: "dict[int, dict]") -> "list[dict]":
             if r[f"{side}_id"] in canon:
                 r[side] = canon[r[f"{side}_id"]]
 
+    # In the Champions League the same ordered pair CAN meet twice in a season: once in the first
+    # phase and again in a knockout leg (2025-26: Benfica v Real Madrid in the league phase and
+    # the playoff). So the pair is keyed per phase, first phase vs knockouts, split by date.
     best_by_pair: dict[tuple, dict] = {}
     for r in by_id.values():
-        key = ((r["home_id"], r["away_id"]) if r["home_id"] and r["away_id"]
+        phase = (r.get("date") or "") <= _first_phase_end(r)
+        key = ((r["home_id"], r["away_id"], phase) if r["home_id"] and r["away_id"]
                else ("_uniq_", r["fotmob_id"]))
         prev = best_by_pair.get(key)
         if prev is None or (r["kickoff_utc"] or "") > (prev["kickoff_utc"] or ""):
@@ -618,7 +656,7 @@ def _candidates(day: date) -> "list[tuple[str, str]]":
 
 
 def _describe(body: str) -> str:
-    """One line saying what a response actually is, and whether the Premier League is in it."""
+    """One line saying what a response actually is, and whether the Champions League is in it."""
     head = body.lstrip()[:1]
     if head == "<":
         try:
@@ -629,7 +667,7 @@ def _describe(body: str) -> str:
                    for l in root.iter("league")]
         hit = [l for l in leagues if "premier" in l[1].lower() or l[0] == str(FOTMOB_LEAGUE_ID)]
         return (f"XML <{root.tag}>, {len(leagues)} league(s), {sum(l[2] for l in leagues)} match(es)"
-                + (f" — PREMIER LEAGUE FOUND: {hit}" if hit else " — no Premier League"))
+                + (f" — CHAMPIONS LEAGUE FOUND: {hit}" if hit else " — no Champions League"))
     try:
         data = json.loads(body)
     except Exception:
@@ -645,7 +683,7 @@ def _describe(body: str) -> str:
     if isinstance(data, dict) and "leagues" in data:
         lg = data.get("leagues") or []
         hit = [x.get("name") for x in lg if "premier" in str(x.get("name", "")).lower()]
-        return f"JSON, {len(lg)} league(s)" + (f" — PREMIER LEAGUE FOUND: {hit}" if hit else " — no Premier League")
+        return f"JSON, {len(lg)} league(s)" + (f" — CHAMPIONS LEAGUE FOUND: {hit}" if hit else " — no Champions League")
     if isinstance(data, dict):
         keys = list(data)[:8]
         fixtures = data.get("matches") or data.get("fixtures") or []
@@ -726,7 +764,7 @@ def debug_day(day_str: str) -> None:
         for lid, name, n in rows[:25]:
             print(f"    id={lid:<10} {name!r} · {n} match(es)")
     print(f"\n  We currently accept id={FOTMOB_LEAGUE_ID} or name in {sorted(FOTMOB_LEAGUE_NAMES)}.")
-    print("  Override with the EPL_FOTMOB_LEAGUE_ID environment variable.")
+    print("  Override with the UCL_FOTMOB_LEAGUE_ID environment variable.")
 
 
 def build_schedule(season: str, start: str | None = None, end: str | None = None,
@@ -750,7 +788,7 @@ def build_schedule(season: str, start: str | None = None, end: str | None = None
     if not by_id:
         days = list(_daterange(s, e))
         if verbose:
-            print(f"Sweeping {len(days)} days ({s} → {e}) for the Premier League "
+            print(f"Sweeping {len(days)} days ({s} → {e}) for the Champions League "
                   f"(league {FOTMOB_LEAGUE_ID}) …")
         for i, day in enumerate(days, 1):
             if verbose and (i % 25 == 0 or i == len(days)):
@@ -784,7 +822,7 @@ def build_schedule(season: str, start: str | None = None, end: str | None = None
                     by_id[rec["fotmob_id"]] = rec
 
     if verbose and not by_id:
-        print("\n⚠ No Premier League matches found in that window.")
+        print("\n⚠ No Champions League matches found in that window.")
         if unreadable:
             print(f"  {unreadable}/{fetched} responses were neither XML nor JSON — FotMob's feed "
                   f"format has changed. First response started with:\n    {sample}")
@@ -794,11 +832,21 @@ def build_schedule(season: str, start: str | None = None, end: str | None = None
         else:
             print(f"  {fetched} days answered fine but none listed league {FOTMOB_LEAGUE_ID} "
                   f"({'/'.join(sorted(FOTMOB_LEAGUE_NAMES))}). Either the fixtures aren't published "
-                  f"yet, or the league id changed (set EPL_FOTMOB_LEAGUE_ID).")
+                  f"yet, or the league id changed (set UCL_FOTMOB_LEAGUE_ID).")
     elif verbose and fetched:
-        print(f"  ({with_league} of {fetched} answered days had Premier League matches)")
+        print(f"  ({with_league} of {fetched} answered days had Champions League matches)")
 
     return _dedupe_and_canonicalise(by_id)
+
+
+def _drop_qualifying(matches: "list[dict]", season: str) -> "list[dict]":
+    """FotMob lists the qualifying rounds (July-August) under league 42 too. The main
+    tournament starts in September, so anything earlier is qualifying and dropped."""
+    start = SEASON_WINDOWS.get(season, (f"{season[:4]}-09-01",))[0]
+    kept = [m for m in matches if (m.get("date") or "9999") >= start]
+    if len(kept) != len(matches):
+        print(f"  dropped {len(matches) - len(kept)} qualifying-round fixture(s) before {start}")
+    return kept
 
 
 def _check_team_assets(matches: "list[dict]") -> None:
@@ -812,21 +860,21 @@ def _check_team_assets(matches: "list[dict]") -> None:
         return
     try:
         sys.path.insert(0, str(_HERE.parent))
-        from epl.team_colors import EPL_TEAM_COLORS, _fold
-        known = {_fold(k) for k in EPL_TEAM_COLORS}
+        from ucl.team_colors import UCL_TEAM_COLORS, _fold
+        known = {_fold(k) for k in UCL_TEAM_COLORS}
         no_colour = [t for t in teams if _fold(t) not in known]
     except Exception as exc:
         print(f"  (couldn't read team colours: {exc})")
         no_colour = []
-    crest_dir = _HERE.parent / "team_logos" / "epl"
+    crest_dir = _HERE.parent / "team_logos" / "ucl"
     have = {p.stem for p in crest_dir.glob("*.png")} if crest_dir.is_dir() else set()
     no_crest = [t for t in teams if t not in have]
     if no_colour:
         print(f"  ⚠ no team colour for: {', '.join(no_colour)}  "
-              f"(add them to epl/team_colors.py — the PNGs fall back to grey)")
+              f"(add them to ucl/team_colors.py — the PNGs fall back to grey)")
     if no_crest:
         print(f"  ⚠ no local crest for: {', '.join(no_crest)}  "
-              f"(run: py epl/download_crests.py — the site falls back to FotMob's CDN)")
+              f"(run: py ucl/download_crests.py — the site falls back to FotMob's CDN)")
     if not (no_colour or no_crest):
         print(f"  colours + crests present for all {len(teams)} clubs.")
 
@@ -846,15 +894,21 @@ def _summarise(matches: list[dict]) -> None:
     if teams:
         gp = sorted(teams.items(), key=lambda kv: -kv[1])
         print(f"  games played  : max {gp[0][1]} ({gp[0][0]}), min {gp[-1][1]} ({gp[-1][0]})")
-        # Only flag an uneven games-played count once the season is basically over — every
-        # team is "off 38" for most of the season, that's not a bug.
-        off = [t for t, n in teams.items() if n != 38]
-        if off and len(finished) >= 380:
-            print(f"  ⚠ teams not on 38 games: {', '.join(sorted(off))}")
+        # Every club plays the same number of first-phase games (6 in groups, 8 in the league
+        # phase); knockout games vary by how far a club went, so only the first phase is checked.
+        first = [m for m in finished if m.get("stage") in ("group", "league")]
+        per = {}
+        for m in first:
+            per[m["home"]] = per.get(m["home"], 0) + 1
+            per[m["away"]] = per.get(m["away"], 0) + 1
+        want = 6 if any(m.get("stage") == "group" for m in first) else 8
+        off = [t for t, n in per.items() if n != want]
+        if off and len(first) >= len(per) * want // 2:
+            print(f"  ⚠ clubs not on {want} first-phase games: {', '.join(sorted(off))}")
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Build a Premier League season schedule from FotMob.")
+    ap = argparse.ArgumentParser(description="Build a Champions League season schedule from FotMob.")
     ap.add_argument("--season", default="2025-26", help="e.g. 2025-26 or 2026-27")
     ap.add_argument("--start", help="override sweep start YYYY-MM-DD")
     ap.add_argument("--end", help="override sweep end YYYY-MM-DD")
@@ -895,6 +949,12 @@ def main() -> None:
             existing = json.loads(out.read_text(encoding="utf-8")).get("matches", []) or []
         except Exception as exc:
             print(f"! Could not read {out.name} ({exc}); treating it as empty.")
+    # An openfootball-seeded file (import_openfootball.py) has synthetic ids that FotMob's can't
+    # merge with; the first FotMob run replaces it outright.
+    if existing and any(m.get("source") == "openfootball" for m in existing):
+        print(f"{out.name}: seeded from openfootball — replacing it with FotMob's fixtures.")
+        existing = []
+        args.full = True
     if existing:
         print(f"{out.name}: {len(existing)} match(es) already known "
               f"({sum(1 for m in existing if m.get('finished'))} finished).")
@@ -902,6 +962,12 @@ def main() -> None:
     found = build_schedule(args.season, args.start, args.end, existing=existing,
                            full=args.full, days_ahead=args.days_ahead)
     matches = merge_matches(existing, found)
+    matches = _drop_qualifying(matches, args.season)
+    for m in matches:   # re-derive every run: a merge can bring in fixtures of a new round
+        for k in ("stage", "group", "leg"):
+            if k != "group" or format_of(args.season) != "groups":
+                m.pop(k, None)
+    assign_stages(matches, args.season, verbose=True)
     added = len(matches) - len(existing)
     newly_finished = (sum(1 for m in matches if m.get("finished"))
                       - sum(1 for m in existing if m.get("finished")))
@@ -910,7 +976,8 @@ def main() -> None:
 
     payload = {
         "season": args.season,
-        "competition": "Premier League",
+        "competition": "Champions League",
+        "format": format_of(args.season),
         "fotmob_league_id": FOTMOB_LEAGUE_ID,
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "matches": matches,

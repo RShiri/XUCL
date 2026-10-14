@@ -1,23 +1,23 @@
 """
-Premier League – Match Data Scraper
+Champions League – Match Data Scraper
 
 Two-source pipeline:
-  1. FotMob   (cloudscraper, no browser) – polls for finished EPL matches,
+  1. FotMob   (cloudscraper, no browser) – polls for finished UCL matches,
                extracts stats, shots, lineups, xG, venue metadata.
   2. WhoScored (Selenium)               – full event stream (passes, shots,
                dribbles, etc.) in the exact format the renderer expects.
 
-Output: epl/matches/YYYY_MM_DD_TeamA_vs_TeamB.json
+Output: ucl/matches/YYYY_MM_DD_TeamA_vs_TeamB.json
 
 Usage:
   # Watch continuously (checks every 5 min for newly finished matches):
-  python -m epl.scraper
+  python -m ucl.scraper
 
   # Fetch one specific FotMob match ID immediately:
-  python -m epl.scraper --fotmob-id 4321567
+  python -m ucl.scraper --fotmob-id 4321567
 
   # Skip WhoScored (FotMob data only – limited pass networks):
-  python -m epl.scraper --fotmob-only
+  python -m ucl.scraper --fotmob-only
 """
 
 from __future__ import annotations
@@ -41,7 +41,7 @@ try:
 except ImportError:
     pass
 
-log = logging.getLogger("epl.scraper")
+log = logging.getLogger("ucl.scraper")
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [SCRAPER] %(levelname)s %(message)s",
@@ -51,30 +51,30 @@ logging.basicConfig(
 MATCHES_DIR  = Path(__file__).parent / "matches"
 MATCHES_DIR.mkdir(exist_ok=True)
 
-POLL_INTERVAL = int(os.environ.get("EPL_SCRAPE_POLL_SECONDS", 300))  # 5 min
+POLL_INTERVAL = int(os.environ.get("UCL_SCRAPE_POLL_SECONDS", 300))  # 5 min
 
-# FotMob Premier League league id (name "Premier League" in the XML feed; the second
-# tier is the EFL Championship id 48, which the id/name filter excludes).
-EPL_FOTMOB_ID = int(os.environ.get("EPL_FOTMOB_LEAGUE_ID", 47))
-EPL_FOTMOB_NAMES = {"premier league", "premierleague", "epl"}
+# FotMob Champions League id 42 (name "Champions League"; the Europa League is 73 and the
+# Conference League 10525, which the id/name filter excludes).
+UCL_FOTMOB_ID = int(os.environ.get("UCL_FOTMOB_LEAGUE_ID", 42))
+UCL_FOTMOB_NAMES = {"champions league", "uefa champions league", "championsleague", "ucl"}
 
-# WhoScored Premier League fixtures page. WhoScored serves the CURRENT season from the
-# season-less tournament URL (Region 252 = England, Tournament 2 = Premier League),
-# which is what we want for a live season. For an archived season set EPL_WHOSCORED_URLS
+# WhoScored Champions League fixtures page. WhoScored serves the CURRENT season from the
+# season-less tournament URL (Region 250 = Europe, Tournament 12 = Champions League),
+# which is what we want for a live season. For an archived season set UCL_WHOSCORED_URLS
 # (pipe-separated) to the season-specific .../Seasons/<sid>/Stages/<stid>/Fixtures/...
-# page. EPL_WHOSCORED_URL still works for a single page.
-_WS_DEFAULT_URLS = "https://www.whoscored.com/Regions/252/Tournaments/2/England-Premier-League"
-EPL_WS_BASES = [
+# page. UCL_WHOSCORED_URL still works for a single page.
+_WS_DEFAULT_URLS = "https://www.whoscored.com/Regions/250/Tournaments/12/Europe-Champions-League"
+UCL_WS_BASES = [
     u.strip() for u in os.environ.get(
-        "EPL_WHOSCORED_URLS",
-        os.environ.get("EPL_WHOSCORED_URL", _WS_DEFAULT_URLS),
+        "UCL_WHOSCORED_URLS",
+        os.environ.get("UCL_WHOSCORED_URL", _WS_DEFAULT_URLS),
     ).split("|") if u.strip()
 ]
-EPL_WS_BASE = EPL_WS_BASES[0]  # backward-compat alias
+UCL_WS_BASE = UCL_WS_BASES[0]  # backward-compat alias
 
 _fetched_ids: set[int] = set()  # avoid re-fetching in the same run
 
-# EPL clubs keep stable names across FotMob/WhoScored/Understat, so no
+# UCL clubs keep stable names across FotMob/WhoScored/Understat, so no
 # placeholder-name remapping is needed. Kept as an empty hook in case a feed ever
 # uses an odd alias.
 FOTMOB_NAME_OVERRIDES: dict[str, str] = {}
@@ -215,11 +215,10 @@ def fotmob_fetch_wc_matches(dates: "list[str] | None" = None) -> list[dict]:
                 lid = str(league.get("primaryId") or league.get("id") or "")
                 lname = str(league.get("name", "")).strip()
                 ccode = str(league.get("ccode") or league.get("country") or "").strip().upper()
-                # Several other countries run a division literally named "Premier League"
-                # (RUS, EGY, WAL, CAN, KAZ, UKR, BLR, AZE, …) — gate the name fallback on
-                # England so a day-sweep never silently pulls in a foreign one.
-                if lid != str(EPL_FOTMOB_ID) and (
-                        lname.lower() not in EPL_FOTMOB_NAMES or ccode not in ("", "ENG", "ENGLAND")):
+                # The AFC / CAF / CONCACAF also run "Champions League"s — gate the name
+                # fallback on FotMob's international code so a day-sweep never pulls one in.
+                if lid != str(UCL_FOTMOB_ID) and (
+                        lname.lower() not in UCL_FOTMOB_NAMES or ccode not in ("", "INT")):
                     continue
                 for m in league.get("matches") or []:
                     mid = str(m.get("id") or "")
@@ -265,10 +264,9 @@ def fotmob_fetch_wc_matches(dates: "list[str] | None" = None) -> list[dict]:
 
         for league in root.iter("league"):
             league_name = league.get("name", "")
-            # Filter to the Premier League: the English top flight is name "Premier
-            # League" id 47 in this feed (the second tier is the Championship id 48).
-            if str(league.get("id", "")) != str(EPL_FOTMOB_ID) \
-               and league_name.strip().lower() not in EPL_FOTMOB_NAMES:
+            # Filter to the Champions League: id 42 in this feed.
+            if str(league.get("id", "")) != str(UCL_FOTMOB_ID) \
+               and league_name.strip().lower() not in UCL_FOTMOB_NAMES:
                 continue
             for match in league.iter("match"):
                 mid = match.get("id")
@@ -306,7 +304,7 @@ def fotmob_fetch_wc_matches(dates: "list[str] | None" = None) -> list[dict]:
                     "_league":  league_name,
                 })
 
-    log.info("FotMob: found %d EPL match(es) across checked dates", len(matches))
+    log.info("FotMob: found %d UCL match(es) across checked dates", len(matches))
     return matches
 
 
@@ -444,7 +442,7 @@ def sofascore_fetch_match_details(home: str, away: str, around_date: str | None)
     stream is richer and whose pitch orientation the renderer already handles)."""
     from datetime import date, timedelta
     try:
-        from epl.knockout_resolve import _team_key  # alias-aware name compare
+        from ucl.knockout_resolve import _team_key  # alias-aware name compare
     except Exception:
         def _team_key(n): return re.sub(r"[^a-z]", "", (n or "").lower())
 
@@ -577,7 +575,7 @@ def sofascore_fetch_match_details(home: str, away: str, around_date: str | None)
 def _ev_is_shootout(e: dict) -> bool:
     """True for penalty-shootout events (WhoScored period 5 / "PenaltyShootout").
 
-    Mirrors epl_dashboard/xg_model.is_shootout (scraper can't import the dashboard
+    Mirrors ucl_dashboard/xg_model.is_shootout (scraper can't import the dashboard
     module). Shootout kicks decide a drawn knockout tie but are not match shots/goals —
     keep them out of stats, xG, shot maps and the goals timeline; report them as a
     separate penalty score. Extra-time events (periods 3/4) are real and stay."""
@@ -1021,7 +1019,7 @@ def whoscored_fetch_match(ws_url: str, timeout: int = 30) -> dict | None:
             raise RuntimeError("undetected-chromedriver already known broken this run")
         import undetected_chromedriver as uc
         options = uc.ChromeOptions()
-        if os.environ.get("EPL_VISIBLE") != "1":
+        if os.environ.get("UCL_VISIBLE") != "1":
             options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
@@ -1035,7 +1033,7 @@ def whoscored_fetch_match(ws_url: str, timeout: int = 30) -> dict | None:
         from selenium import webdriver
         from selenium.webdriver.chrome.options import Options
         options = Options()
-        if os.environ.get("EPL_VISIBLE") != "1":
+        if os.environ.get("UCL_VISIBLE") != "1":
             options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
@@ -1167,7 +1165,7 @@ def whoscored_search_match_id(home_name: str, away_name: str) -> int | None:
             raise RuntimeError("undetected-chromedriver already known broken this run")
         import undetected_chromedriver as uc
         options = uc.ChromeOptions()
-        if os.environ.get("EPL_VISIBLE") != "1":
+        if os.environ.get("UCL_VISIBLE") != "1":
             options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
@@ -1177,7 +1175,7 @@ def whoscored_search_match_id(home_name: str, away_name: str) -> int | None:
         from selenium import webdriver
         from selenium.webdriver.chrome.options import Options
         options = Options()
-        if os.environ.get("EPL_VISIBLE") != "1":
+        if os.environ.get("UCL_VISIBLE") != "1":
             options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
@@ -1196,7 +1194,7 @@ def whoscored_search_match_id(home_name: str, away_name: str) -> int | None:
         # Same approach as XLALIGA's scraper and scrape_whoscored.harvest_ids().
         from selenium.webdriver.common.by import By
         weeks_scanned = 0
-        for base in EPL_WS_BASES:
+        for base in UCL_WS_BASES:
             try:
                 driver.get(base)
             except Exception as exc:
@@ -1312,14 +1310,14 @@ def _merge_sources(by_source: "dict[str, dict]") -> dict:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# BUILD EPL MATCH JSON
+# BUILD UCL MATCH JSON
 # ══════════════════════════════════════════════════════════════════════════
 
 def build_match_json(fm_data: dict, ws_data: dict | None,
                      xml_match: dict | None = None) -> dict:
     """
     Merge FotMob details + optional WhoScored event stream into the
-    epl match schema expected by renderer.py.
+    ucl match schema expected by renderer.py.
 
     When FotMob JSON details are unavailable (fm_data has _fotmob_unavailable=True),
     names/scores are taken from xml_match (the dict parsed from the XML feed)
@@ -1363,7 +1361,7 @@ def build_match_json(fm_data: dict, ws_data: dict | None,
         date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     venue_info = _parse_fotmob_venue(fm_data) if not fotmob_unavailable else {
-        "venue": "", "city": "", "country": "England", "stage": "Premier League"
+        "venue": "", "city": "", "country": "", "stage": "Champions League"
     }
 
     # ── Events & players ─────────────────────────────────────────────────────
@@ -1589,7 +1587,7 @@ def fetch_and_save(fotmob_id: int, season: str = "2025-26", fotmob_only: bool = 
     home_name = FOTMOB_NAME_OVERRIDES.get(home_name, home_name)
     away_name = FOTMOB_NAME_OVERRIDES.get(away_name, away_name)
 
-    # Understat — the EPL's xG + shot-level source (replaces SofaScore). Attempt it for
+    # Understat — the UCL's xG + shot-level source (replaces SofaScore). Attempt it for
     # every match to get xG / shots / rosters; disable with UNDERSTAT_FALLBACK=0. It's a
     # Selenium fetch, so it runs inside the same run-lock the WhoScored scrape holds.
     us_data = None
@@ -1599,7 +1597,7 @@ def fetch_and_save(fotmob_id: int, season: str = "2025-26", fotmob_only: bool = 
         if xml_match:
             around = (xml_match.get("status", {}).get("utcTime", "") or "")[:10]
         try:
-            from epl.understat import understat_fetch_match_details
+            from ucl.understat import understat_fetch_match_details
             us_data = understat_fetch_match_details(home_name, away_name, around or None, season)
         except Exception as exc:
             log.warning("Understat fetch failed for %s vs %s: %s", home_name, away_name, exc)
@@ -1638,7 +1636,7 @@ def fetch_and_save(fotmob_id: int, season: str = "2025-26", fotmob_only: bool = 
     # Stamp season + matchday into meta so the renderer/builders can label the game.
     _meta = match_json.setdefault("meta", {})
     _meta["season"] = season
-    _meta["competition"] = "Premier League"
+    _meta["competition"] = "Champions League"
     _md = next((m.get("matchday") for m in _load_schedule() if m.get("fotmob_id") == fotmob_id), None)
     if _md is not None:
         _meta["matchday"] = _md
@@ -1692,7 +1690,7 @@ def fetch_and_save(fotmob_id: int, season: str = "2025-26", fotmob_only: bool = 
 
 def watch_loop(fotmob_only: bool = False) -> None:
     """Poll FotMob every POLL_INTERVAL seconds for newly finished WC matches."""
-    log.info("Watcher started. Polling every %ds for EPL matches …", POLL_INTERVAL)
+    log.info("Watcher started. Polling every %ds for UCL matches …", POLL_INTERVAL)
     while True:
         try:
             matches = fotmob_fetch_wc_matches()
@@ -1733,7 +1731,7 @@ def watch_loop(fotmob_only: bool = False) -> None:
 # ══════════════════════════════════════════════════════════════════════════
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="EPL Match Scraper")
+    parser = argparse.ArgumentParser(description="UCL Match Scraper")
     parser.add_argument("--fotmob-id", type=int,
                         help="Fetch a specific FotMob match ID and exit.")
     parser.add_argument("--fotmob-only", action="store_true",

@@ -1,5 +1,5 @@
 """
-Cross-process scrape lock — serialises EPL scrapers so only ONE runs at a time.
+Cross-process scrape lock — serialises UCL scrapers so only ONE runs at a time.
 
 Why this exists
 ---------------
@@ -31,12 +31,12 @@ import logging
 from contextlib import contextmanager
 from pathlib import Path
 
-log = logging.getLogger("epl.runlock")
+log = logging.getLogger("ucl.runlock")
 
 # One lock file shared by every scraper on this machine. %TEMP% is per-user and
 # always writable; fall back to the module directory if it is somehow unset.
 _LOCK_DIR = Path(os.environ.get("TEMP") or os.environ.get("TMP") or Path(__file__).parent)
-_LOCK_PATH = _LOCK_DIR / "epl_scrape.lock"
+_LOCK_PATH = _LOCK_DIR / "ucl_scrape.lock"
 
 
 @contextmanager

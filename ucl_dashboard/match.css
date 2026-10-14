@@ -154,7 +154,7 @@ body.match nav.tabs { align-items: center; align-self: center; }
 .agm-mk { fill: var(--text); } .agm-mk-shot { fill: var(--accent); }
 .agm-node { fill: var(--plate-2); stroke: var(--text); stroke-width: .22; }
 .agm-node.start { fill: var(--warn); stroke: #c98a2e; }
-.agm-node.shot  { fill: var(--accent); stroke: #7c3aed; }
+.agm-node.shot  { fill: var(--accent); stroke: #1d4ed8; }
 .agm-node.save  { fill: var(--muted); stroke: #6b7488; }
 .agm-nt { font-size: 1.35px; font-weight: 700; fill: var(--text); text-anchor: middle; dominant-baseline: central; }
 .agm-nt.dark { fill: var(--bg); }
@@ -165,7 +165,7 @@ body.match nav.tabs { align-items: center; align-self: center; }
 .agm-legend .it { display: inline-flex; gap: 6px; align-items: center; }
 .agm-lz { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--text); background: var(--plate-2); font-size: 7px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text); }
 .agm-lz.start { background: var(--warn); border-color: #c98a2e; color: var(--bg); }
-.agm-lz.shot  { background: var(--accent); border-color: #7c3aed; color: var(--bg); }
+.agm-lz.shot  { background: var(--accent); border-color: #1d4ed8; color: var(--bg); }
 .agm-lz.save  { background: var(--muted); border-color: #6b7488; color: var(--bg); }
 .agm-lln { width: 22px; height: 0; border-top: 2px dotted var(--text); }
 .agm-lln.carry { border-top: 2px solid var(--text); }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download Premier League club crests from FotMob's logo CDN into team_logos/epl/.
+"""Download Champions League club crests from FotMob's logo CDN into team_logos/ucl/.
 
 Every fixture in the season schedule carries the FotMob team ids (``home_id``/``away_id``),
 and FotMob serves each club's crest at a stable URL keyed by that id. We pull one PNG per
@@ -7,7 +7,7 @@ club so the dashboard is self-contained (no hot-linking, works offline, and scre
 don't stall on a slow external CDN). ``build_data.py`` prefers these local files and falls
 back to the CDN URL for any club whose crest isn't present.
 
-Usage:  py epl/download_crests.py
+Usage:  py ucl/download_crests.py
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ if hasattr(sys.stdout, "reconfigure"):
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(_HERE)
 SCHED_DIR = os.path.join(_HERE, "schedules")
-OUT_DIR = os.path.join(ROOT, "team_logos", "epl")
+OUT_DIR = os.path.join(ROOT, "team_logos", "ucl")
 CDN = "https://images.fotmob.com/image_resources/logo/teamlogo/{id}.png"
 
 
@@ -50,7 +50,7 @@ def main() -> None:
     os.makedirs(OUT_DIR, exist_ok=True)
     ids = collect_ids()
     if not ids:
-        raise SystemExit("No team ids found — run epl/build_schedule.py first.")
+        raise SystemExit("No team ids found — run ucl/build_schedule.py first.")
     ok = skip = fail = 0
     for team, tid in sorted(ids.items()):
         dest = os.path.join(OUT_DIR, team + ".png")

@@ -3,9 +3,9 @@
 
 Answers "where did this match's data come from?" without opening JSON by hand:
 
-    py epl/check_data.py                 # newest season
-    py epl/check_data.py --season 2025-26
-    py epl/check_data.py --season 2026-27 --detail   # one line per match
+    py ucl/check_data.py                 # newest season
+    py ucl/check_data.py --season 2025-26
+    py ucl/check_data.py --season 2026-27 --detail   # one line per match
 """
 from __future__ import annotations
 
@@ -17,8 +17,8 @@ from pathlib import Path
 from collections import Counter
 
 _REPO = Path(__file__).resolve().parents[1]
-MATCH_DIR = Path(os.environ.get("EPL_MATCH_DIR") or (_REPO / "epl" / "matches"))
-SCHED_DIR = _REPO / "epl" / "schedules"
+MATCH_DIR = Path(os.environ.get("UCL_MATCH_DIR") or (_REPO / "ucl" / "matches"))
+SCHED_DIR = _REPO / "ucl" / "schedules"
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")

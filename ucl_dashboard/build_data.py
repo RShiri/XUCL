@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Build data.js for the Premier League dashboard — one payload per season, from the FotMob
+"""Build data.js for the Champions League dashboard — one payload per season, from the FotMob
 schedule (spine: fixtures/results/standings) plus any rich per-match scrapes.
 
 Unlike the WC2026 builder (whose primary source was the rich scraped match JSONs), a
-league is driven by its **schedule**: ``epl/schedules/SCHEDULE_<season>.json`` already
+league is driven by its **schedule**: ``ucl/schedules/SCHEDULE_<season>.json`` already
 carries every fixture with real scores + matchday (built token-free from FotMob by
-``epl/build_schedule.py``). Rich per-match data (xG, shots, events) is *layered on*
-when present in ``epl/matches/<season>/<fotmob_id>.json`` — the same files the browser
-scrapers (``epl/run_match.py`` / ``epl/backfill.py``) produce. Matches with no rich
+``ucl/build_schedule.py``). Rich per-match data (xG, shots, events) is *layered on*
+when present in ``ucl/matches/<season>/<fotmob_id>.json`` — the same files the browser
+scrapers (``ucl/run_match.py`` / ``ucl/backfill.py``) produce. Matches with no rich
 file still appear with their score/standings contribution; the xG lab simply fills in as
 matches get deep-scraped.
 
@@ -26,23 +26,25 @@ import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xg_model import team_xg_from_events, team_ppda_from_events  # shared shot-extraction + xG (matches the PNGs)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from ucl.stages import format_of, assign_stages, FIRST_PHASE  # noqa: E402  (groups vs league phase, KO rounds)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SCHED_DIR = os.path.join(ROOT, "epl", "schedules")
-TEAM_STATS_DIR = os.path.join(ROOT, "epl", "team_stats")  # FotMob season team stats (fetch_team_stats.py)
-MATCH_DIR = os.environ.get("EPL_MATCH_DIR") or os.path.join(ROOT, "epl", "matches")  # rich scrapes: <season>/<id>.json
-PNG_DIRS = [os.path.join(ROOT, "epl_png"), os.path.join(ROOT, "epl", "output")]
+SCHED_DIR = os.path.join(ROOT, "ucl", "schedules")
+TEAM_STATS_DIR = os.path.join(ROOT, "ucl", "team_stats")  # FotMob season team stats (fetch_team_stats.py)
+MATCH_DIR = os.environ.get("UCL_MATCH_DIR") or os.path.join(ROOT, "ucl", "matches")  # rich scrapes: <season>/<id>.json
+PNG_DIRS = [os.path.join(ROOT, "ucl_png"), os.path.join(ROOT, "ucl", "output")]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.js")
 
 FOTMOB_CREST = "https://images.fotmob.com/image_resources/logo/teamlogo/{id}.png"
-CREST_DIR = os.path.join(ROOT, "team_logos", "epl")
+CREST_DIR = os.path.join(ROOT, "team_logos", "ucl")
 
 
 def _crest(team, team_id):
     """Prefer a locally downloaded crest (self-contained site); fall back to the CDN."""
     local = os.path.join(CREST_DIR, f"{team}.png")
     if os.path.exists(local):
-        return f"../team_logos/epl/{team}.png"
+        return f"../team_logos/ucl/{team}.png"
     return FOTMOB_CREST.format(id=team_id) if team_id else ""
 
 # Canonical stat keys we surface (same set the WC dashboard used), mapped to how the
@@ -71,9 +73,9 @@ def _stat_line(ms):
 
 
 def _find_png(season, fotmob_id):
-    """Link to the PUBLISHED copy (epl_png/, tracked) — a PNG that only exists in the
-    git-ignored epl/output/ works on localhost but 404s on GitHub Pages, so copy it into
-    epl_png/ here and always emit that path."""
+    """Link to the PUBLISHED copy (ucl_png/, tracked) — a PNG that only exists in the
+    git-ignored ucl/output/ works on localhost but 404s on GitHub Pages, so copy it into
+    ucl_png/ here and always emit that path."""
     published, output = (os.path.join(d, f"{fotmob_id}.png") for d in PNG_DIRS)
     if not os.path.exists(published) and os.path.exists(output):
         try:
@@ -140,10 +142,14 @@ def _load_rich(season, fotmob_id):
 
 def build_matches(season, schedule):
     """Merge schedule fixtures with any rich scrape → the dashboard match list + crest map."""
-    matches, crests = [], {}
+    matches, crests, countries = [], {}, {}
     for f in schedule["matches"]:
         fid = f["fotmob_id"]
         home, away = f["home"], f["away"]
+        for side in ("home", "away"):
+            cc = f.get(side + "_country")
+            if cc:
+                countries[f[side]] = cc
         if home not in crests:
             crests[home] = _crest(home, f.get("home_id"))
         if away not in crests:
@@ -196,6 +202,8 @@ def build_matches(season, schedule):
             "fotmob_id": fid,
             "date": f.get("date") or "",
             "matchday": f.get("matchday"),
+            "stage": f.get("stage"), "group": f.get("group"), "leg": f.get("leg"),
+            "aet": bool(f.get("aet")), "pens": f.get("pens"),
             "venue": (rich or {}).get("meta", {}).get("venue", "") if rich else "",
             "home": home, "away": away,
             "home_id": f.get("home_id"), "away_id": f.get("away_id"),
@@ -213,11 +221,14 @@ def build_matches(season, schedule):
             "ppda_home": ppda_home, "ppda_away": ppda_away,
             "box": _box_entries(fid) if (played and has_events) else None,
         })
-    return matches, crests
+    return matches, crests, countries
 
 
-def compute_standings(matches):
-    """Single 20-team league table from finished results, ranked Pts→GD→GF→name."""
+def compute_standings(matches, h2h=False):
+    """One table from finished results. League phase (and the old fork default) ranks
+    Pts → GD → GF → away goals → wins → away wins → name (UCL league-phase order, minus the
+    opponents'-points / disciplinary / coefficient steps). ``h2h=True`` is the old group-stage
+    order: head-to-head points, GD, goals among the tied clubs first, then overall GD, GF."""
     T = {}
     for m in matches:
         if not m["played"]:
@@ -225,8 +236,11 @@ def compute_standings(matches):
         h, a, hs, as_ = m["home"], m["away"], m["hs"], m["as"]
         for t in (h, a):
             T.setdefault(t, dict(team=t, P=0, W=0, D=0, L=0, GF=0, GA=0, GD=0, Pts=0, form=[],
-                                 ppda_sum=0.0, ppda_n=0))
+                                 ppda_sum=0.0, ppda_n=0, AGF=0, AW=0))
         H, A = T[h], T[a]
+        A["AGF"] += as_
+        if as_ > hs:
+            A["AW"] += 1
         if m.get("ppda_home") is not None:
             H["ppda_sum"] += m["ppda_home"]; H["ppda_n"] += 1
         if m.get("ppda_away") is not None:
@@ -244,7 +258,7 @@ def compute_standings(matches):
     for m in matches:
         for t in (m["home"], m["away"]):
             T.setdefault(t, dict(team=t, P=0, W=0, D=0, L=0, GF=0, GA=0, GD=0, Pts=0, form=[],
-                                 ppda_sum=0.0, ppda_n=0))
+                                 ppda_sum=0.0, ppda_n=0, AGF=0, AW=0))
     rows = list(T.values())
     for r in rows:
         r["GD"] = r["GF"] - r["GA"]
@@ -253,10 +267,86 @@ def compute_standings(matches):
         # PPDA: season average of the per-match values (a rate stat, not a sum).
         r["ppda"] = round(r["ppda_sum"] / r["ppda_n"], 2) if r["ppda_n"] else None
         del r["ppda_sum"], r["ppda_n"]
-    rows.sort(key=lambda r: (-r["Pts"], -r["GD"], -r["GF"], r["team"]))
+    rows.sort(key=lambda r: (-r["Pts"], -r["GD"], -r["GF"], -r["AGF"], -r["W"], -r["AW"], r["team"]))
+    if h2h:
+        played = [m for m in matches if m["played"]]
+        out, i = [], 0
+        while i < len(rows):
+            j = i
+            while j < len(rows) and rows[j]["Pts"] == rows[i]["Pts"]:
+                j += 1
+            tied = rows[i:j]
+            if len(tied) > 1:
+                names = {r["team"] for r in tied}
+                mini = {r["team"]: r for r in compute_standings(
+                    [m for m in played if m["home"] in names and m["away"] in names])}
+                key = lambda r: tuple(-mini[r["team"]][k] if r["team"] in mini else 0 for k in ("Pts", "GD", "GF")) + (-r["GD"], -r["GF"], r["team"])
+                tied = sorted(tied, key=key)
+            out += tied
+            i = j
+        rows = out
     for i, r in enumerate(rows, 1):
         r["rank"] = i
+        r.pop("AGF", None); r.pop("AW", None)
     return rows
+
+
+KO_ORDER = ["PO", "R16", "QF", "SF", "F"]
+
+
+def build_ties(matches):
+    """Knockout ties per round: legs, aggregate, extra time / penalties, winner. A level
+    aggregate with no shoot-out score in the feed falls back to whichever club turns up in the
+    next round (FotMob doesn't always carry the shoot-out score in its schedule feed)."""
+    rounds = {}
+    for rnd in KO_ORDER:
+        games = sorted((m for m in matches if m.get("stage") == rnd), key=lambda m: m.get("kickoff") or m["date"])
+        pairs = {}
+        for m in games:
+            pairs.setdefault(frozenset((m["home"], m["away"])), []).append(m)
+        ties = []
+        for legs in pairs.values():
+            a, b = legs[0]["home"], legs[0]["away"]          # a hosts the first leg
+            played = [m for m in legs if m["played"]]
+            ga = sum(m["hs"] if m["home"] == a else m["as"] for m in played)
+            gb = sum(m["hs"] if m["home"] == b else m["as"] for m in played)
+            last = legs[-1]
+            done = played and len(played) == len(legs) and (rnd == "F" or len(legs) == 2)
+            winner, pens = None, None
+            if last.get("pens"):
+                pens = last["pens"] if last["home"] == a else last["pens"][::-1]
+            if done:
+                if ga != gb:
+                    winner = a if ga > gb else b
+                elif pens:
+                    winner = a if pens[0] > pens[1] else b
+            ties.append({"a": a, "b": b, "agg": [ga, gb], "winner": winner, "pens": pens,
+                         "aet": any(m.get("aet") for m in played),
+                         "legs": [m["id"] for m in legs], "done": bool(done)})
+        if ties:
+            rounds[rnd] = ties
+    # fallback winners from the next round
+    for i, rnd in enumerate(KO_ORDER[:-1]):
+        nxt = {t for tie in rounds.get(KO_ORDER[i + 1], []) for t in (tie["a"], tie["b"])}
+        for tie in rounds.get(rnd, []):
+            if tie["done"] and not tie["winner"]:
+                hit = [t for t in (tie["a"], tie["b"]) if t in nxt]
+                if len(hit) == 1:
+                    tie["winner"] = hit[0]
+    return rounds
+
+
+def reach_of(teams, rounds):
+    """Furthest stage per club: 'first' (group / league phase), PO, R16, QF, SF, F, W."""
+    reach = {t: "first" for t in teams}
+    for rnd in KO_ORDER:
+        for tie in rounds.get(rnd, []):
+            for t in (tie["a"], tie["b"]):
+                reach[t] = rnd
+    fin = (rounds.get("F") or [None])[0]
+    if fin and fin.get("winner"):
+        reach[fin["winner"]] = "W"
+    return reach
 
 
 def build_xg_records(matches):
@@ -272,7 +362,7 @@ def build_xg_records(matches):
 
 
 def build_distance(season, schedule):
-    """Avg km covered per match, per club, from epl/team_stats/DISTANCE_<season>.json (FotMob's
+    """Avg km covered per match, per club, from ucl/team_stats/DISTANCE_<season>.json (FotMob's
     "Total distance per match" team stat — tracking data, so no event scrape can derive it).
     Rows are keyed back to the schedule's team names by FotMob team id, so a club FotMob
     spells differently in its stats feed still lines up with the standings. None if absent."""
@@ -300,15 +390,41 @@ def build_season(season):
         return {"season": season, "status": "not_started", "counts": {},
                 "standings": [], "matches": [], "xgRecords": [], "crests": {}, "teams": []}
 
-    matches, crests = build_matches(season, schedule)
-    standings = compute_standings(matches)
+    if any(not f.get("stage") for f in schedule["matches"]):
+        assign_stages(schedule["matches"], season, verbose=False)
+    matches, crests, countries = build_matches(season, schedule)
+    fmt = format_of(season)
+    first = [m for m in matches if m.get("stage") in FIRST_PHASE]
+    standings = compute_standings(first)          # league phase table / all group clubs
+    groups = None
+    if fmt == "groups":
+        groups = {}
+        for g in sorted({m["group"] for m in first if m.get("group")}):
+            groups[g] = compute_standings([m for m in first if m.get("group") == g], h2h=True)
+        # overall table keeps each club's group and group position for the views that list clubs
+        pos = {r["team"]: (g, r["rank"]) for g, rows in groups.items() for r in rows}
+        for r in standings:
+            r["group"], r["grank"] = pos.get(r["team"], (None, None))
+    rounds = build_ties(matches)
+    reach = reach_of([r["team"] for r in standings], rounds)
+    fin = (rounds.get("F") or [None])[0]
+    champion = fin["winner"] if fin and fin.get("winner") else None
     xg_records = build_xg_records(matches)
     played = [m for m in matches if m["played"]]
     with_xg = [m for m in played if m["xg_home"] is not None]
-    mds = [m["matchday"] for m in matches if m["matchday"]]
-    cur_md = max((m["matchday"] for m in played if m["matchday"]), default=0)
+    mds = [m["matchday"] for m in first if m["matchday"]]
+    cur_md = max((m["matchday"] for m in played if m.get("stage") in FIRST_PHASE and m["matchday"]), default=0)
+    stage_now = max((m["stage"] for m in played), key=lambda s: KO_ORDER.index(s) + 1 if s in KO_ORDER else 0, default=None)
     return {
         "season": season,
+        "format": fmt,
+        "groups": groups,
+        "rounds": rounds,
+        "reach": reach,
+        "champion": champion,
+        "runnerUp": next((t for t in (fin["a"], fin["b"]) if t != champion), None) if champion else None,
+        "stageNow": stage_now,
+        "countries": countries,
         "status": "in_progress" if played and len(played) < len(matches) else
                   ("finished" if played else "not_started"),
         "counts": {
@@ -326,14 +442,11 @@ def build_season(season):
 
 
 def _default_season(seasons):
-    """Newest season with at least one played match out of a real, (near-)complete fixture
-    list; else the newest we have. The >=100 floor keeps a season with only a handful of
-    fixtures on disk (an incremental build_schedule.py sweep just starting, or a few
-    hand-added preview matches) from briefly becoming the default before its full 380-match
-    schedule is pulled — landing new visitors on a near-empty table."""
+    """Newest season with at least one full matchday played (18 matches: every club of the
+    36 has played once); else the newest we have. The floor keeps a season with only a
+    handful of results from becoming the default and landing visitors on a near-empty table."""
     played = [s for s in sorted(seasons)
-              if (seasons[s].get("counts") or {}).get("played")
-              and (seasons[s].get("counts") or {}).get("total", 0) >= 100]
+              if (seasons[s].get("counts") or {}).get("played", 0) >= 18]
     return (played or sorted(seasons))[-1]
 
 
@@ -344,7 +457,7 @@ def main():
         if s is not None:
             seasons[season] = s
     if not seasons:
-        raise SystemExit("No schedules found in " + SCHED_DIR + " — run epl/build_schedule.py first.")
+        raise SystemExit("No schedules found in " + SCHED_DIR + " — run ucl/build_schedule.py first.")
 
     payload = {
         "generated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),

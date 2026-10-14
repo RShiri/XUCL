@@ -3,7 +3,7 @@
 
     from xg_core_v3 import XGScorer
     scorer = XGScorer()                       # loads xg_artifact.json (23-feature)
-    for event_id, xg in scorer.iter_match_xg(match_data, league="EPL"):
+    for event_id, xg in scorer.iter_match_xg(match_data, league="UCL"):
         ...
 """
 from .features import (FEATURE_NAMES, feature_dict, shot_feature_dict,  # noqa: F401

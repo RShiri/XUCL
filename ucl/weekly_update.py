@@ -7,9 +7,9 @@ per-match tasks in register_tasks.ps1.
 
 Steps (season auto-detected as the newest SCHEDULE_*.json on disk, i.e.
 whichever season is currently in progress):
-    1. epl/build_schedule.py --season <season>   (FotMob sweep, no browser)
-       + epl/fetch_team_stats.py --season <season> (FotMob team distance per match)
-    2. epl/backfill.py --season <season>         (WhoScored scrape of any
+    1. ucl/build_schedule.py --season <season>   (FotMob sweep, no browser)
+       + ucl/fetch_team_stats.py --season <season> (FotMob team distance per match)
+    2. ucl/backfill.py --season <season>         (WhoScored scrape of any
        newly-finished match + a full dashboard rebuild — see backfill.py)
     3. git add -A && git commit && git push          (only if something changed;
        plain git, NOT git_ops/XWORLDCUPTWIT_REPO — see CLAUDE.md gotchas on why)
@@ -18,9 +18,9 @@ Every run appends one line to PROGRESS.md (via log_platform) so a scheduled
 run that silently failed doesn't go unnoticed forever.
 
 Usage:
-    py epl/weekly_update.py                  # auto-detect season
-    py epl/weekly_update.py --season 2026-27  # force a season
-    py epl/weekly_update.py --no-push         # rebuild locally, skip git push
+    py ucl/weekly_update.py                  # auto-detect season
+    py ucl/weekly_update.py --season 2026-27  # force a season
+    py ucl/weekly_update.py --no-push         # rebuild locally, skip git push
 """
 from __future__ import annotations
 
@@ -31,13 +31,13 @@ import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SCHED_DIR = REPO_ROOT / "epl" / "schedules"
+SCHED_DIR = REPO_ROOT / "ucl" / "schedules"
 
 sys.path.insert(0, str(REPO_ROOT))
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from epl.progress_log import log_platform  # noqa: E402
+from ucl.progress_log import log_platform  # noqa: E402
 
 PY = sys.executable or "py"
 
@@ -45,7 +45,7 @@ PY = sys.executable or "py"
 def _newest_season() -> str:
     names = sorted(p.stem.replace("SCHEDULE_", "") for p in SCHED_DIR.glob("SCHEDULE_*.json"))
     if not names:
-        raise SystemExit("No SCHEDULE_*.json found under epl/schedules — nothing to update.")
+        raise SystemExit("No SCHEDULE_*.json found under ucl/schedules — nothing to update.")
     return names[-1]
 
 
@@ -63,10 +63,10 @@ def _git(*args: str) -> tuple[int, str]:
 # Files this run regenerates. If GitHub changed them too (code pushed from another
 # machine or a cloud session rebuilds them), our freshly built copy wins on a merge
 # conflict; build_split.py then rewrites the cache hashes in index.html/match.html.
-_GENERATED = ("epl_dashboard/data", "epl_dashboard/players.js", "epl_dashboard/shots.js",
-              "epl_dashboard/matches_detail/", "epl_dashboard/player_lab/",
-              "epl_dashboard/database/", "epl_dashboard/index.html",
-              "epl_dashboard/match.html", "epl_png/", "epl/schedules/", "epl/team_stats/",
+_GENERATED = ("ucl_dashboard/data", "ucl_dashboard/players.js", "ucl_dashboard/shots.js",
+              "ucl_dashboard/matches_detail/", "ucl_dashboard/player_lab/",
+              "ucl_dashboard/database/", "ucl_dashboard/index.html",
+              "ucl_dashboard/match.html", "ucl_png/", "ucl/schedules/", "ucl/team_stats/",
               "PROGRESS.md")
 
 
@@ -92,14 +92,14 @@ def _sync_and_push() -> tuple[int, str]:
         # too (a design change can land on GitHub mid-run); for those take GitHub's version,
         # since the only thing this run changes in them is the ?v= cache hash, which
         # build_split.py rewrites below. "--ours" there would silently drop the other edits.
-        pages = [f for f in files if f in ("epl_dashboard/index.html", "epl_dashboard/match.html")]
+        pages = [f for f in files if f in ("ucl_dashboard/index.html", "ucl_dashboard/match.html")]
         data = [f for f in files if f not in pages]
         if data:
             _git("checkout", "--ours", "--", *data)
         if pages:
             _git("checkout", "--theirs", "--", *pages)
         _git("add", "--", *files)
-        _run([PY, "epl_dashboard/build_split.py"])  # re-hash index.html/match.html
+        _run([PY, "ucl_dashboard/build_split.py"])  # re-hash index.html/match.html
         _git("add", "-A")
         rc, out = _git("commit", "--no-edit")
         if rc != 0:
@@ -108,7 +108,7 @@ def _sync_and_push() -> tuple[int, str]:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Weekly Premier League fixtures/results/scrape/push run.")
+    ap = argparse.ArgumentParser(description="Weekly Champions League fixtures/results/scrape/push run.")
     ap.add_argument("--season", help="e.g. 2026-27; default = newest schedule on disk")
     ap.add_argument("--no-push", action="store_true", help="Rebuild only, skip git push.")
     args = ap.parse_args()
@@ -117,11 +117,11 @@ def main() -> None:
     started = time.time()
     print(f"── Weekly update — season {season} ──")
 
-    rc1 = _run([PY, "epl/build_schedule.py", "--season", season])
+    rc1 = _run([PY, "ucl/build_schedule.py", "--season", season])
     # FotMob's "Total distance per match" team stat (tracking data the event scrape can't give).
     # Best-effort: a miss keeps the previous file and never fails the weekly run.
-    _run([PY, "epl/fetch_team_stats.py", "--season", season])
-    rc2 = _run([PY, "epl/backfill.py", "--season", season])
+    _run([PY, "ucl/fetch_team_stats.py", "--season", season])
+    rc2 = _run([PY, "ucl/backfill.py", "--season", season])
 
     pushed = False
     push_note = ""
@@ -129,7 +129,7 @@ def main() -> None:
         rc, status = _git("status", "--porcelain")
         if status.strip():
             _git("add", "-A")
-            rc, msg = _git("commit", "-m", f"[EPL] weekly update ({season})")
+            rc, msg = _git("commit", "-m", f"[UCL] weekly update ({season})")
             if rc == 0:
                 rc, out = _sync_and_push()
                 if rc == 0:

@@ -5,7 +5,7 @@
    html[data-site-style] before paint and switches it live, so everything here
    is pure CSS: no re-render is needed when the visitor flips C <-> A.
 
-   A "Matchday"  — the dashboard's native language; keeps Premier League purple.
+   A "Matchday"  — the dashboard's native language; keeps Champions League blue.
    C "HUD"       — deep navy, cyan hairlines, square corners, corner brackets,
                    upright Chakra Petch display over IBM Plex Sans.
    Data colours (team kits, win/draw/loss, relegation red, pitch green) are left
@@ -21,8 +21,8 @@ html[data-site-style="a"] {
   --font-display: var(--rs-display);
   --font-label: var(--rs-display);
   --font-body: var(--rs-text);
-  /* the portfolio bar + About panel take the league purple instead of portfolio lime */
-  --rs-accent: #a855f7; --rs-accent-ink: #0c0d10; --rs-accent-soft: rgba(168, 85, 247, 0.14); --rs-goal: #a855f7;
+  /* the portfolio bar + About panel take the competition blue instead of portfolio lime */
+  --rs-accent: #3b82f6; --rs-accent-ink: #0c0d10; --rs-accent-soft: rgba(59, 130, 246, 0.14); --rs-goal: #3b82f6;
 }
 
 /* ---------------------------------------------------------------- C: HUD */
@@ -197,26 +197,26 @@ html[data-site-style="c"] svg text[fill="#f5f7fa"] { fill: var(--text); }
 html[data-site-style="c"] svg text[fill="#b9bfc9"] { fill: var(--muted); }
 html[data-site-style="c"] svg text[fill="#7c89a8"] { fill: var(--muted-2); }
 html[data-site-style="c"] svg [stroke="#b9bfc9"] { stroke: var(--muted); }
-html[data-site-style="c"] svg [fill="#a855f7"] { fill: var(--accent); }
-html[data-site-style="c"] svg [stroke="#a855f7"] { stroke: var(--accent); }
-html[data-site-style="c"] svg [fill="#7c3aed"] { fill: var(--accent-dim); }
-html[data-site-style="c"] svg [stroke="#7c3aed"] { stroke: var(--accent-dim); }
+html[data-site-style="c"] svg [fill="#3b82f6"] { fill: var(--accent); }
+html[data-site-style="c"] svg [stroke="#3b82f6"] { stroke: var(--accent); }
+html[data-site-style="c"] svg [fill="#1d4ed8"] { fill: var(--accent-dim); }
+html[data-site-style="c"] svg [stroke="#1d4ed8"] { stroke: var(--accent-dim); }
 html[data-site-style="c"] svg [fill="#9fd0ff"] { fill: var(--info); }
 html[data-site-style="c"] svg [stroke="#9fd0ff"] { stroke: var(--info); }
 html[data-site-style="c"] svg[style*="#0f1114"] { background: var(--well) !important; border-radius: 0 !important; outline: 1px solid var(--line); }
-html[data-site-style="c"] [style*="background:#a855f7"] { background: var(--accent) !important; }
-html[data-site-style="c"] [style*="background:#7c3aed"] { background: var(--accent-dim) !important; }
+html[data-site-style="c"] [style*="background:#3b82f6"] { background: var(--accent) !important; }
+html[data-site-style="c"] [style*="background:#1d4ed8"] { background: var(--accent-dim) !important; }
 html[data-site-style="c"] [style*="background:#9fd0ff"] { background: var(--info) !important; }
 
-/* ---- colour words in the explainers follow the look (the accent is purple in A,
+/* ---- colour words in the explainers follow the look (the accent is blue in A,
    cyan in C; the second series is pale blue in A, violet in C) */
-.cw-acc::after { content: "purple"; }
-.cw-acc-cap::after { content: "Purple"; }
+.cw-acc::after { content: "blue"; }
+.cw-acc-cap::after { content: "Blue"; }
 .cw-info::after { content: "pale blue"; }
 html[data-site-style="c"] .cw-acc::after { content: "cyan"; }
 html[data-site-style="c"] .cw-acc-cap::after { content: "Cyan"; }
 html[data-site-style="c"] .cw-info::after { content: "violet"; }
-html[data-site-lang="he"] .cw-acc::after, html[data-site-lang="he"] .cw-acc-cap::after { content: "סגול"; }
+html[data-site-lang="he"] .cw-acc::after, html[data-site-lang="he"] .cw-acc-cap::after { content: "כחול"; }
 html[data-site-lang="he"] .cw-info::after { content: "תכלת"; }
 html[data-site-lang="he"][data-site-style="c"] .cw-acc::after, html[data-site-lang="he"][data-site-style="c"] .cw-acc-cap::after { content: "טורקיז"; }
 html[data-site-lang="he"][data-site-style="c"] .cw-info::after { content: "סגול"; }

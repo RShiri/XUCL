@@ -1,0 +1,28 @@
+match_id,date,stage,venue,home,away,home_score,away_score,home_xg,away_xg,xg_estimated
+of-2026-27-001,2026-09-08,league,,AEK Athens,LASK Linz,1,0,,,0
+of-2026-27-002,2026-09-08,league,,Club Brugge,Aston Villa,2,3,,,0
+of-2026-27-003,2026-09-08,league,,Borussia Dortmund,Villarreal,3,2,,,0
+of-2026-27-004,2026-09-08,league,,Porto,Manchester City,0,2,,,0
+of-2026-27-005,2026-09-08,league,,Lille,Real Betis,2,3,,,0
+of-2026-27-006,2026-09-08,league,,Real Madrid,Inter,2,1,,,0
+of-2026-27-007,2026-09-09,league,,Barcelona,Feyenoord,5,1,,,0
+of-2026-27-008,2026-09-09,league,,VfB Stuttgart,Viking,3,1,,,0
+of-2026-27-009,2026-09-09,league,,Liverpool,Atletico Madrid,2,1,,,0
+of-2026-27-010,2026-09-09,league,,Paris Saint-Germain,Slovan Bratislava,6,1,,,0
+of-2026-27-011,2026-09-09,league,,Sporting CP,Galatasaray,3,1,,,0
+of-2026-27-012,2026-09-09,league,,Napoli,Arsenal,0,1,,,0
+of-2026-27-013,2026-09-10,league,,Fenerbahçe,Roma,1,1,,,0
+of-2026-27-014,2026-09-10,league,,PSV,Shakhtar Donetsk,1,1,,,0
+of-2026-27-015,2026-09-10,league,,Como,RB Leipzig,4,1,,,0
+of-2026-27-016,2026-09-10,league,,Bayern München,Bodø/Glimt,5,0,,,0
+of-2026-27-017,2026-09-10,league,,Manchester United,Sabah,4,0,,,0
+of-2026-27-018,2026-09-10,league,,Slavia Prague,Lens,2,3,,,0
+of-2026-27-019,2026-10-13,league,,Lens,Sporting CP,0,2,,,0
+of-2026-27-020,2026-10-13,league,,Sabah,Slavia Prague,2,0,,,0
+of-2026-27-021,2026-10-13,league,,Arsenal,Lille,3,0,,,0
+of-2026-27-022,2026-10-13,league,,Atletico Madrid,Manchester United,2,0,,,0
+of-2026-27-023,2026-10-13,league,,Galatasaray,Barcelona,1,4,,,0
+of-2026-27-024,2026-10-13,league,,Inter,Club Brugge,3,4,,,0
+of-2026-27-025,2026-10-13,league,,RB Leipzig,PSV,1,0,,,0
+of-2026-27-026,2026-10-13,league,,Viking,Bayern München,3,3,,,0
+of-2026-27-027,2026-10-13,league,,Villarreal,Napoli,3,1,,,0

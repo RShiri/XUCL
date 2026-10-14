@@ -1,48 +1,59 @@
-# XEPL — English Premier League match analytics
+# XUCL — UEFA Champions League match analytics
 
-Multi-source analytics for the **English Premier League**: a standings + results dashboard, an
-xG efficiency lab, a per-match "Match Centre" (shot/pass/dribble maps, all-goals reconstruction),
-a player leaderboard, and a Poisson **season projection** (title / European / relegation odds).
-Cloned from the La Liga (XLALIGA) system; shares the same `xg_core/` model.
+Multi-source analytics for the **UEFA Champions League**, built exactly like XEPL / XLALIGA: a
+standings + results dashboard, a knockout bracket, an xG efficiency lab, a per-match "Match Centre"
+(shot/pass/dribble maps, all-goals reconstruction), a player leaderboard, and a Poisson
+**league-phase projection**. Cloned from the Premier League system (XEPL); shares the same
+`xg_core/` model, so numbers compare across all three sites.
 
-**Live dashboard:** `epl_dashboard/index.html` (root `index.html` redirects there).
+**Live dashboard:** `ucl_dashboard/index.html` (root `index.html` redirects there).
 
-**Ships with:** four complete seasons — **2022/23, 2023/24, 2024/25 and 2025/26** (380/380 matches
-each, 1,520 total) with the full rich xG/shot/player layer. `2026/27` fills in once FotMob releases
-the fixtures.
+**Seasons:** 2022/23, 2023/24, 2024/25, 2025/26 complete, plus 2026/27 in progress.
+
+## The format changed in the middle
+| Seasons | Clubs | First phase | Then |
+|---|---|---|---|
+| 2022/23, 2023/24 | 32 | 8 groups of 4, 6 matchdays (head-to-head tiebreak) | top 2 → round of 16, 3rd → Europa League |
+| 2024/25 onward | 36 | one league table, 8 matchdays (GD, GF, away GF, W, away W) | 1-8 → round of 16, 9-24 → knockout playoff, 25-36 out |
+
+Every schedule record carries a `stage` (`group` / `league`, `PO`, `R16`, `QF`, `SF`, `F`), plus
+`group` (old format), `matchday` (first phase) and `leg` (two-legged ties). `ucl/stages.py` derives
+them from the fixtures themselves (dates, who-played-whom components, round sizes), so a FotMob pull
+and an openfootball import end up labelled the same way. The dashboard switches the table (8 group
+tables vs one 36-club table), zones, bracket and projection by `format`.
 
 ## How it works
 Two data layers:
-1. **Schedule spine (token-free):** `epl/build_schedule.py` sweeps FotMob's public feed for the
-   Premier League (league 47) → `epl/schedules/SCHEDULE_<season>.json` with every fixture's real
-   score + matchday. Drives **standings, results, fixtures and projection** — no browser needed.
-2. **Rich per-match layer:** `epl/run_match.py` / `epl/backfill.py` deep-scrape individual games
-   (FotMob + WhoScored + Understat) into `epl/matches/<season>/<id>.json`, adding xG, shot/pass/
-   dribble maps and player stats. The dashboard degrades gracefully — a match shows its
+1. **Schedule spine (token-free):** `ucl/build_schedule.py` sweeps FotMob's public feed for the
+   Champions League (league 42) → `ucl/schedules/SCHEDULE_<season>.json` with every fixture's real
+   score, stage and matchday. Drives **standings, bracket, results and projection**.
+   *Fallback:* `ucl/import_openfootball.py` writes the same files from the public-domain
+   openfootball/champions-league data in `ucl/openfootball/` (used where FotMob is unreachable, e.g.
+   cloud sessions). 2026/27 lives in a hand-kept `cl_2026-27.csv` until FotMob replaces it.
+   A FotMob build always replaces an openfootball-seeded file.
+2. **Rich per-match layer:** `ucl/scrape_whoscored.py` / `ucl/run_match.py` / `ucl/backfill.py`
+   deep-scrape individual games (WhoScored + FotMob) into `ucl/matches/<season>/<id>.json`, adding
+   xG (our own model, never another provider's), shot/pass/dribble maps and player stats. Understat
+   does not cover the Champions League. The dashboard degrades gracefully: a match shows its
    result/table contribution immediately, its rich views once deep-scraped.
 
-## Quick start
+## Quick start (on the PC, where FotMob and WhoScored are reachable)
 ```bash
 pip install -r requirements.txt
-py epl/build_schedule.py --season 2025-26     # real results (token-free)
-py epl/download_crests.py                      # club badges
-py epl_dashboard/build_data.py                 # build the dashboard data
-py -m http.server 8778                         # → http://localhost:8778/epl_dashboard/index.html
+py ucl/build_schedule.py --season 2026-27 --full   # real fixtures + FotMob ids (replaces the seed)
+py ucl/download_crests.py                          # club badges
+py ucl/scrape_whoscored.py --season 2026-27        # events → xG/shots/players
+py ucl_dashboard/build_match_details.py && py ucl_dashboard/build_players.py \
+  && py ucl_dashboard/build_database.py && py ucl_dashboard/build_shots.py \
+  && py ucl_dashboard/build_player_lab.py && py ucl_dashboard/build_data.py \
+  && py ucl_dashboard/build_split.py               # build_split always last
+py -m http.server 8778                             # → http://localhost:8778/ucl_dashboard/index.html
 ```
-Rich per-match data — the workhorse is the WhoScored crawler (needs Chrome; ~1h/season, resumable):
+Without FotMob (results only):
 ```bash
-py epl/scrape_whoscored.py --season 2025-26     # scrape every match's events
-py epl_dashboard/build_match_details.py && py epl_dashboard/build_players.py \
-  && py epl_dashboard/build_database.py && py epl_dashboard/build_shots.py \
-  && py epl_dashboard/build_player_lab.py && py epl_dashboard/build_data.py
-git add -A && git commit -m "refresh data" && git push
+py ucl/import_openfootball.py && py ucl_dashboard/build_data.py && py ucl_dashboard/build_split.py
 ```
-
-## European zones (season-aware)
-UCL cut is **top 5** for 2024/25 & 2025/26 (England's coefficient-earned fifth CL place), **top 4**
-for 2022/23 & 2023/24; then Europa, Conference play-off, bottom 3 relegation. Encoded in
-`epl_dashboard/app.js` `zoneOf()`/`uclSpots()` and the projection Monte-Carlo.
 
 ## Layout
-`epl/` pipeline · `epl_dashboard/` static site + builders · `epl_png/` published PNGs ·
-`team_logos/epl/` crests · `xg_core/` shared xG/xA model.
+`ucl/` pipeline · `ucl_dashboard/` static site + builders · `ucl_png/` published PNGs ·
+`team_logos/ucl/` crests · `xg_core/` shared xG/xA model.

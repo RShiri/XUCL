@@ -2,7 +2,7 @@
 
 xG: the v3 artifact in <repo root>/xg_core_v3 (23 features — the base-14 geometry plus
 9 shot-/assist-context extras; LR + monotone-GBM + market blend, isotonic map; trained
-on La Liga + EPL 4 seasons each + the World Cup). FIVE of the extras come from the
+on La Liga + UCL 4 seasons each + the World Cup). FIVE of the extras come from the
 shot's ASSISTING PASS, so xG must be scored with the whole match's events in hand: call
 match_xg_map(match_data) ONCE per match, then look each shot's xG up via
 shot_xg(ev, xg_by_event). There is deliberately no per-shot scalar path in this module —
@@ -26,7 +26,7 @@ from xg_core_v3.score import XGScorer   # v3: 23-feature, event-based (needs the
 from xg_core.xa_score import XAScorer   # xA unchanged (new artifact is a drop-in)
 from xgot_core.score import XGOTScorer  # placement-based xGOT (on-target shots only)
 
-_LEAGUE = "EPL"           # per-league calibration shift inside the artifacts
+_LEAGUE = "UCL"           # per-league calibration shift inside the artifacts
 _XG = XGScorer()          # loads xg_core_v3/xg_artifact.json
 _XA = XAScorer()
 _XGOT = XGOTScorer()
@@ -79,7 +79,7 @@ def match_xg_map(match_data):
 
     Delegates to XGScorer.match_xg_by_id, which keys the map by object identity, NOT
     WhoScored eventId: eventIds are unique only within a possession chain and DO collide
-    within a match (~15% of EPL matches have two shots sharing one), so an eventId-keyed
+    within a match (~15% of UCL matches have two shots sharing one), so an eventId-keyed
     dict would hand colliding shots each other's xG. Every caller builds this map and
     iterates shots from the SAME match_data, so the id(ev) identities line up."""
     return _XG.match_xg_by_id(match_data, league=_LEAGUE)

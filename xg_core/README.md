@@ -103,7 +103,7 @@ Team-match level, all 380 La Liga matches vs **Understat** and 18 WC matches vs
 
 **The −12% level gap vs Understat is theirs, not ours.** Understat sums run above
 actual goals in every league-season checked: La Liga 23/24 +8.7%, 24/25 +8.8%,
-25/26 +11.4%, EPL 24/25 +9.1%, 25/26 +11.2%. Per-segment on 9,453 identical shots,
+25/26 +11.4%, UCL 24/25 +9.1%, 25/26 +11.2%. Per-segment on 9,453 identical shots,
 actual goal rates side with this model everywhere:
 
 | segment | actual | Understat | this model |

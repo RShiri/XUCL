@@ -10,7 +10,7 @@ timeline and the line-ups. Each match is written to matches_detail/<id>.js as
 so match.html can load one game via a plain <script> tag (works on file:// too).
 
 Usage:
-    py epl_dashboard/build_match_details.py            # build all
+    py ucl_dashboard/build_match_details.py            # build all
     (the renderer hook calls build_one(match_data) for the game it just rendered)
 """
 import json
@@ -26,9 +26,9 @@ sys.path.insert(0, ROOT)
 from xg_model import (SHOT_TYPES, shot_xg, match_xg_map, match_xgot_by_event, player_full_name, ascii_name,
                       is_shootout, player_xa_from_events)
 
-# raw scrapes are git-ignored and absent in this clone; EPL_MATCH_DIR lets a
+# raw scrapes are git-ignored and absent in this clone; UCL_MATCH_DIR lets a
 # rebuild point at the dev copy (Desktop\XWORLDCUPTWIT\laliga\matches)
-MATCH_DIR = os.environ.get("EPL_MATCH_DIR") or os.path.join(ROOT, "epl", "matches")
+MATCH_DIR = os.environ.get("UCL_MATCH_DIR") or os.path.join(ROOT, "ucl", "matches")
 OUT_DIR = os.path.join(HERE, "matches_detail")
 
 NAME_MAP = {
@@ -41,7 +41,7 @@ NAME_MAP = {
 
 
 import re as _re
-# The EPL pipeline saves matches by FotMob id (e.g. 4837113.json); the WC pipeline used
+# The UCL pipeline saves matches by FotMob id (e.g. 4837113.json); the WC pipeline used
 # date_Home_vs_Away.json. Accept either, excluding the scraper's match_<id>_cache.json.
 _MATCH_NAME_RE = _re.compile(r"^(\d+|\d{4}_\d{2}_\d{2}_.+_vs_.+)$")
 
@@ -58,7 +58,7 @@ def norm(name):
 
 def _team_color(name):
     try:
-        from epl.team_colors import get_team_colors
+        from ucl.team_colors import get_team_colors
         c = get_team_colors(name, fallback_home=True)
         return c.get("primary", "#4ea1ff")
     except Exception:
@@ -242,14 +242,14 @@ def _shootout(match_data, side_of):
 def find_png(match_id):
     """Relative path (from the dashboard folder) to the rendered infographic, or None.
 
-    Always emits the published epl_png path (where the deploy copies the PNG),
-    even when the file currently only exists in the git-ignored epl/output. A
-    fresh auto-deploy regenerates data.js *before* the PNG reaches epl_png,
+    Always emits the published ucl_png path (where the deploy copies the PNG),
+    even when the file currently only exists in the git-ignored ucl/output. A
+    fresh auto-deploy regenerates data.js *before* the PNG reaches ucl_png,
     so returning the output/ path here would 404 the Infographic link on the live
     site. The PNG is checked in both places only to decide whether the match has a
     render at all."""
-    published = os.path.join("epl_png", match_id + ".png")
-    for rel in (published, os.path.join("epl", "output", match_id + ".png")):
+    published = os.path.join("ucl_png", match_id + ".png")
+    for rel in (published, os.path.join("ucl", "output", match_id + ".png")):
         if os.path.exists(os.path.join(ROOT, rel)):
             return "../" + published.replace("\\", "/")
     return None

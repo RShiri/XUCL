@@ -20,7 +20,7 @@ from build_match_details import norm, _match_extras, _player_rating, is_match_fi
 from xg_model import (ascii_name, SHOT_TYPES, shot_xg, match_xg_map, match_xgot_by_event,
                       is_shootout, player_xa_from_events)
 
-MATCH_DIR = os.environ.get("EPL_MATCH_DIR") or os.path.join(ROOT, "epl", "matches")
+MATCH_DIR = os.environ.get("UCL_MATCH_DIR") or os.path.join(ROOT, "ucl", "matches")
 OUT = os.path.join(HERE, "players.js")
 
 # WhoScored per-minute stat dicts are incremental → sum the values.
@@ -81,7 +81,7 @@ def _fotmob_photo_lookup(match_data):
 
 def _fotmob_xgot_buckets(match_data):
     """(side, normalized surname, minute) -> [xgot, ...] from FotMob's own shotmap
-    (_fotmob_shots — see epl/scraper.py's _fotmob_shot_xg_list), for the goalkeeper
+    (_fotmob_shots — see ucl/scraper.py's _fotmob_shot_xg_list), for the goalkeeper
     goals-prevented stat below. Same best-effort team+surname+minute matching as
     build_match_details.py's cross-provider xG buckets (XLALIGA)."""
     out = {}

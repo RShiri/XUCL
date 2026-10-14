@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Batch deep-scrape a Premier League season (FotMob + WhoScored + Understat) to layer rich data
+Batch deep-scrape a Champions League season (FotMob + WhoScored + Understat) to layer rich data
 (xG, shots, passes, dribbles, events, player stats) onto the schedule-driven dashboard.
 
 The dashboard's standings/results/fixtures come from the token-free schedule
@@ -11,11 +11,11 @@ machine with Chrome + the FotMob token, ideally overnight. Each match is scraped
 everything, instead of 380 commits.
 
 Examples:
-    py epl/backfill.py --season 2025-26                 # every finished, not-yet-scraped match
-    py epl/backfill.py --season 2025-26 --limit 10      # just the next 10 (good for a test run)
-    py epl/backfill.py --season 2025-26 --matchday 19   # only matchday 19
-    py epl/backfill.py --season 2025-26 --redo          # re-scrape even already-scraped matches
-    py epl/backfill.py --season 2025-26 --push          # rebuild + one git push at the end
+    py ucl/backfill.py --season 2025-26                 # every finished, not-yet-scraped match
+    py ucl/backfill.py --season 2025-26 --limit 10      # just the next 10 (good for a test run)
+    py ucl/backfill.py --season 2025-26 --matchday 19   # only matchday 19
+    py ucl/backfill.py --season 2025-26 --redo          # re-scrape even already-scraped matches
+    py ucl/backfill.py --season 2025-26 --push          # rebuild + one git push at the end
 """
 from __future__ import annotations
 
@@ -32,11 +32,11 @@ sys.path.insert(0, str(_REPO_ROOT))
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from epl.run_match import run_match
-from epl.progress_log import log_scrape
+from ucl.run_match import run_match
+from ucl.progress_log import log_scrape
 
-SCHED_DIR = _REPO_ROOT / "epl" / "schedules"
-MATCH_DIR = _REPO_ROOT / "epl" / "matches"
+SCHED_DIR = _REPO_ROOT / "ucl" / "schedules"
+MATCH_DIR = _REPO_ROOT / "ucl" / "matches"
 
 
 def _scrape_state(season: str, fotmob_id: int) -> str:
@@ -69,7 +69,7 @@ def _newest_season() -> str:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Batch deep-scrape a Premier League season.")
+    ap = argparse.ArgumentParser(description="Batch deep-scrape a Champions League season.")
     ap.add_argument("--season", default=_newest_season())
     ap.add_argument("--limit", type=int, help="Scrape at most N matches this run.")
     ap.add_argument("--matchday", type=int, help="Only this matchday.")
@@ -84,7 +84,7 @@ def main() -> None:
 
     sched_path = SCHED_DIR / f"SCHEDULE_{args.season}.json"
     if not sched_path.exists():
-        raise SystemExit(f"No schedule for {args.season}. Run: py epl/build_schedule.py --season {args.season}")
+        raise SystemExit(f"No schedule for {args.season}. Run: py ucl/build_schedule.py --season {args.season}")
     matches = json.loads(sched_path.read_text(encoding="utf-8")).get("matches", [])
 
     todo, partial = [], []
@@ -112,7 +112,7 @@ def main() -> None:
     started = time.time()
     # One rebuild at the end, not one per match: the per-match refresh re-reads every season
     # and rewrites every derived file, which is what makes a long batch thrash the machine.
-    os.environ["EPL_SKIP_DASHBOARD_REFRESH"] = "1"
+    os.environ["UCL_SKIP_DASHBOARD_REFRESH"] = "1"
     ok = fail = 0
     for i, m in enumerate(todo, 1):
         label = f"{m['home']} vs {m['away']} (MD{m.get('matchday')}, id={m['fotmob_id']})"
@@ -129,11 +129,11 @@ def main() -> None:
         if i < len(todo):
             time.sleep(args.delay)
 
-    os.environ.pop("EPL_SKIP_DASHBOARD_REFRESH", None)
+    os.environ.pop("UCL_SKIP_DASHBOARD_REFRESH", None)
     if ok:
         print("\nRebuilding the dashboard once for the whole batch …")
         try:
-            from epl.renderer import _refresh_web_dashboard_db
+            from ucl.renderer import _refresh_web_dashboard_db
             _refresh_web_dashboard_db()
         except Exception as exc:
             print(f"  ! rebuild failed ({exc}) — run the build_*.py scripts by hand.")
@@ -143,7 +143,7 @@ def main() -> None:
                         and _scrape_state(args.season, m["fotmob_id"]) == "partial")
     if still_partial:
         print(f"{still_partial} match(es) still hold FotMob data only — "
-              f"'py epl/backfill.py --season {args.season} --redo-partial' retries just those.")
+              f"'py ucl/backfill.py --season {args.season} --redo-partial' retries just those.")
     target = f"{len(todo)} match(es)"
     if args.matchday:
         target = f"matchday {args.matchday} · {target}"
@@ -152,16 +152,16 @@ def main() -> None:
                note=("--redo" if args.redo else "") + (" --fotmob-only" if args.fotmob_only else ""))
     if args.push and ok:
         # One deploy for the whole batch. push_match_update clones + commits the refreshed
-        # epl_dashboard/{data.js,players.js,matches_detail,database} + any new PNGs.
+        # ucl_dashboard/{data.js,players.js,matches_detail,database} + any new PNGs.
         try:
-            from epl.git_ops import push_match_update
+            from ucl.git_ops import push_match_update
             # A representative PNG (any) satisfies the signature; the dashboard files are
             # what matter. Fall back to a no-PNG commit if none exist.
-            pngs = list((_REPO_ROOT / "epl_png").glob("*.png"))
+            pngs = list((_REPO_ROOT / "ucl_png").glob("*.png"))
             png = str(pngs[0]) if pngs else None
             if png:
                 push_match_update(png, match_id=f"backfill-{args.season}",
-                                  commit_message=f"[EPL] backfill {args.season} ({ok} matches)")
+                                  commit_message=f"[UCL] backfill {args.season} ({ok} matches)")
                 print("Pushed batch to GitHub.")
             else:
                 print("No PNGs to push; run the dashboard build + git push manually.")

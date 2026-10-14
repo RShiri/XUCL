@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Render the infographic PNG for every scraped match that doesn't have one yet, and
-publish every PNG into the tracked ``epl_png/`` folder the website links to.
+publish every PNG into the tracked ``ucl_png/`` folder the website links to.
 
-    py epl/render_missing.py                    # newest season
-    py epl/render_missing.py --season 2025-26
-    py epl/render_missing.py --season 2025-26 --ids 4193490 4193491
+    py ucl/render_missing.py                    # newest season
+    py ucl/render_missing.py --season 2025-26
+    py ucl/render_missing.py --season 2025-26 --ids 4193490 4193491
 
 Why this exists: ``run_match.py`` (and therefore ``backfill.py``) scrapes AND renders,
 but the bulk crawler ``scrape_whoscored.py`` only saves the raw match JSON — so a
@@ -12,8 +12,8 @@ matchday scraped that way shows in every table but has no PNG link in the Data t
 no download button in the Match Centre. This script closes that gap from the raw JSONs
 already on disk (no browser, no network) and is the first step of every dashboard rebuild.
 
-It also copies PNGs from the git-ignored ``epl/output/`` into ``epl_png/``: the site
-links ``../epl_png/<id>.png``, so a PNG that only lives in ``output/`` works on
+It also copies PNGs from the git-ignored ``ucl/output/`` into ``ucl_png/``: the site
+links ``../ucl_png/<id>.png``, so a PNG that only lives in ``output/`` works on
 localhost and 404s on GitHub Pages.
 """
 from __future__ import annotations
@@ -28,10 +28,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-MATCH_DIR = Path(os.environ.get("EPL_MATCH_DIR") or (ROOT / "epl" / "matches"))
-OUTPUT_DIR = ROOT / "epl" / "output"
-PUBLISH_DIR = ROOT / "epl_png"
-SCHED_DIR = ROOT / "epl" / "schedules"
+MATCH_DIR = Path(os.environ.get("UCL_MATCH_DIR") or (ROOT / "ucl" / "matches"))
+OUTPUT_DIR = ROOT / "ucl" / "output"
+PUBLISH_DIR = ROOT / "ucl_png"
+SCHED_DIR = ROOT / "ucl" / "schedules"
 
 
 def _newest_season() -> str:
@@ -68,7 +68,7 @@ def main() -> None:
         print(f"render_missing: no raw matches for {args.season} under {MATCH_DIR} — nothing to do")
         return
 
-    from epl.renderer import render_wc_dashboard  # matplotlib: import lazily
+    from ucl.renderer import render_wc_dashboard  # matplotlib: import lazily
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     raws = sorted(season_dir.glob("*.json"))
@@ -103,7 +103,7 @@ def main() -> None:
         publish(png)
 
     print(f"render_missing {args.season}: {rendered} rendered, {skipped} already had one or had no events, "
-          f"{failed} failed; {len(list(PUBLISH_DIR.glob('*.png')))} PNGs published in epl_png/")
+          f"{failed} failed; {len(list(PUBLISH_DIR.glob('*.png')))} PNGs published in ucl_png/")
 
 
 if __name__ == "__main__":

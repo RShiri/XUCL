@@ -1,5 +1,5 @@
 """
-Premier League – Combined one-shot match runner.
+Champions League – Combined one-shot match runner.
 
 Does the entire flow for ONE match in a single synchronous call:
     scrape (WhoScored via FotMob id) → render PNG → push to GitHub → post to X.
@@ -8,14 +8,14 @@ Unlike pipeline.py (a long-running watcher with a delayed-tweet thread), this
 module runs start-to-finish and exits. That makes it ideal for Windows Task
 Scheduler: register one task per match firing at (kick-off + 2h), each calling
 
-    py -m epl.run_match --fotmob-id <ID>
+    py -m ucl.run_match --fotmob-id <ID>
 
 Usage:
-    py -m epl.run_match --fotmob-id 4667812
-    py -m epl.run_match --fotmob-id 4667812 --fotmob-only   # skip WhoScored
-    py -m epl.run_match --fotmob-id 4667812 --no-post       # render+push only
-    py -m epl.run_match --fotmob-id 4667812 --no-push       # render+post only
-    py -m epl.run_match --from-file epl/matches/x.json    # skip scraping
+    py -m ucl.run_match --fotmob-id 4667812
+    py -m ucl.run_match --fotmob-id 4667812 --fotmob-only   # skip WhoScored
+    py -m ucl.run_match --fotmob-id 4667812 --no-post       # render+push only
+    py -m ucl.run_match --fotmob-id 4667812 --no-push       # render+post only
+    py -m ucl.run_match --from-file ucl/matches/x.json    # skip scraping
 """
 
 from __future__ import annotations
@@ -43,21 +43,21 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="backslashreplace")
 
-from epl.scraper     import (fetch_and_save, fotmob_fetch_wc_matches,
+from ucl.scraper     import (fetch_and_save, fotmob_fetch_wc_matches,
                                 schedule_team_names, schedule_lookup_by_teams)
-from epl.renderer    import render_wc_dashboard, output_filename
-from epl.git_ops     import push_png_to_xworldcuptwit, push_match_update
-from epl._runlock    import scrape_lock
-from epl.progress_log import log_scrape
+from ucl.renderer    import render_wc_dashboard, output_filename
+from ucl.git_ops     import push_png_to_xworldcuptwit, push_match_update
+from ucl._runlock    import scrape_lock
+from ucl.progress_log import log_scrape
 
-log = logging.getLogger("epl.run_match")
+log = logging.getLogger("ucl.run_match")
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [RUN] %(levelname)s %(message)s",
     datefmt="%Y-%m-%dT%H:%M:%S",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(_REPO_ROOT / "epl" / "run_match.log", encoding="utf-8"),
+        logging.FileHandler(_REPO_ROOT / "ucl" / "run_match.log", encoding="utf-8"),
     ],
 )
 
@@ -67,7 +67,7 @@ logging.basicConfig(
 # file handler onto the root logger so every run (especially failures) is recorded.
 _root_logger = logging.getLogger()
 if not any(isinstance(h, logging.FileHandler) for h in _root_logger.handlers):
-    _file_handler = logging.FileHandler(_REPO_ROOT / "epl" / "run_match.log", encoding="utf-8")
+    _file_handler = logging.FileHandler(_REPO_ROOT / "ucl" / "run_match.log", encoding="utf-8")
     _file_handler.setFormatter(
         logging.Formatter("%(asctime)s [RUN] %(levelname)s %(message)s", "%Y-%m-%dT%H:%M:%S")
     )
@@ -81,7 +81,7 @@ if not any(isinstance(h, logging.FileHandler) for h in _root_logger.handlers):
 SCRAPE_ATTEMPTS    = 3
 SCRAPE_RETRY_DELAY = 20  # seconds between attempts
 
-OUTPUT_DIR = _REPO_ROOT / "epl" / "output"
+OUTPUT_DIR = _REPO_ROOT / "ucl" / "output"
 
 
 def send_whatsapp_notification(image_url: str, text: str) -> bool:
@@ -292,7 +292,7 @@ def run_match(
             raw_url = push_match_update(
                 png_path,
                 match_id=match_id,
-                commit_message=f"[EPL] {home} vs {away} analytics dashboard",
+                commit_message=f"[UCL] {home} vs {away} analytics dashboard",
             )
             log.info("Match update pushed (PNG + site) → %s", raw_url)
         except Exception as exc:
@@ -304,11 +304,11 @@ def run_match(
     if do_whatsapp:
         if not raw_url:
             # Fallback to direct raw github URL pattern if push is disabled or failed
-            raw_url = f"https://raw.githubusercontent.com/RShiri/XLALIGA/main/epl_png/{os.path.basename(png_path)}"
+            raw_url = f"https://raw.githubusercontent.com/RShiri/XLALIGA/main/ucl_png/{os.path.basename(png_path)}"
 
         md = match_data.get("meta", {}).get("matchday")
-        tag = f"Matchday {md}" if md else "Premier League"
-        msg = f"⚽ Premier League Match Report ({tag}) · {season}\n🏆 {home} {home_score} - {away_score} {away}"
+        tag = f"Matchday {md}" if md else "Champions League"
+        msg = f"⚽ Champions League Match Report ({tag}) · {season}\n🏆 {home} {home_score} - {away_score} {away}"
         send_whatsapp_notification(raw_url, msg)
     else:
         log.info("Skipping WhatsApp notification.")
@@ -319,12 +319,12 @@ def run_match(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Premier League one-shot: scrape (FotMob+WhoScored+Understat) → render → push → whatsapp.",
+        description="Champions League one-shot: scrape (FotMob+WhoScored+Understat) → render → push → whatsapp.",
         epilog=(
             "Examples:\n"
-            "  py -m epl.run_match --fotmob-id 4837123 --season 2025-26\n"
-            "  py -m epl.run_match --match 'Arsenal vs Chelsea' --season 2025-26\n"
-            "  py -m epl.run_match --from-file epl/matches/2025-26/4837123.json\n"
+            "  py -m ucl.run_match --fotmob-id 4837123 --season 2025-26\n"
+            "  py -m ucl.run_match --match 'Arsenal vs Chelsea' --season 2025-26\n"
+            "  py -m ucl.run_match --from-file ucl/matches/2025-26/4837123.json\n"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Harvest Premier League rich match data from WhoScored and map it onto the FotMob schedule.
+Harvest Champions League rich match data from WhoScored and map it onto the FotMob schedule.
 
 Why this exists: WhoScored ids are NOT contiguous or chronological, so we can't range-scrape.
 Individual `/Matches/<id>/Live` pages DO load reliably (via plain Selenium), but the fixtures
@@ -12,9 +12,9 @@ shared `build_match_json` — the exact shape the dashboard builders consume. Re
 matches already saved with events).
 
 Usage:
-    py epl/scrape_whoscored.py --season 2025-26                 # full season
-    py epl/scrape_whoscored.py --season 2025-26 --max-back 20   # navigate more matchdays
-    py epl/scrape_whoscored.py --season 2025-26 --ids 1914252,1914253   # specific ids
+    py ucl/scrape_whoscored.py --season 2025-26                 # full season
+    py ucl/scrape_whoscored.py --season 2025-26 --max-back 20   # navigate more matchdays
+    py ucl/scrape_whoscored.py --season 2025-26 --ids 1914252,1914253   # specific ids
 """
 from __future__ import annotations
 
@@ -26,11 +26,11 @@ sys.path.insert(0, str(_REPO))
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from epl.scraper import build_match_json, _fotmob_unavailable_stub, EPL_WS_BASES
-from epl.progress_log import log_scrape
+from ucl.scraper import build_match_json, _fotmob_unavailable_stub, UCL_WS_BASES
+from ucl.progress_log import log_scrape
 
-SCHED_DIR = _REPO / "epl" / "schedules"
-MATCH_DIR = _REPO / "epl" / "matches"
+SCHED_DIR = _REPO / "ucl" / "schedules"
+MATCH_DIR = _REPO / "ucl" / "matches"
 
 
 # WhoScored's matchCentre names are often SHORTER than FotMob's schedule names, and not
@@ -39,7 +39,7 @@ MATCH_DIR = _REPO / "epl" / "matches"
 # "Wolves" ⊄ "wolverhamptonwanderers", "Nott'm Forest" → "nottmforest". Map each variant to the
 # schedule's canonical key so both sides collapse to the same token. Crucially this keeps the two
 # Manchester clubs (and the two Sheffield clubs) on DISTINCT canonicals — never collapse to a bare
-# city — the EPL analogue of the two-Madrid rule.
+# city — the UCL analogue of the two-Madrid rule.
 _ALIASES = {
     "mancity": "manchestercity",
     "manutd": "manchesterunited", "manunited": "manchesterunited", "manchesterutd": "manchesterunited",
@@ -83,14 +83,14 @@ def _plain_driver():
     import tempfile
     from selenium import webdriver
     o = webdriver.ChromeOptions()
-    if os.environ.get("EPL_VISIBLE") != "1":
+    if os.environ.get("UCL_VISIBLE") != "1":
         o.add_argument("--headless=new")
     # A fresh --user-data-dir per launch: reusing Chrome's default profile means a run that
     # left orphaned chrome.exe processes behind (crash, killed task, etc.) holds the profile
     # lock, and the NEXT launch fails immediately with "connection refused" on the debugger
     # port — no driver ever actually starts. Isolating the profile makes each run independent.
     for a in ("--no-sandbox", "--disable-dev-shm-usage", "--window-size=1600,1000",
-              "--user-data-dir=" + tempfile.mkdtemp(prefix="epl_chrome_"),
+              "--user-data-dir=" + tempfile.mkdtemp(prefix="ucl_chrome_"),
               # Stability + speed on WhoScored's ad/image-heavy pages: no GPU process to crash,
               # no images/extensions/background chatter. matchCentreData is server-rendered into
               # the HTML, so none of this affects what we extract — it just stops headless Chrome
@@ -109,12 +109,12 @@ def _plain_driver():
 
 def make_driver():
     # Plain Selenium (Selenium Manager auto-resolves the driver) is the default here —
-    # undetected-chromedriver breaks on Chrome 149. Opt into uc with EPL_USE_UC=1.
-    if os.environ.get("EPL_USE_UC") == "1":
+    # undetected-chromedriver breaks on Chrome 149. Opt into uc with UCL_USE_UC=1.
+    if os.environ.get("UCL_USE_UC") == "1":
         try:
             import undetected_chromedriver as uc
             o = uc.ChromeOptions()
-            if os.environ.get("EPL_VISIBLE") != "1":
+            if os.environ.get("UCL_VISIBLE") != "1":
                 o.add_argument("--headless=new")
             for a in ("--no-sandbox", "--disable-dev-shm-usage", "--window-size=1600,1000"):
                 o.add_argument(a)
@@ -151,10 +151,10 @@ def extract_mcd(html):
 
 
 def harvest_ids(driver, max_back, want=None):
-    """Collect Premier League match ids from the fixtures page, paging back through matchdays."""
+    """Collect Champions League match ids from the fixtures page, paging back through matchdays."""
     from selenium.webdriver.common.by import By
     ids = []
-    for base in EPL_WS_BASES:
+    for base in UCL_WS_BASES:
         got_page = False
         for attempt in range(6):
             driver.get(base)
@@ -169,7 +169,7 @@ def harvest_ids(driver, max_back, want=None):
             continue
         seen = set()
         empty_streak = 0
-        # The calendar is a WEEKLY view; #dayChangeBtn-prev steps back one week. The EPL
+        # The calendar is a WEEKLY view; #dayChangeBtn-prev steps back one week. The UCL
         # plays ~1 round/week, so page back across the whole season (~40+ weeks).
         for step in range(max_back + 1):
             page_ids = list(dict.fromkeys(re.findall(r"/[Mm]atches/(\d+)/", driver.page_source)))
@@ -235,7 +235,7 @@ def save_match(mcd, fixture, season):
     mj = build_match_json(_fotmob_unavailable_stub(), mcd, xml_match=xml_stub)
     meta = mj.setdefault("meta", {})
     meta["season"] = season
-    meta["competition"] = "Premier League"
+    meta["competition"] = "Champions League"
     if fixture.get("matchday"):
         meta["matchday"] = fixture["matchday"]
     out = MATCH_DIR / season / f"{fid}.json"

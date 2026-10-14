@@ -1,7 +1,7 @@
 """
-Understat source for the Premier League — xG / shots / PPDA / deep completions + shot-level xG.
+Understat source for the Champions League — xG / shots / PPDA / deep completions + shot-level xG.
 
-Understat publishes rich, free xG data for the top-5 leagues (incl. the EPL) as JSON
+Understat publishes rich, free xG data for the top-5 leagues (incl. the UCL) as JSON
 blobs embedded in each page (``var X = JSON.parse('...')``). It used to be scrapeable
 with plain ``urllib``, but the site now bot-blocks raw HTTP (returns a ~18 KB shell with
 no data blobs), so we load pages through Selenium — the same browser the WhoScored scrape
@@ -30,10 +30,10 @@ import logging
 import unicodedata
 from datetime import datetime
 
-log = logging.getLogger("epl.understat")
+log = logging.getLogger("ucl.understat")
 
 UNDERSTAT = "https://understat.com"
-LEAGUE_SLUG = "EPL"
+LEAGUE_SLUG = "UCL"
 
 
 # ── team-name matching across feeds ───────────────────────────────────────────
@@ -201,13 +201,13 @@ if __name__ == "__main__":
     import sys
     logging.basicConfig(level=logging.INFO)
     if len(sys.argv) >= 4:
-        # py -m epl.understat "Arsenal" "Chelsea" 2025-26 [YYYY-MM-DD]
+        # py -m ucl.understat "Arsenal" "Chelsea" 2025-26 [YYYY-MM-DD]
         h, a, season = sys.argv[1], sys.argv[2], sys.argv[3]
         d = sys.argv[4] if len(sys.argv) > 4 else None
         res = understat_fetch_match_details(h, a, d, season)
     elif len(sys.argv) == 2:
         res = fetch_understat_match(sys.argv[1])
     else:
-        print("usage: py -m epl.understat <home> <away> <season> [date]  |  <match_id>")
+        print("usage: py -m ucl.understat <home> <away> <season> [date]  |  <match_id>")
         raise SystemExit(2)
     print(json.dumps(res, ensure_ascii=False, indent=2)[:2000] if res else "None")

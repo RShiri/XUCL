@@ -5,15 +5,15 @@ patch in ``_fotmob_player_ids`` (player headshots — see PROMPT_PLAYER_PHOTOS.m
 anything else in the raw JSON.
 
 Needed because neither field existed when older matches were scraped:
-_fotmob_shot_xg_list() and _fotmob_player_ids() were both only added to epl/scraper.py
+_fotmob_shot_xg_list() and _fotmob_player_ids() were both only added to ucl/scraper.py
 on 2026-09-15 (mirroring laliga/scraper.py). This is a plain HTTP fetch per match (no
 browser), same endpoint scraper.py already uses — one fetch backfills both fields,
 since they come off the same FotMob response.
 
 Usage:
-    py epl/backfill_fotmob_player_ids.py                  # every season, resumable
-    py epl/backfill_fotmob_player_ids.py --season 2025-26
-    py epl/backfill_fotmob_player_ids.py --workers 4       # lower if FotMob 403s
+    py ucl/backfill_fotmob_player_ids.py                  # every season, resumable
+    py ucl/backfill_fotmob_player_ids.py --season 2025-26
+    py ucl/backfill_fotmob_player_ids.py --workers 4       # lower if FotMob 403s
 """
 from __future__ import annotations
 
@@ -29,11 +29,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from epl.scraper import (  # noqa: E402
+from ucl.scraper import (  # noqa: E402
     fotmob_fetch_match_details, _fotmob_player_ids, _fotmob_shot_xg_list,
 )
 
-MATCH_DIR = REPO_ROOT / "epl" / "matches"
+MATCH_DIR = REPO_ROOT / "ucl" / "matches"
 
 
 def _target_files(season: str | None):

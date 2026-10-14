@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Export the full WC2026 dataset as a downloadable database.
 
-Writes to epl_dashboard/database/:
+Writes to ucl_dashboard/database/:
   results.csv            one row per match (score, xG, venue, stage)
   team_match_stats.csv   one row per team per match (possession, shots, passes, …)
   player_match_stats.csv one row per player per match
   players.csv            aggregated career-so-far player totals
   standings.csv          group tables
-  epl.sqlite          all of the above as SQL tables
+  ucl.sqlite          all of the above as SQL tables
 
 Pulls from both scraped sources (FotMob match stats + WhoScored player/event data)
 via the existing builders, so the exports stay in lock-step with the website.
@@ -27,7 +27,7 @@ import build_players
 from build_match_details import norm, is_match_file
 from xg_model import team_xg_from_events
 
-MATCH_DIR = os.environ.get("EPL_MATCH_DIR") or os.path.join(ROOT, "epl", "matches")
+MATCH_DIR = os.environ.get("UCL_MATCH_DIR") or os.path.join(ROOT, "ucl", "matches")
 OUT_DIR = os.path.join(HERE, "database")
 
 
@@ -112,7 +112,7 @@ def _write_csv(name, rows):
 
 
 def _write_sqlite(tables):
-    path = os.path.join(OUT_DIR, "epl.sqlite")
+    path = os.path.join(OUT_DIR, "ucl.sqlite")
     if os.path.exists(path):
         os.remove(path)
     con = sqlite3.connect(path)
@@ -196,9 +196,9 @@ def main():
             {"file": "players.csv", "label": "Player aggregate totals", "rows": counts["players.csv"]},
             {"file": "standings.csv", "label": "League standings", "rows": counts["standings.csv"]},
         ],
-        "sqlite": "epl.sqlite",
+        "sqlite": "ucl.sqlite",
         "raw_match_files": len(raw_files),
-        "raw_match_dir": "../epl/matches/",
+        "raw_match_dir": "../ucl/matches/",
     }
     with open(os.path.join(OUT_DIR, "manifest.js"), "w", encoding="utf-8") as fh:
         fh.write("window.WC_DATABASE = ")
@@ -208,7 +208,7 @@ def main():
     print("Database exported to", OUT_DIR)
     for k, v in counts.items():
         print(f"  {k}: {v} rows")
-    print(f"  epl.sqlite + manifest.js · {len(raw_files)} raw match files")
+    print(f"  ucl.sqlite + manifest.js · {len(raw_files)} raw match files")
 
 
 if __name__ == "__main__":
