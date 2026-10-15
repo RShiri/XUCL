@@ -94,6 +94,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--season", help="e.g. 2025-26; default = every season on disk")
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--rebuild", action="store_true",
+                    help="rebuild the dashboard afterwards if any match was patched")
     args = ap.parse_args()
 
     files = list(_target_files(args.season))
@@ -120,6 +122,11 @@ def main() -> None:
         print(f"{len(errors)} read error(s), first few:")
         for e in errors[:10]:
             print(f"  {e}")
+    if args.rebuild and counts.get("patched"):
+        print("Rebuilding the dashboard for the new player photos …")
+        os.environ.pop("UCL_SKIP_DASHBOARD_REFRESH", None)
+        from ucl.renderer import _refresh_web_dashboard_db
+        _refresh_web_dashboard_db()
 
 
 if __name__ == "__main__":

@@ -328,6 +328,22 @@ def scrape_one(driver, wsid, tries=2):
     return None
 
 
+def _add_fotmob_player_ids(mj, fid):
+    """FotMob player ids for the headshots (build_players matches them by team + surname).
+    The events come from WhoScored, but only FotMob has the photos, so fetch its lineup
+    once per match. Best-effort: no photo is better than a failed save."""
+    if not str(fid).isdigit():
+        return
+    try:
+        from ucl.scraper import fotmob_fetch_match_details, _fotmob_player_ids
+        fm = fotmob_fetch_match_details(int(fid))
+        ids = [] if fm.get("_fotmob_unavailable") else _fotmob_player_ids(fm)
+        if ids:
+            mj["_fotmob_player_ids"] = ids
+    except Exception as e:
+        print(f"  (no FotMob player ids for {fid}: {str(e)[:60]})")
+
+
 def save_match(mcd, fixture, season):
     fid = fixture["fotmob_id"]
     ws_h = (mcd.get("home") or {}).get("name", "")
@@ -339,6 +355,7 @@ def save_match(mcd, fixture, season):
                 "away": {"name": fixture["away"], "id": fixture.get("away_id")},
                 "status": {"scoreStr": score, "utcTime": (fixture.get("kickoff_utc") or ""), "finished": True}}
     mj = build_match_json(_fotmob_unavailable_stub(), mcd, xml_match=xml_stub)
+    _add_fotmob_player_ids(mj, fid)
     meta = mj.setdefault("meta", {})
     meta["season"] = season
     meta["competition"] = "Champions League"
