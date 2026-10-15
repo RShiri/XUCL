@@ -868,7 +868,7 @@ def _check_team_assets(matches: "list[dict]") -> None:
         no_colour = []
     crest_dir = _HERE.parent / "team_logos" / "ucl"
     have = {p.stem for p in crest_dir.glob("*.png")} if crest_dir.is_dir() else set()
-    no_crest = [t for t in teams if t not in have]
+    no_crest = [t for t in teams if t.replace("/", "-") not in have]
     if no_colour:
         print(f"  ⚠ no team colour for: {', '.join(no_colour)}  "
               f"(add them to ucl/team_colors.py — the PNGs fall back to grey)")

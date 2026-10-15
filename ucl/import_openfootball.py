@@ -37,15 +37,16 @@ SRC = _HERE / "openfootball"
 SCHED_DIR = _HERE / "schedules"
 
 # openfootball spells clubs in full ("FC Internazionale Milano") and changed spelling between
-# seasons ("Atlético Madrid" vs "Club Atlético de Madrid"). Map to one short name per club.
+# seasons ("Atlético Madrid" vs "Club Atlético de Madrid"). Map to FotMob's spelling where known,
+# so a later FotMob build keeps the same club names.
 ALIAS = {
     "1. FC Union Berlin": "Union Berlin", "AC Sparta Praha": "Sparta Prague", "AFC Ajax": "Ajax",
     "AS Monaco FC": "Monaco", "Arsenal FC": "Arsenal", "Aston Villa FC": "Aston Villa", "Atalanta BC": "Atalanta",
-    "Club Atlético de Madrid": "Atletico Madrid", "Atlético Madrid": "Atletico Madrid",
+    "Club Atlético de Madrid": "Atlético Madrid", "Atletico Madrid": "Atlético Madrid",
     "BSC Young Boys": "Young Boys", "Bayer 04 Leverkusen": "Bayer Leverkusen",
     "FC Bayern München": "Bayern München", "Bologna FC 1909": "Bologna", "Celtic FC": "Celtic",
     "Chelsea FC": "Chelsea", "Club Brugge KV": "Club Brugge", "GNK Dinamo Zagreb": "Dinamo Zagreb",
-    "FC Barcelona": "Barcelona", "FC Internazionale Milano": "Inter", "FC Porto": "Porto",
+    "FC Barcelona": "Barcelona", "FC Internazionale Milano": "Inter", "FC Porto": "FC Porto", "Porto": "FC Porto", "PSV": "PSV Eindhoven", "PSV Eindhoven": "PSV Eindhoven",
     "FC Red Bull Salzburg": "RB Salzburg", "FK Bodø/Glimt": "Bodø/Glimt", "FK Crvena Zvezda": "Crvena Zvezda",
     "FK Kairat": "Kairat Almaty", "FK Shakhtar Donetsk": "Shakhtar Donetsk", "Feyenoord Rotterdam": "Feyenoord",
     "Galatasaray SK": "Galatasaray", "Girona FC": "Girona", "Juventus FC": "Juventus", "Lille OSC": "Lille",
@@ -64,7 +65,7 @@ ALIAS = {
     "Juventus": "Juventus", "Manchester City": "Manchester City", "Paris Saint-Germain": "Paris Saint-Germain",
     "Real Madrid": "Real Madrid", "RB Salzburg": "RB Salzburg", "Bayer Leverkusen": "Bayer Leverkusen",
     # hand-kept CSV spellings
-    "Slavia Praha": "Slavia Prague", "AEK Athens": "AEK Athens", "LASK": "LASK Linz",
+    "Slavia Praha": "Slavia Prague", "AEK Athens": "AEK Athens", "LASK": "LASK", "Sabah": "Sabah FK",
 }
 
 MONTHS = {m: i for i, m in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(), 1)}

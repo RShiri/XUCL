@@ -224,7 +224,7 @@ def _load_logo(team_name: str, size: tuple[int, int] = (80, 80)):
         from PIL import Image
         logo_dir = _REPO_ROOT / "team_logos" / "ucl"
         for ext in ("png", "jpg", "svg"):
-            p = logo_dir / f"{team_name}.{ext}"
+            p = logo_dir / f"{team_name.replace('/', '-')}.{ext}"
             if p.exists():
                 img = Image.open(p).convert("RGBA")
                 img.thumbnail(size, Image.LANCZOS)
@@ -252,7 +252,7 @@ def _place_flag(ax: plt.Axes, team_name: str,
 
         logo_dir = _REPO_ROOT / "team_logos" / "ucl"
         for ext in ("png", "jpg"):
-            p = logo_dir / f"{team_name}.{ext}"
+            p = logo_dir / f"{team_name.replace('/', '-')}.{ext}"
             if p.exists():
                 img = Image.open(p).convert("RGBA")
                 img_w, img_h = img.size

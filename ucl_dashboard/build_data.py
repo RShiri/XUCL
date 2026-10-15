@@ -42,9 +42,10 @@ CREST_DIR = os.path.join(ROOT, "team_logos", "ucl")
 
 def _crest(team, team_id):
     """Prefer a locally downloaded crest (self-contained site); fall back to the CDN."""
-    local = os.path.join(CREST_DIR, f"{team}.png")
+    fname = team.replace("/", "-")  # same file-name rule as ucl/download_crests.py
+    local = os.path.join(CREST_DIR, f"{fname}.png")
     if os.path.exists(local):
-        return f"../team_logos/ucl/{team}.png"
+        return f"../team_logos/ucl/{fname}.png"
     return FOTMOB_CREST.format(id=team_id) if team_id else ""
 
 # Canonical stat keys we surface (same set the WC dashboard used), mapped to how the
