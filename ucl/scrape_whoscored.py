@@ -246,6 +246,22 @@ def season_fixtures_url(driver, season, base=None):
     return None
 
 
+def stage_urls(driver, url):
+    """Every stage page of a season (League Phase, Knockout Play-offs, Final Stage, or the
+    old group stage). WhoScored's fixtures calendar only pages within ONE stage, so a sweep
+    from the season page stops at the start of the knockouts and never reaches the league
+    phase. Falls back to [url] when the page has no stage list."""
+    from selenium.webdriver.common.by import By
+    driver.get(url)
+    time.sleep(8)
+    out = []
+    for o in driver.find_elements(By.CSS_SELECTOR, "select#stages option, select[name='stages'] option"):
+        v = o.get_attribute("value") or ""
+        if v:
+            out.append(v if v.startswith("http") else "https://www.whoscored.com" + v)
+    return list(dict.fromkeys(out)) or [url]
+
+
 def harvest_ids(driver, max_back, want=None, season=None):
     """Collect Champions League match ids from the fixtures page, paging back through matchdays.
     With `season`, start from that season's fixtures page (unless UCL_WHOSCORED_URLS pins one)."""
@@ -258,8 +274,8 @@ def harvest_ids(driver, max_back, want=None, season=None):
             print(f"  could not open WhoScored's {season} fixtures; pass --url with that season's "
                   f"Fixtures page. Not harvesting the live season instead.")
             return []
-        print(f"  {season} fixtures: {url}")
-        bases = [url]
+        bases = stage_urls(driver, url)
+        print(f"  {season} fixtures: {url} ({len(bases)} stage(s))")
     for base in bases:
         got_page = False
         for attempt in range(6):

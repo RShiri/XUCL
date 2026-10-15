@@ -191,7 +191,10 @@ def main():
                     print(f"{_now()} no WhoScored fixtures page for {args.season}; pass --url", flush=True)
                     return
                 print(f"{_now()} {args.season} fixtures: {base}", flush=True)
-            ids = harvest(d, base, args.max_back)
+            from ucl.scrape_whoscored import stage_urls
+            ids = []
+            for stage in stage_urls(d, base):   # the calendar only pages within one stage
+                ids += [i for i in harvest(d, stage, args.max_back) if i not in ids]
         print(f"{_now()} {len(ids)} candidate ids. Scraping…", flush=True)
         # persist harvested ids for reuse/debugging
         try:

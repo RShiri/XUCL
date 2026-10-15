@@ -75,7 +75,7 @@ re-derive the accent per fork rather than copying another sport's colour blindly
   and the "Copy link" button copies it; opening that link selects the player.
 - **Past seasons on WhoScored**: the season-less fixtures page only lists the live season, so
   `scrape_whoscored.py --season <old>` picks that season in WhoScored's season dropdown
-  (`season_fixtures_url`) or takes `--url <that season's Fixtures page>`. `find_fixture` also
+  (`season_fixtures_url`) or takes `--url <that season's Fixtures page>`, then sweeps each stage in its stage dropdown (`stage_urls`): the calendar only pages within one stage, so a single sweep stopped at the knockout playoff and missed the league phase. `find_fixture` also
   requires the kick-off date (±3 days) and, when the schedule has one, the final score to agree,
   because the same two clubs can meet in several seasons (a 2026-27 Liverpool v Atletico was once
   saved over 2025-26's).
