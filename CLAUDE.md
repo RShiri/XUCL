@@ -73,6 +73,12 @@ re-derive the accent per fork rather than copying another sport's colour blindly
   each tile, so new sentences need both languages.
 - **Player Lab URLs carry the player**: `#<season>/playerlab/<Team @@ Player>` is kept in the address bar
   and the "Copy link" button copies it; opening that link selects the player.
+- **Past seasons on WhoScored**: the season-less fixtures page only lists the live season, so
+  `scrape_whoscored.py --season <old>` picks that season in WhoScored's season dropdown
+  (`season_fixtures_url`) or takes `--url <that season's Fixtures page>`. `find_fixture` also
+  requires the kick-off date (±3 days) and, when the schedule has one, the final score to agree,
+  because the same two clubs can meet in several seasons (a 2026-27 Liverpool v Atletico was once
+  saved over 2025-26's).
 - **Team-matcher must NOT strip "united"/"city"** — `ucl/scrape_whoscored._key` keeps them so the
   two Manchester clubs never collide (the analogue of La Liga's "don't strip real" rule).
 - **xG/xA come from `xg_core/`** (shared, league-agnostic; UCL passed as the league key, falls

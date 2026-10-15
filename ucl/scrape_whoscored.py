@@ -86,6 +86,55 @@ def _teams_match(ws_h, ws_a, sc_h, sc_a):
     return ov(kh, sh) and ov(ka, sa)
 
 
+def _ws_date(mcd):
+    """Kick-off date (YYYY-MM-DD) from WhoScored's matchCentreData, or None."""
+    for k in ("startTime", "startDate", "timeStamp"):
+        v = mcd.get(k)
+        if isinstance(v, str):
+            m = re.search(r"(\d{4})-(\d{2})-(\d{2})", v) or re.search(r"(\d{2})/(\d{2})/(\d{4})", v)
+            if m:
+                g = m.groups()
+                return f"{g[0]}-{g[1]}-{g[2]}" if len(g[0]) == 4 else f"{g[2]}-{g[1]}-{g[0]}"
+    return None
+
+
+def _fixture_ok(mcd, f, max_days=3):
+    """Guard against pairing a WhoScored game with the same two clubs' fixture from ANOTHER
+    season (the fixtures page only lists the live season, so a 2026-27 Liverpool v Atletico was
+    once saved over 2025-26's). The kick-off dates must agree within a few days, and when the
+    schedule already has a final score, WhoScored's must equal it."""
+    from datetime import date
+    wd, fd = _ws_date(mcd), (f.get("date") or f.get("kickoff_utc") or "")[:10]
+    if wd and fd:
+        try:
+            if abs((date.fromisoformat(wd) - date.fromisoformat(fd)).days) > max_days:
+                return False
+        except ValueError:
+            pass
+    if f.get("home_score") is not None and f.get("away_score") is not None:
+        want = (int(f["home_score"]), int(f["away_score"]))
+        hsc = (mcd.get("home") or {}).get("scores") or {}
+        asc = (mcd.get("away") or {}).get("scores") or {}
+        # the schedule's score is the 120' one after extra time; WhoScored keeps 90' in "fulltime"
+        got = [(hsc.get(k), asc.get(k)) for k in ("fulltime", "extratime")]
+        got = [(int(h), int(a)) for h, a in got if h is not None and a is not None]
+        if got and want not in got:
+            return False
+    return True
+
+
+def find_fixture(mcd, schedule):
+    """The schedule fixture this WhoScored game is: same teams (exact keys first, so "Real Madrid"
+    never grabs an Atletico fixture, then contains-matching) AND the same date/score."""
+    wh = (mcd.get("home") or {}).get("name", "")
+    wa = (mcd.get("away") or {}).get("name", "")
+    for test in (_exact_match, _teams_match):
+        for f in schedule:
+            if test(wh, wa, f["home"], f["away"]) and _fixture_ok(mcd, f):
+                return f
+    return None
+
+
 def load_schedule(season):
     data = json.loads((SCHED_DIR / f"SCHEDULE_{season}.json").read_text(encoding="utf-8"))
     return data.get("matches", [])
@@ -162,11 +211,56 @@ def extract_mcd(html):
         return None
 
 
-def harvest_ids(driver, max_back, want=None):
-    """Collect Champions League match ids from the fixtures page, paging back through matchdays."""
+def season_fixtures_url(driver, season, base=None):
+    """WhoScored fixtures URL for `season` ("2025-26"). The season-less tournament page only
+    shows the live season, so for an older one pick it in the page's season dropdown
+    (option text "2025/2026") and follow that season's Fixtures link. Returns the base URL
+    unchanged when the season is the one already selected, None when it can't be found."""
+    from selenium.webdriver.common.by import By
+    base = base or UCL_WS_BASES[0]
+    y1, y2 = season.split("-")
+    label = f"{y1}/{int(y1[:2] + y2) if len(y2) == 2 else y2}"
+    for attempt in range(4):
+        driver.get(base)
+        time.sleep(8)
+        opts = driver.find_elements(By.CSS_SELECTOR, "select#seasons option, select[name='seasons'] option")
+        if not opts:
+            continue
+        for o in opts:
+            if (o.text or "").strip() == label:
+                if o.get_attribute("selected"):
+                    return base
+                href = o.get_attribute("value") or ""
+                if not href:
+                    return None
+                driver.get(href if href.startswith("http") else "https://www.whoscored.com" + href)
+                time.sleep(8)
+                for a in driver.find_elements(By.CSS_SELECTOR, "a[href*='/Fixtures/']"):
+                    u = a.get_attribute("href") or ""
+                    if "/Seasons/" in u:
+                        return u
+                return driver.current_url
+        print(f"  season {label} not in WhoScored's season list")
+        return None
+    print("  WhoScored season list never loaded")
+    return None
+
+
+def harvest_ids(driver, max_back, want=None, season=None):
+    """Collect Champions League match ids from the fixtures page, paging back through matchdays.
+    With `season`, start from that season's fixtures page (unless UCL_WHOSCORED_URLS pins one)."""
     from selenium.webdriver.common.by import By
     ids = []
-    for base in UCL_WS_BASES:
+    bases = UCL_WS_BASES
+    if season and not os.environ.get("UCL_WHOSCORED_URLS") and not os.environ.get("UCL_WHOSCORED_URL"):
+        url = season_fixtures_url(driver, season)
+        if not url:
+            print(f"  could not open WhoScored's {season} fixtures; pass --url with that season's "
+                  f"Fixtures page. Not harvesting the live season instead.")
+            return []
+        print(f"  {season} fixtures: {url}")
+        bases = [url]
+    for base in bases:
         got_page = False
         for attempt in range(6):
             driver.get(base)
@@ -279,9 +373,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--season", default=_newest_season())
     ap.add_argument("--ids", help="comma-separated WhoScored ids (skip fixtures harvest)")
+    ap.add_argument("--url", help="WhoScored Fixtures page for the season (default: found from the season list)")
     ap.add_argument("--max-back", type=int, default=40, help="matchday pages to navigate back")
     ap.add_argument("--limit", type=int, help="stop after saving N matches")
     args = ap.parse_args()
+    if args.url:
+        global UCL_WS_BASES
+        os.environ["UCL_WHOSCORED_URLS"] = args.url
+        UCL_WS_BASES = [args.url]
 
     schedule = load_schedule(args.season)
     print(f"Season {args.season}: {len(schedule)} fixtures in schedule.")
@@ -293,7 +392,7 @@ def main():
             ids = [x.strip() for x in args.ids.split(",") if x.strip()]
         else:
             print("Harvesting match ids from WhoScored fixtures…")
-            ids = harvest_ids(driver, args.max_back)
+            ids = harvest_ids(driver, args.max_back, season=args.season)
         print(f"Got {len(ids)} candidate WhoScored ids. Scraping…")
         for n, wsid in enumerate(ids, 1):
             mcd = scrape_one(driver, wsid)
@@ -303,13 +402,10 @@ def main():
                 continue
             wh = (mcd.get("home") or {}).get("name", "")
             wa = (mcd.get("away") or {}).get("name", "")
-            # Exact team-key match first (so "Real Madrid" never grabs an Atletico fixture),
-            # then fall back to contains-matching for short/long name variants.
-            fixture = (next((f for f in schedule if _exact_match(wh, wa, f["home"], f["away"])), None)
-                       or next((f for f in schedule if _teams_match(wh, wa, f["home"], f["away"])), None))
+            fixture = find_fixture(mcd, schedule)
             if not fixture:
                 unmatched += 1
-                print(f"[{n}/{len(ids)}] {wsid}: {wh} vs {wa} — not in {args.season} schedule, skip")
+                print(f"[{n}/{len(ids)}] {wsid}: {wh} vs {wa} ({_ws_date(mcd)}) — not in {args.season} schedule, skip")
                 continue
             if already_done(args.season, fixture["fotmob_id"]):
                 skipped += 1

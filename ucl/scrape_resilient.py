@@ -172,7 +172,7 @@ def main():
         os.environ["UCL_WHOSCORED_URLS"] = args.url
     # import AFTER setting env so UCL_WS_BASES picks up the season URL
     from ucl.scrape_whoscored import (extract_mcd, save_match, load_schedule, already_done,
-                                      _exact_match, _teams_match, UCL_WS_BASES)
+                                      find_fixture, UCL_WS_BASES)
 
     schedule = load_schedule(args.season)
     print(f"{_now()} Season {args.season}: {len(schedule)} fixtures; base={UCL_WS_BASES[0]}", flush=True)
@@ -183,7 +183,15 @@ def main():
             ids = [x.strip() for x in args.ids.split(",") if x.strip()]
         else:
             print(f"{_now()} Harvesting match ids…", flush=True)
-            ids = harvest(d, UCL_WS_BASES[0], args.max_back)
+            base = UCL_WS_BASES[0]
+            if not args.url:
+                from ucl.scrape_whoscored import season_fixtures_url
+                base = season_fixtures_url(d, args.season)
+                if not base:
+                    print(f"{_now()} no WhoScored fixtures page for {args.season}; pass --url", flush=True)
+                    return
+                print(f"{_now()} {args.season} fixtures: {base}", flush=True)
+            ids = harvest(d, base, args.max_back)
         print(f"{_now()} {len(ids)} candidate ids. Scraping…", flush=True)
         # persist harvested ids for reuse/debugging
         try:
@@ -210,8 +218,7 @@ def main():
                 continue
             wh = (mcd.get("home") or {}).get("name", "")
             wa = (mcd.get("away") or {}).get("name", "")
-            fixture = (next((f for f in schedule if _exact_match(wh, wa, f["home"], f["away"])), None)
-                       or next((f for f in schedule if _teams_match(wh, wa, f["home"], f["away"])), None))
+            fixture = find_fixture(mcd, schedule)
             if not fixture:
                 unmatched += 1
                 print(f"  {_now()} [{n}/{len(ids)}] {wsid}: {wh} vs {wa} — not in schedule", flush=True)
