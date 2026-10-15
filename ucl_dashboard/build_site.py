@@ -40,8 +40,8 @@ def build_once():
     build_players.main()
     build_shots.main()
     build_player_lab.main()
-    build_database.main()
     build_data.main()
+    build_database.main()   # reads data.js, so it must follow build_data (else it exports the previous build)
     build_split.main()      # per-season bundles the site actually loads
     print(f"Site rebuilt in {time.time() - t0:.1f}s")
 

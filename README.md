@@ -44,8 +44,8 @@ py ucl/build_schedule.py --season 2026-27 --full   # real fixtures + FotMob ids 
 py ucl/download_crests.py                          # club badges
 py ucl/scrape_whoscored.py --season 2026-27        # events → xG/shots/players
 py ucl_dashboard/build_match_details.py && py ucl_dashboard/build_players.py \
-  && py ucl_dashboard/build_database.py && py ucl_dashboard/build_shots.py \
-  && py ucl_dashboard/build_player_lab.py && py ucl_dashboard/build_data.py \
+  && py ucl_dashboard/build_shots.py && py ucl_dashboard/build_player_lab.py \
+  && py ucl_dashboard/build_data.py && py ucl_dashboard/build_database.py \
   && py ucl_dashboard/build_split.py               # build_split always last
 py -m http.server 8778                             # → http://localhost:8778/ucl_dashboard/index.html
 ```
