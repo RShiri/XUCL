@@ -1,28 +1,37 @@
 match_id,date,stage,venue,home,away,home_score,away_score,home_xg,away_xg,xg_estimated
-of-2026-27-001,2026-09-08,league,,AEK Athens,LASK Linz,1,0,,,0
-of-2026-27-002,2026-09-08,league,,Club Brugge,Aston Villa,2,3,,,0
-of-2026-27-003,2026-09-08,league,,Borussia Dortmund,Villarreal,3,2,,,0
-of-2026-27-004,2026-09-08,league,,Porto,Manchester City,0,2,,,0
-of-2026-27-005,2026-09-08,league,,Lille,Real Betis,2,3,,,0
-of-2026-27-006,2026-09-08,league,,Real Madrid,Inter,2,1,,,0
-of-2026-27-007,2026-09-09,league,,Barcelona,Feyenoord,5,1,,,0
-of-2026-27-008,2026-09-09,league,,VfB Stuttgart,Viking,3,1,,,0
-of-2026-27-009,2026-09-09,league,,Liverpool,Atletico Madrid,2,1,,,0
-of-2026-27-010,2026-09-09,league,,Paris Saint-Germain,Slovan Bratislava,6,1,,,0
-of-2026-27-011,2026-09-09,league,,Sporting CP,Galatasaray,3,1,,,0
-of-2026-27-012,2026-09-09,league,,Napoli,Arsenal,0,1,,,0
-of-2026-27-013,2026-09-10,league,,Fenerbahçe,Roma,1,1,,,0
-of-2026-27-014,2026-09-10,league,,PSV,Shakhtar Donetsk,1,1,,,0
-of-2026-27-015,2026-09-10,league,,Como,RB Leipzig,4,1,,,0
-of-2026-27-016,2026-09-10,league,,Bayern München,Bodø/Glimt,5,0,,,0
-of-2026-27-017,2026-09-10,league,,Manchester United,Sabah,4,0,,,0
-of-2026-27-018,2026-09-10,league,,Slavia Prague,Lens,2,3,,,0
-of-2026-27-019,2026-10-13,league,,Lens,Sporting CP,0,2,,,0
-of-2026-27-020,2026-10-13,league,,Sabah,Slavia Prague,2,0,,,0
-of-2026-27-021,2026-10-13,league,,Arsenal,Lille,3,0,,,0
-of-2026-27-022,2026-10-13,league,,Atletico Madrid,Manchester United,2,0,,,0
-of-2026-27-023,2026-10-13,league,,Galatasaray,Barcelona,1,4,,,0
-of-2026-27-024,2026-10-13,league,,Inter,Club Brugge,3,4,,,0
-of-2026-27-025,2026-10-13,league,,RB Leipzig,PSV,1,0,,,0
-of-2026-27-026,2026-10-13,league,,Viking,Bayern München,3,3,,,0
-of-2026-27-027,2026-10-13,league,,Villarreal,Napoli,3,1,,,0
+6106295,2026-09-08,league,,Club Brugge,Aston Villa,2,3,1.58,2.54,1
+6106404,2026-09-08,league,,AEK Athens,LASK,1,0,1.92,1.28,1
+6106242,2026-09-08,league,,Real Madrid,Inter,2,1,4.01,2.04,1
+6106272,2026-09-08,league,,Borussia Dortmund,Villarreal,3,2,3.31,1.29,1
+6106286,2026-09-08,league,,FC Porto,Manchester City,0,2,0.18,2.73,1
+6106311,2026-09-08,league,,Lille,Real Betis,2,3,0.6,1.87,1
+6106264,2026-09-09,league,,Barcelona,Feyenoord,5,1,2.24,0.79,1
+6106400,2026-09-09,league,,VfB Stuttgart,Viking,3,1,2.36,0.51,1
+6106237,2026-09-09,league,,Paris Saint-Germain,Slovan Bratislava,6,1,,,0
+6106246,2026-09-09,league,,Liverpool,Atlético Madrid,2,1,1.86,0.66,1
+6106280,2026-09-09,league,,Sporting CP,Galatasaray,3,1,1.58,1.33,1
+6106318,2026-09-09,league,,Napoli,Arsenal,0,1,0.27,3.59,1
+6106304,2026-09-10,league,,PSV Eindhoven,Shakhtar Donetsk,1,1,0.47,0.36,1
+6106331,2026-09-10,league,,Fenerbahçe,Roma,1,1,1.34,0.53,1
+6106240,2026-09-10,league,,Bayern München,Bodø/Glimt,5,0,,,0
+6106293,2026-09-10,league,,Manchester United,Sabah FK,4,0,3.37,0.82,1
+6106392,2026-09-10,league,,Slavia Prague,Lens,2,3,1.25,2.16,1
+6106411,2026-09-10,league,,Como,RB Leipzig,4,1,2.9,1.25,1
+6106414,2026-10-13,league,,Lens,Sporting CP,0,2,1.47,1.54,1
+6106424,2026-10-13,league,,Sabah FK,Slavia Prague,2,0,0.77,3.28,1
+6106251,2026-10-13,league,,Inter,Club Brugge,3,4,4.01,3.43,1
+6106260,2026-10-13,league,,Arsenal,Lille,3,0,2.02,0.22,1
+6106267,2026-10-13,league,,Atlético Madrid,Manchester United,2,0,1.26,1.05,1
+6106323,2026-10-13,league,,RB Leipzig,PSV Eindhoven,1,0,1.82,1.14,1
+6106328,2026-10-13,league,,Villarreal,Napoli,3,1,1.24,1.86,1
+6106338,2026-10-13,league,,Galatasaray,Barcelona,1,4,0.21,3.19,1
+6106417,2026-10-13,league,,Viking,Bayern München,3,3,0.61,2.88,1
+6106309,2026-10-14,league,,Feyenoord,Como,3,2,0.56,1.21,1
+6106405,2026-10-14,league,,LASK,Liverpool,3,6,1.99,2.91,1
+6106254,2026-10-14,league,,Manchester City,Paris Saint-Germain,2,4,,,0
+6106274,2026-10-14,league,,Roma,Real Madrid,3,4,1.52,1.99,1
+6106284,2026-10-14,league,,Aston Villa,Fenerbahçe,6,0,2.65,1.38,1
+6106299,2026-10-14,league,,Real Betis,FC Porto,3,2,1.77,1.31,1
+6106315,2026-10-14,league,,Bodø/Glimt,Borussia Dortmund,1,0,,,0
+6106337,2026-10-14,league,,Shakhtar Donetsk,AEK Athens,3,1,1.35,1.68,1
+6106396,2026-10-14,league,,Slovan Bratislava,VfB Stuttgart,0,3,0.87,1.93,1
