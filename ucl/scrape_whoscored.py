@@ -116,9 +116,21 @@ def _fixture_ok(mcd, f, max_days=3):
         hsc = (mcd.get("home") or {}).get("scores") or {}
         asc = (mcd.get("away") or {}).get("scores") or {}
         # the schedule's score is the 120' one after extra time; WhoScored keeps 90' in "fulltime"
-        got = [(hsc.get(k), asc.get(k)) for k in ("fulltime", "extratime")]
-        got = [(int(h), int(a)) for h, a in got if h is not None and a is not None]
-        if got and want not in got:
+        # ("running" is the final total on some pages; skip anything that isn't a number)
+        got = []
+        for k in ("fulltime", "extratime", "running"):
+            try:
+                got.append((int(hsc.get(k)), int(asc.get(k))))
+            except (TypeError, ValueError):
+                pass
+        # top-level strings: "score" (final), "ftScore", "etScore" as "5 : 0"
+        for k in ("score", "ftScore", "etScore"):
+            m = re.match(r"\s*(\d+)\s*:\s*(\d+)", str(mcd.get(k) or ""))
+            if m:
+                got.append((int(m.group(1)), int(m.group(2))))
+        # after extra time the providers disagree on which score is "the" score; the date
+        # check above already pins the game, so don't reject an aet match on score alone
+        if got and want not in got and not f.get("aet"):
             return False
     return True
 
@@ -290,7 +302,8 @@ def harvest_ids(driver, max_back, want=None, season=None):
             print("  fixtures page never yielded ids on", base)
             continue
         seen = set()
-        empty_streak = 0
+        empty_streak = stuck = 0
+        last_label = None
         # The calendar is a WEEKLY view; #dayChangeBtn-prev steps back one week. The UCL
         # plays ~1 round/week, so page back across the whole season (~40+ weeks).
         for step in range(max_back + 1):
@@ -298,10 +311,16 @@ def harvest_ids(driver, max_back, want=None, season=None):
             new = [i for i in page_ids if i not in seen]
             for i in new:
                 seen.add(i); ids.append(i)
-            print(f"  week {step} ({_cal_label(driver)}): +{len(new)} ids (total {len(ids)})")
+            label = _cal_label(driver)
+            print(f"  week {step} ({label}): +{len(new)} ids (total {len(ids)})")
             empty_streak = empty_streak + 1 if not new else 0
+            stuck = stuck + 1 if (label and label == last_label and not new) else 0
+            last_label = label
             if empty_streak >= 6:
-                print("  6 empty weeks in a row — reached season start, stopping.")
+                print("  6 empty weeks in a row — reached the start of this stage, stopping.")
+                break
+            if stuck >= 2:
+                print("  the calendar stopped moving — start of this stage, stopping.")
                 break
             if want and len(ids) >= want:
                 break
