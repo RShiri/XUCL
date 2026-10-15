@@ -49,6 +49,16 @@ _ALIASES = {
     "sheffutd": "sheffieldunited", "sheffieldutd": "sheffieldunited",
     "sheffwed": "sheffieldwednesday", "sheffieldwed": "sheffieldwednesday",
     "westbrom": "westbromwichalbion", "spursfc": "tottenhamhotspur",
+    # Champions League: WhoScored short names / spellings vs FotMob's schedule names
+    "psg": "parissaintgermain", "parissg": "parissaintgermain",
+    "bodoeglimt": "bodoglimt", "fkbodoglimt": "bodoglimt",
+    "redstarbelgrade": "crvenazvezda", "redstar": "crvenazvezda",
+    "fckobenhavn": "fccopenhagen", "kobenhavn": "fccopenhagen", "copenhagen": "fccopenhagen",
+    "olympiakos": "olympiacos", "olympiakospiraeus": "olympiacos",
+    "athleticbilbao": "athleticclub",
+    "unionstgilloise": "unionsaintgilloise", "usaintgilloise": "unionsaintgilloise",
+    "bayern": "bayernmunchen", "bayernmunich": "bayernmunchen",
+    "atletico": "atleticomadrid", "atleticodemadrid": "atleticomadrid",
 }
 
 
@@ -56,7 +66,9 @@ def _key(name: str) -> str:
     # Accent-fold + lowercase, strip SAFE club-suffix noise, alnum only, then canonicalise known
     # short/nickname variants (see _ALIASES above). Do NOT strip the DISCRIMINATING tokens
     # "united"/"city" that keep "Manchester United" vs "Manchester City" distinct.
-    s = unicodedata.normalize("NFKD", name or "").encode("ascii", "ignore").decode().lower()
+    # ø/æ/ß don't decompose under NFKD and would just vanish ("Bodø" → "bod"); spell them out first
+    s = (name or "").translate(str.maketrans({"ø": "o", "Ø": "O", "æ": "ae", "Æ": "AE", "ß": "ss"}))
+    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower()
     s = s.replace("&", " and ")
     for j in ("afc ", " afc", " fc", "f.c.", "association football club"):
         s = s.replace(j, " ")
