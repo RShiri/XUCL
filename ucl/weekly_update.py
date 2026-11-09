@@ -70,17 +70,22 @@ _GENERATED = ("ucl_dashboard/data", "ucl_dashboard/players.js", "ucl_dashboard/s
               "PROGRESS.md")
 
 
+# Git Credential Manager can wait forever for a sign-in window nobody sees during an unattended run,
+# so pushes and pulls use the GitHub CLI's stored login instead.
+_GH_AUTH = ("-c", "credential.helper=", "-c", "credential.helper=!gh auth git-credential")
+
+
 def _sync_and_push() -> tuple[int, str]:
     """Push; if GitHub has commits we don't (rejected "fetch first"), merge them and retry.
 
     Without this, one commit pushed from anywhere else blocks every scheduled push forever
     (the Team Lab commits pushed to main on 2026-09-23 did exactly that: XLALIGA's runs
     scraped fine but never reached the site until it got this same fix)."""
-    rc, out = _git("push")
+    rc, out = _git(*_GH_AUTH, "push")
     if rc == 0:
         return rc, out
     print(f"! push rejected, merging GitHub's commits first:\n{out[:300]}")
-    rc, out = _git("pull", "--no-rebase", "--no-edit", "--autostash")
+    rc, out = _git(*_GH_AUTH, "pull", "--no-rebase", "--no-edit", "--autostash")
     if rc != 0:
         _, conflicted = _git("diff", "--name-only", "--diff-filter=U")
         files = [f for f in conflicted.splitlines() if f.strip()]
@@ -104,7 +109,7 @@ def _sync_and_push() -> tuple[int, str]:
         rc, out = _git("commit", "--no-edit")
         if rc != 0:
             return rc, f"merge commit failed: {out}"
-    return _git("push")
+    return _git(*_GH_AUTH, "push")
 
 
 def main() -> None:
