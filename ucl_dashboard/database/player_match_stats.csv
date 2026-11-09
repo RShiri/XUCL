@@ -1,4 +1,36 @@
 match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assists,yellow,red,rating,xg,xa,shots,sot,passes,passAcc,keyPasses,touches,tackles,interceptions,aerials,dribbles,fouls,clearances,dispossessed,saves
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,329019,Matvey Safonov,GK,1,93,0,0,0,0,6.5,0.0,0.0,0,0,25,18,0,34,0,0,0,0,0,1,0,3
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,320834,Achraf Hakimi,DR,1,93,0,1,0,0,7.5,0.41,0.69,2,1,68,61,3,90,2,1,0,0,0,0,1,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,101949,Marquinhos,DC,1,58,0,0,0,0,6.2,0.0,0.0,0,0,40,33,0,44,1,0,1,0,0,1,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,432378,Willian Pacho,DC,1,93,0,0,0,0,6.6,0.0,0.0,0,0,32,30,0,43,4,1,1,0,1,2,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,139186,Lucas Hernandez,DL,1,77,1,0,0,0,7.6,0.04,0.0,1,1,33,26,0,47,4,1,1,0,3,3,1,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,384887,Vitinha,MC,1,93,1,0,0,0,7.4,0.03,0.16,1,1,65,56,0,69,1,0,0,0,0,1,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,465388,Joao Neves,MC,1,93,0,0,0,0,7.8,0.48,0.08,1,1,36,32,6,52,6,2,0,0,3,0,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,294193,Fabian Ruiz,MC,1,93,1,0,0,0,7.8,0.82,0.02,5,3,63,57,2,78,2,3,0,1,0,0,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,433183,Desire Doue,FWR,1,77,1,1,0,0,8.8,0.24,0.23,4,2,33,26,4,54,2,0,0,1,3,0,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,299513,Ousmane Dembele,FW,1,19,0,0,0,0,6.2,0.06,0.0,1,1,4,2,0,8,0,1,0,0,0,0,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,370984,Khvicha Kvaratskhelia,FWL,1,58,0,0,0,0,7.3,0.16,0.01,4,2,14,12,1,36,2,1,0,1,1,0,2,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,426648,Maghnes Akliouche,Sub,0,35,0,0,0,0,6.5,0.0,0.07,0,0,20,16,1,22,0,1,0,0,0,0,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,513665,Senny Mayulu,Sub,0,16,0,0,0,0,6.1,0.0,0.0,0,0,4,3,0,8,1,0,0,0,0,0,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,444679,Warren Zaire-Emery,Sub,0,16,0,0,0,0,5.3,0.0,0.0,0,0,8,7,0,11,1,0,0,0,0,1,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,349760,Ferran Torres,Sub,0,74,0,0,0,0,6.3,1.29,0.0,3,2,12,10,0,17,0,0,0,0,0,0,0,0
+6106234,2026-10-20,Paris Saint-Germain,Barcelona,399826,Illia Zabarnyi,Sub,0,35,0,0,0,0,6.4,0.0,0.0,0,0,20,17,0,22,0,1,0,0,0,0,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,422824,Joan Garcia,GK,1,93,0,0,0,0,7.7,0.0,0.0,0,0,33,28,0,50,0,0,0,0,0,0,0,10
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,591617,Xavi Espart,DR,1,73,1,0,0,0,7.3,0.32,0.02,1,1,42,35,1,59,3,0,0,1,2,1,1,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,498386,Pau Cubarsi,DC,1,93,0,0,0,0,5.7,0.0,0.06,0,0,66,61,1,73,0,0,0,0,0,3,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,512879,Gerard Martin,DC,1,93,0,0,0,0,6.0,0.0,0.0,0,0,63,58,0,77,0,1,2,0,0,4,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,128967,Joao Cancelo,DL,1,93,0,0,1,0,6.0,0.04,0.02,1,0,55,46,1,71,3,0,0,0,3,3,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,402197,Pedri,DMC,1,59,0,0,0,0,6.0,0.16,0.25,2,0,38,36,1,51,0,3,0,0,0,0,1,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,534796,Marc Bernal,DMC,1,59,0,0,0,0,6.3,0.02,0.0,1,0,30,26,0,37,1,0,1,1,1,0,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,480249,Lamine Yamal,AMR,1,93,1,0,0,0,7.3,0.17,0.12,4,1,55,43,3,84,1,2,0,3,0,0,2,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,261212,Dani Olmo,AMC,1,26,0,0,0,0,6.3,0.08,0.0,1,0,10,8,0,15,0,1,0,0,0,2,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,349669,Anthony Gordon,AML,1,93,0,0,0,0,5.9,0.0,0.2,0,0,36,31,2,47,1,0,0,0,0,0,3,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,300447,Raphinha,FW,1,59,0,0,0,0,6.8,0.36,0.05,2,1,22,20,2,32,1,0,0,3,0,0,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,392646,Karim Adeyemi,Sub,0,34,0,0,0,0,6.0,0.07,0.1,2,0,14,13,1,20,0,0,0,1,0,0,1,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,422937,Gavi,Sub,0,34,0,0,0,0,5.9,0.27,0.0,1,1,17,17,1,18,0,0,0,0,1,0,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,422938,Alejandro Balde,Sub,0,20,0,0,0,0,6.2,0.0,0.0,0,0,10,9,0,14,1,2,0,0,0,0,0,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,463838,Fermin Lopez,Sub,0,67,0,1,0,0,6.4,1.06,0.15,3,1,22,19,1,33,1,1,0,0,2,0,2,0
+6106234,2026-10-20,Barcelona,Paris Saint-Germain,303139,Rodri,Sub,0,34,0,0,0,0,6.3,0.0,0.0,0,0,26,22,0,32,0,2,1,0,1,1,0,0
 6106237,2026-09-09,Paris Saint-Germain,Slovan Bratislava,329019,Matvey Safonov,GK,1,92,0,0,0,0,6.7,0.0,0.0,0,0,17,14,0,28,0,0,0,0,0,0,0,3
 6106237,2026-09-09,Paris Saint-Germain,Slovan Bratislava,320834,Achraf Hakimi,DR,1,63,0,0,0,0,7.1,0.08,0.16,2,1,72,65,5,92,0,0,0,1,0,0,0,0
 6106237,2026-09-09,Paris Saint-Germain,Slovan Bratislava,432378,Willian Pacho,DC,1,63,0,0,0,0,6.5,0.0,0.0,0,0,37,35,0,41,0,0,2,0,0,1,0,0
@@ -94,6 +126,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106242,2026-09-08,Inter,Real Madrid,447489,Ange-Yoan Bonny,Sub,0,34,0,0,0,0,6.2,0.0,0.02,0,0,4,3,0,9,2,0,0,0,0,0,0,0
 6106242,2026-09-08,Inter,Real Madrid,118169,Piotr Zielinski,Sub,0,34,0,0,0,0,6.4,0.0,0.02,0,0,25,24,1,31,0,1,0,0,0,1,1,0
 6106242,2026-09-08,Inter,Real Madrid,101374,John Stones,Sub,0,48,0,0,0,0,6.4,0.02,0.0,1,0,23,23,0,27,0,0,2,0,1,3,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,73798,Thibaut Courtois,GK,1,93,0,0,0,0,7.2,0.0,0.0,0,0,36,33,0,48,0,0,0,0,0,0,0,5
+6106244,2026-10-21,Real Madrid,RB Leipzig,344644,Federico Valverde,DR,1,93,0,0,0,0,7.8,0.05,0.27,2,1,93,81,3,116,7,1,0,0,2,5,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,104010,Antonio Rudiger,DC,1,93,0,0,0,0,6.8,0.0,0.0,0,0,75,72,0,82,1,0,0,0,2,2,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,468852,Dean Huijsen,DC,1,93,0,0,0,0,7.2,0.0,0.01,0,0,102,97,1,115,0,7,0,0,1,3,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,437583,Alvaro Carreras,DL,1,69,0,0,1,0,6.8,0.0,0.0,0,0,59,54,0,69,4,1,0,0,2,0,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,369109,Eduardo Camavinga,DMC,1,93,0,0,0,0,8.0,0.02,0.06,1,1,71,65,0,87,4,1,3,3,5,0,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,136741,Bernardo Silva,DMC,1,93,1,0,0,0,7.4,0.86,0.0,1,1,81,76,1,89,1,1,0,0,1,2,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,415181,Arda Guler,AMR,1,77,1,0,0,0,8.3,1.36,0.26,3,3,58,54,2,74,1,0,1,3,0,0,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,379868,Jude Bellingham,AMC,1,87,0,0,0,0,7.3,0.08,0.23,2,0,55,47,3,69,0,0,1,2,0,0,1,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,337782,Vinicius Junior,AML,1,69,0,0,0,0,7.0,0.17,0.04,3,2,35,29,0,45,2,0,0,0,0,0,1,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,300713,Kylian Mbappe,FW,1,87,1,0,0,0,8.0,0.51,0.06,4,2,35,31,2,52,0,0,0,0,0,0,3,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,317541,Brahim Diaz,Sub,0,16,0,1,0,0,6.6,0.0,0.02,0,0,11,11,1,14,0,0,0,0,0,0,1,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,363496,Marc Cucurella,Sub,0,24,0,0,0,0,6.2,0.0,0.0,0,0,18,17,0,18,0,0,1,0,0,0,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,557000,Yan Diomande,Sub,0,24,1,0,0,0,7.4,0.04,0.03,1,1,11,10,1,13,0,0,0,0,0,0,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,516341,Carlos Espi,Sub,0,6,0,0,0,0,6.3,0.03,0.0,1,0,1,0,0,2,0,0,0,0,0,0,0,0
+6106244,2026-10-21,Real Madrid,RB Leipzig,445649,Endrick,Sub,0,6,0,0,0,0,6.0,0.0,0.0,0,0,2,2,1,6,1,0,0,0,0,0,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,365332,Maarten Vandevoordt,GK,1,93,0,0,0,0,6.8,0.0,0.0,0,0,35,25,0,53,0,0,1,0,0,1,0,6
+6106244,2026-10-21,RB Leipzig,Real Madrid,356183,Ridle Baku,DR,1,93,0,0,0,0,6.4,0.05,0.14,2,1,39,35,1,66,2,1,0,0,1,4,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,415172,Castello Lukeba,DC,1,93,0,0,0,0,6.3,0.0,0.0,0,0,45,40,0,56,1,3,1,1,0,5,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,104917,Willi Orban,DC,1,93,0,0,0,0,6.1,0.0,0.0,0,0,34,31,0,48,1,2,1,0,1,9,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,330538,David Raum,DL,1,72,0,0,0,0,6.5,0.0,0.42,0,0,39,32,3,51,3,0,0,0,0,2,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,418587,Nicolas Seiwald,DMC,1,93,0,0,0,0,6.0,0.0,0.01,0,0,50,48,0,65,3,1,0,0,1,4,1,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,486734,Neil El Aynaoui,DMC,1,62,0,0,0,0,5.9,0.0,0.02,0,0,37,36,0,43,2,1,0,0,0,0,1,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,471784,Brajan Gruda,AMR,1,62,0,0,0,0,6.2,0.0,0.08,0,0,32,29,1,54,1,0,0,2,1,1,5,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,300945,Christopher Nkunku,AMC,1,77,0,0,0,0,6.0,0.3,0.0,1,1,25,22,1,33,0,0,0,0,2,0,1,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,416030,Antonio Nusa,AML,1,72,0,0,0,0,6.8,0.1,0.07,2,0,13,11,1,30,2,0,0,3,1,0,1,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,428330,Romulo,FW,1,93,0,0,0,0,6.4,0.4,0.0,4,2,16,11,0,35,1,2,1,0,2,0,2,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,369979,Christoph Baumgartner,Sub,0,16,0,1,0,0,6.6,0.0,0.09,0,0,6,6,1,9,0,0,0,1,2,0,1,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,511411,Tidiam Gomis,Sub,0,21,1,0,0,0,6.8,0.43,0.0,1,1,4,4,0,6,0,0,0,0,0,0,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,497562,Max Finkgrafe,Sub,0,21,0,0,0,0,6.5,0.03,0.0,1,1,7,5,0,16,5,1,0,0,0,0,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,401014,Rocco Reitz,Sub,0,31,0,0,1,0,5.8,0.0,0.0,0,0,13,10,0,13,0,0,0,0,1,0,0,0
+6106244,2026-10-21,RB Leipzig,Real Madrid,502775,Andrija Maksimovic,Sub,0,31,0,0,0,0,6.0,0.0,0.0,0,0,10,10,1,10,0,0,0,0,0,0,0,0
 6106246,2026-09-09,Liverpool,Atlético Madrid,114147,Alisson Becker,GK,1,95,0,0,0,0,6.5,0.0,0.0,0,0,38,27,0,44,0,0,0,0,0,1,0,3
 6106246,2026-09-09,Liverpool,Atlético Madrid,384711,Ronald Araujo,DR,1,95,0,1,0,0,6.8,0.12,0.07,3,0,39,33,1,62,0,0,2,0,0,2,2,0
 6106246,2026-09-09,Liverpool,Atlético Madrid,468827,Jeremy Jacquet,DC,1,95,0,0,0,0,6.6,0.0,0.01,0,0,47,46,0,55,1,2,0,0,2,2,0,0
@@ -126,6 +190,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106246,2026-09-09,Atlético Madrid,Liverpool,299451,Ademola Lookman,Sub,0,37,0,0,0,0,6.0,0.0,0.02,0,0,14,14,0,19,1,0,0,0,1,0,1,0
 6106246,2026-09-09,Atlético Madrid,Liverpool,367008,Robin Le Normand,Sub,0,19,0,0,0,0,6.4,0.0,0.0,0,0,13,11,0,19,1,1,1,0,1,2,0,0
 6106246,2026-09-09,Atlético Madrid,Liverpool,107252,Alejandro Grimaldo,Sub,0,37,0,0,0,0,6.4,0.0,0.1,0,0,19,14,2,30,1,1,0,0,0,0,0,0
+6106248,2026-10-20,Liverpool,Villarreal,114147,Alisson Becker,GK,1,93,0,0,0,0,6.0,0.0,0.0,0,0,25,20,0,33,0,0,0,0,0,0,0,2
+6106248,2026-10-20,Liverpool,Villarreal,384711,Ronald Araujo,DR,1,45,1,0,0,0,7.0,0.3,0.0,1,1,25,19,0,34,0,0,1,1,0,1,0,0
+6106248,2026-10-20,Liverpool,Villarreal,468827,Jeremy Jacquet,DC,1,73,0,0,0,0,6.3,0.0,0.01,0,0,44,36,0,53,5,0,0,1,0,1,2,0
+6106248,2026-10-20,Liverpool,Villarreal,95408,Virgil van Dijk,DC,1,93,0,0,0,0,5.6,0.04,0.0,1,0,62,52,1,74,1,2,3,0,2,1,0,0
+6106248,2026-10-20,Liverpool,Villarreal,301455,Kostas Tsimikas,DL,1,93,0,1,0,0,7.8,0.04,0.13,1,0,49,41,4,88,3,2,1,2,3,1,0,0
+6106248,2026-10-20,Liverpool,Villarreal,345319,Alexis Mac Allister,DMC,1,93,2,0,0,0,8.8,0.67,0.05,5,2,60,53,4,77,1,2,2,0,0,0,0,0
+6106248,2026-10-20,Liverpool,Villarreal,509423,Trey Nyoni,DMC,1,80,0,0,0,0,7.2,0.03,0.09,1,0,88,83,2,98,3,2,0,0,2,0,0,0
+6106248,2026-10-20,Liverpool,Villarreal,548566,Rio Ngumoha,AMR,1,73,0,2,0,0,9.5,0.09,0.64,2,0,27,23,3,51,0,1,0,9,0,0,2,0
+6106248,2026-10-20,Liverpool,Villarreal,363884,Ryan Gravenberch,AMC,1,93,0,0,0,0,6.8,0.12,0.03,2,1,35,33,0,57,2,0,0,1,2,1,2,0
+6106248,2026-10-20,Liverpool,Villarreal,352825,Cody Gakpo,AML,1,93,0,1,0,0,8.3,0.17,0.14,3,1,56,45,3,79,3,1,0,5,1,1,1,0
+6106248,2026-10-20,Liverpool,Villarreal,492374,Lewis Koumas,FW,1,65,0,0,0,0,6.5,0.0,0.0,0,0,12,7,0,15,1,0,1,0,0,1,1,0
+6106248,2026-10-20,Liverpool,Villarreal,425366,Bradley Barcola,Sub,0,20,0,0,0,0,6.1,0.0,0.0,0,0,4,4,0,5,1,0,0,0,0,0,0,0
+6106248,2026-10-20,Liverpool,Villarreal,394786,Florian Wirtz,Sub,0,48,1,0,0,0,8.1,0.45,0.01,4,2,39,35,2,56,3,1,0,2,1,0,0,0
+6106248,2026-10-20,Liverpool,Villarreal,299254,Alexander Isak,Sub,0,28,0,0,0,0,6.0,0.08,0.0,2,0,9,8,0,11,0,0,0,0,0,0,0,0
+6106248,2026-10-20,Liverpool,Villarreal,136451,Joe Gomez,Sub,0,20,0,0,0,0,6.5,0.0,0.0,0,0,7,5,0,14,4,1,0,0,0,1,1,0
+6106248,2026-10-20,Liverpool,Villarreal,492375,James McConnell,Sub,0,13,0,0,0,0,6.0,0.0,0.0,0,0,2,2,0,4,0,1,0,0,1,0,0,0
+6106248,2026-10-20,Villarreal,Liverpool,67369,Peter Gulacsi,GK,1,93,0,0,0,0,5.8,0.0,0.0,0,0,30,20,0,41,0,0,0,0,0,0,0,4
+6106248,2026-10-20,Villarreal,Liverpool,448936,Santiago Mourino,DR,1,93,0,0,1,0,6.8,0.04,0.02,1,1,44,33,2,72,2,5,2,1,3,5,1,0
+6106248,2026-10-20,Villarreal,Liverpool,434077,Renato Veiga,DC,1,93,0,0,0,0,6.6,0.0,0.0,0,0,40,34,0,58,0,1,3,0,0,9,0,0
+6106248,2026-10-20,Villarreal,Liverpool,537235,Pau Navarro,DC,1,93,0,0,0,0,6.2,0.0,0.0,0,0,60,50,0,70,3,1,1,0,0,3,0,0
+6106248,2026-10-20,Villarreal,Liverpool,448209,Sergi Cardona,DL,1,93,1,0,0,0,6.2,0.49,0.0,2,1,37,33,0,60,6,2,0,1,1,3,0,0
+6106248,2026-10-20,Villarreal,Liverpool,399047,Pape Gueye,DMC,1,93,0,0,0,0,6.9,0.06,0.0,1,1,62,53,1,82,3,2,1,1,0,2,1,0
+6106248,2026-10-20,Villarreal,Liverpool,362735,Santi Comesana,DMC,1,77,0,0,0,0,5.8,0.0,0.0,0,0,38,30,1,44,4,0,0,1,0,0,0,0
+6106248,2026-10-20,Villarreal,Liverpool,371027,Tajon Buchanan,AMR,1,59,0,0,0,0,6.3,0.08,0.02,1,0,18,14,1,33,4,2,0,0,1,0,1,0
+6106248,2026-10-20,Villarreal,Liverpool,445119,Nathan Saliba,AMC,1,45,0,1,0,0,6.7,0.14,0.2,2,0,16,12,1,25,1,0,0,0,2,0,1,0
+6106248,2026-10-20,Villarreal,Liverpool,448211,Alberto Moleiro,AML,1,53,0,0,1,0,5.9,0.02,0.0,1,0,23,22,0,28,3,0,0,0,1,0,0,0
+6106248,2026-10-20,Villarreal,Liverpool,389020,Georges Mikautadze,FW,1,59,1,0,0,0,7.1,0.2,0.01,1,1,17,14,0,33,3,0,0,0,0,0,1,0
+6106248,2026-10-20,Villarreal,Liverpool,335107,Juan Foyth,Sub,0,40,0,0,0,0,5.9,0.0,0.01,0,0,42,39,0,50,2,1,0,0,2,1,3,0
+6106248,2026-10-20,Villarreal,Liverpool,445292,Tani Oluwaseyi,Sub,0,48,1,0,0,0,7.0,0.35,0.03,2,1,17,14,1,31,2,0,1,0,0,3,3,0
+6106248,2026-10-20,Villarreal,Liverpool,97659,Gerard Moreno,Sub,0,16,0,0,0,0,6.0,0.06,0.02,1,0,22,17,0,26,1,0,0,0,0,0,0,0
+6106248,2026-10-20,Villarreal,Liverpool,135366,Ayoze Perez,Sub,0,34,0,1,0,0,7.1,0.11,0.19,2,0,13,13,3,27,2,0,0,1,0,0,1,0
+6106248,2026-10-20,Villarreal,Liverpool,440159,Alex Freeman,Sub,0,34,0,0,0,0,6.1,0.0,0.1,0,0,20,19,0,26,1,0,0,0,0,0,0,0
 6106251,2026-10-13,Inter,Club Brugge,321236,Josep Martinez,GK,1,97,0,0,0,0,5.6,0.0,0.0,0,0,37,35,0,48,0,0,0,0,0,1,0,4
 6106251,2026-10-13,Inter,Club Brugge,349126,Yann Bisseck,DC,1,97,0,0,0,0,5.8,0.0,0.01,0,0,46,44,1,55,3,1,2,0,0,2,0,0
 6106251,2026-10-13,Inter,Club Brugge,329665,Alessandro Bastoni,DC,1,97,0,0,0,0,6.3,0.24,0.01,2,1,78,65,0,98,0,1,1,1,1,5,0,0
@@ -158,6 +254,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106251,2026-10-13,Club Brugge,Inter,482831,Mamadou Diakhon,Sub,0,15,0,0,0,0,6.2,0.06,0.0,1,1,6,5,0,11,0,0,0,0,0,0,1,0
 6106251,2026-10-13,Club Brugge,Inter,426647,Felix Lemarechal,Sub,0,37,0,0,1,0,6.2,0.0,0.01,0,0,25,23,0,31,1,0,0,2,2,0,0,0
 6106251,2026-10-13,Club Brugge,Inter,531031,Lee Han-Beom,Sub,0,37,0,0,1,0,6.5,0.0,0.0,0,0,18,15,0,26,3,2,3,0,2,2,0,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,321236,Josep Martinez,GK,1,93,0,0,0,0,7.5,0.0,0.0,0,0,23,18,0,31,0,0,0,0,0,1,0,4
+6106252,2026-10-21,Inter,Shakhtar Donetsk,357897,Carlos Augusto,DC,1,93,1,0,0,0,7.4,0.35,0.0,1,1,50,46,0,66,3,0,1,0,0,3,0,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,329665,Alessandro Bastoni,DC,1,93,0,0,2,1,5.7,0.03,0.0,1,0,55,52,0,69,4,0,2,0,2,3,1,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,297390,Manuel Akanji,DC,1,93,0,0,0,0,7.5,0.0,0.12,0,0,62,57,1,75,0,2,2,1,1,5,1,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,362219,Djed Spence,DMR,1,58,0,0,0,0,6.3,0.0,0.07,0,0,25,22,0,42,2,1,0,2,0,0,1,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,255929,Federico Dimarco,DML,1,58,0,0,0,0,6.3,0.02,0.12,1,0,28,23,1,45,2,0,0,0,0,0,0,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,439534,Petar Sucic,MC,1,72,0,0,1,0,6.7,0.0,0.18,0,0,29,25,1,39,8,1,1,0,2,0,0,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,148684,Nicolo Barella,MC,1,93,0,0,0,0,7.2,0.02,0.0,2,0,34,27,3,53,3,1,2,1,1,0,2,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,110373,Hakan Calhanoglu,MC,1,58,0,0,0,0,6.8,0.05,0.06,2,0,44,39,1,55,2,1,0,1,0,0,0,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,447489,Ange-Yoan Bonny,FW,1,74,0,0,0,0,6.6,0.2,0.07,3,2,14,8,1,30,3,1,0,0,0,1,1,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,296322,Marcus Thuram,FW,1,93,0,0,1,0,7.2,0.09,0.11,2,2,11,9,2,27,2,0,1,2,3,0,1,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,28421,Henrikh Mkhitaryan,Sub,0,19,0,1,0,0,7.2,0.13,0.01,1,0,9,9,2,15,1,0,1,0,0,1,1,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,388567,Luis Henrique,Sub,0,21,0,0,0,0,6.5,0.0,0.0,0,0,7,6,0,11,0,1,0,1,0,1,0,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,415415,Andy Diouf,Sub,0,35,0,0,0,0,6.1,0.0,0.01,0,0,12,7,0,15,0,0,0,0,0,1,1,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,349126,Yann Bisseck,Sub,0,35,0,0,0,0,6.2,0.0,0.0,0,0,14,14,0,18,1,0,0,0,0,0,0,0
+6106252,2026-10-21,Inter,Shakhtar Donetsk,118169,Piotr Zielinski,Sub,0,35,0,0,0,0,6.2,0.0,0.0,0,0,10,9,0,12,0,0,0,0,0,0,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,399834,Dmytro Riznyk,GK,1,93,0,0,0,0,7.1,0.0,0.0,0,0,34,26,0,40,0,0,0,0,0,0,0,4
+6106252,2026-10-21,Shakhtar Donetsk,Inter,428352,Vinicius Tobias,DR,1,93,0,0,0,0,6.5,0.02,0.25,1,0,58,54,2,75,0,1,0,0,1,4,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,370248,Valerii Bondar,DC,1,93,0,0,0,0,6.7,0.04,0.0,1,1,61,58,1,66,1,0,1,0,1,2,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,284817,Mykola Matviienko,DC,1,93,0,0,0,0,6.7,0.06,0.0,2,1,77,71,0,90,2,1,1,0,0,4,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,425770,Pedro Henrique,DL,1,93,0,0,0,0,6.9,0.0,0.19,0,0,72,63,1,98,5,2,0,1,1,3,2,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,427997,Oleh Ocheretko,DMC,1,71,0,0,1,0,5.6,0.09,0.0,2,0,37,31,0,50,1,1,0,0,1,3,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,475166,Alisson Santana,MR,1,82,0,0,0,0,7.6,0.0,0.0,0,0,23,18,0,62,1,2,2,7,0,3,2,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,337813,Pedrinho,MC,1,31,0,0,0,0,6.5,0.04,0.01,1,1,9,8,1,12,0,0,0,1,0,0,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,468024,Marlon Gomes,MC,1,93,0,0,1,0,6.4,0.0,0.0,0,0,40,39,1,57,6,0,2,0,2,2,2,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,519673,Gleiker Mendoza,ML,1,71,0,0,0,0,6.2,0.04,0.0,1,0,29,27,0,35,1,0,0,0,1,0,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,478297,Kaua Elias,FW,1,71,0,0,0,0,6.0,0.16,0.0,2,0,9,8,0,25,2,1,0,0,3,0,4,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,312812,Yehor Nazaryna,Sub,0,62,0,0,0,0,6.7,0.02,0.07,1,0,55,54,2,67,2,0,1,1,0,2,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,373291,Lassina Traore,Sub,0,22,0,0,0,0,6.0,0.0,0.02,0,0,4,4,1,4,0,0,0,0,0,0,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,521087,Isaque,Sub,0,22,0,0,0,0,6.2,0.0,0.02,0,0,8,7,0,12,4,0,0,0,0,0,0,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,605469,Bruninho,Sub,0,11,0,0,0,0,6.0,0.0,0.01,0,0,9,9,0,12,0,0,0,0,0,0,1,0
+6106252,2026-10-21,Shakhtar Donetsk,Inter,478838,Newerton,Sub,0,22,0,0,0,0,6.0,0.03,0.02,1,1,8,7,1,12,1,0,0,0,0,0,0,0
 6106254,2026-10-14,Manchester City,Paris Saint-Germain,262515,Gianluigi Donnarumma,GK,1,94,0,0,0,0,6.3,0.0,0.0,0,0,32,24,0,45,0,0,0,0,0,1,0,6
 6106254,2026-10-14,Manchester City,Paris Saint-Germain,493206,Abdukodir Khusanov,DR,1,94,0,0,0,0,6.2,0.0,0.02,0,0,44,40,0,59,7,2,0,0,0,0,0,0
 6106254,2026-10-14,Manchester City,Paris Saint-Germain,313171,Ruben Dias,DC,1,45,0,0,0,0,5.9,0.0,0.0,0,0,25,21,0,32,3,1,0,0,0,0,0,0
@@ -189,6 +317,37 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106254,2026-10-14,Paris Saint-Germain,Manchester City,465388,Joao Neves,Sub,0,19,0,0,0,0,6.5,0.0,0.0,0,0,8,7,0,14,3,0,1,0,1,1,0,0
 6106254,2026-10-14,Paris Saint-Germain,Manchester City,349760,Ferran Torres,Sub,0,19,0,0,0,0,5.5,0.79,0.04,1,1,2,2,0,4,0,0,0,0,0,0,0,0
 6106254,2026-10-14,Paris Saint-Germain,Manchester City,440085,Beraldo,Sub,0,11,0,0,0,0,6.2,0.0,0.0,0,0,3,2,0,10,2,1,0,0,0,1,1,0
+6106257,2026-10-20,Manchester City,AEK Athens,262515,Gianluigi Donnarumma,GK,1,92,0,0,0,0,7.0,0.0,0.0,0,0,31,29,0,36,0,0,2,0,0,1,0,2
+6106257,2026-10-20,Manchester City,AEK Athens,444791,Rico Lewis,DR,1,92,0,2,0,0,8.0,0.0,0.29,0,0,57,56,4,67,0,1,0,0,0,1,0,0
+6106257,2026-10-20,Manchester City,AEK Athens,313171,Ruben Dias,DC,1,82,0,0,0,0,7.1,0.02,0.0,1,0,66,64,0,74,2,0,1,0,2,2,0,0
+6106257,2026-10-20,Manchester City,AEK Athens,493206,Abdukodir Khusanov,DC,1,92,0,0,0,0,6.7,0.0,0.07,0,0,85,78,1,96,1,5,1,0,0,2,0,0
+6106257,2026-10-20,Manchester City,AEK Athens,402664,Josko Gvardiol,DL,1,71,0,0,1,0,6.7,0.0,0.02,0,0,66,62,0,77,1,1,0,0,2,1,0,0
+6106257,2026-10-20,Manchester City,AEK Athens,369430,Enzo Fernandez,DMC,1,71,0,0,0,0,6.9,0.14,0.3,2,0,63,58,1,75,2,0,0,0,0,0,1,0
+6106257,2026-10-20,Manchester City,AEK Athens,402596,Elliot Anderson,DMC,1,92,1,0,0,0,7.8,0.61,0.02,3,1,69,66,0,87,3,2,0,0,1,1,2,0
+6106257,2026-10-20,Manchester City,AEK Athens,331254,Phil Foden,AMR,1,92,3,1,0,0,10.0,1.22,0.18,4,3,55,49,3,75,3,1,0,1,0,0,0,0
+6106257,2026-10-20,Manchester City,AEK Athens,386153,Rayan Cherki,AMC,1,92,1,0,0,0,8.6,0.28,0.24,5,2,85,78,3,108,1,0,0,3,0,0,3,0
+6106257,2026-10-20,Manchester City,AEK Athens,521094,Allan,AML,1,92,0,0,0,0,7.7,0.08,0.1,2,1,34,29,0,52,4,0,0,4,1,0,1,0
+6106257,2026-10-20,Manchester City,AEK Athens,609335,Floyd Samba,FW,1,62,0,0,0,0,6.6,0.0,0.0,0,0,2,2,0,6,1,0,0,0,0,0,1,0
+6106257,2026-10-20,Manchester City,AEK Athens,355401,Rayan Ait-Nouri,Sub,0,21,0,0,0,0,6.3,0.0,0.0,0,0,15,13,0,19,0,0,0,1,0,0,1,0
+6106257,2026-10-20,Manchester City,AEK Athens,478314,Vitor Reis,Sub,0,21,0,0,0,0,6.3,0.0,0.0,0,0,25,25,0,27,0,0,1,0,0,2,0,0
+6106257,2026-10-20,Manchester City,AEK Athens,540462,Kaden Braithwaite,Sub,0,10,0,0,0,0,6.0,0.0,0.0,0,0,15,15,0,16,0,0,0,0,0,0,0,0
+6106257,2026-10-20,Manchester City,AEK Athens,584927,Ryan McAidoo,Sub,0,30,0,1,0,0,6.8,0.0,0.52,0,0,12,12,1,13,0,0,0,0,0,0,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,294165,Alberto Brignoli,GK,1,92,0,0,0,0,5.4,0.0,0.0,0,0,31,21,0,40,0,0,1,0,0,1,0,2
+6106257,2026-10-20,AEK Athens,Manchester City,391933,Lazaros Rota,DR,1,92,0,0,0,0,5.6,0.0,0.03,0,0,33,30,0,54,4,0,0,0,1,2,1,0
+6106257,2026-10-20,AEK Athens,Manchester City,279169,Harold Moukoudi,DC,1,92,0,0,0,0,6.1,0.0,0.0,0,0,56,54,0,72,3,0,1,1,3,6,1,0
+6106257,2026-10-20,AEK Athens,Manchester City,422207,Filipe Relvas,DC,1,92,0,0,0,0,5.9,0.0,0.0,0,0,70,67,0,81,2,2,0,0,0,4,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,493121,Stavros Pilios,DL,1,92,1,0,0,0,6.7,0.3,0.0,1,1,28,25,1,45,4,3,0,0,0,1,2,0
+6106257,2026-10-20,AEK Athens,Manchester City,369887,Lovro Majer,MR,1,92,0,0,0,0,6.5,0.04,0.01,1,0,37,33,0,58,4,0,0,4,1,0,2,0
+6106257,2026-10-20,AEK Athens,Manchester City,433488,Kervin Arriaga,MC,1,82,0,0,0,0,6.4,0.02,0.0,1,0,37,37,1,51,6,3,0,0,0,1,1,0
+6106257,2026-10-20,AEK Athens,Manchester City,239013,Razvan Marin,MC,1,45,0,0,0,0,6.1,0.03,0.02,1,0,19,14,0,26,3,0,0,0,0,1,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,125476,Joao Mario,ML,1,62,0,0,0,0,6.1,0.0,0.0,0,0,25,23,0,33,2,0,0,1,4,1,1,0
+6106257,2026-10-20,AEK Athens,Manchester City,476796,Barnabas Varga,FW,1,45,0,0,0,0,5.9,0.0,0.0,0,0,5,2,0,13,0,1,1,0,0,0,1,0
+6106257,2026-10-20,AEK Athens,Manchester City,315755,Luka Jovic,FW,1,82,0,0,0,0,6.2,0.0,0.05,0,0,14,12,1,19,0,0,1,0,0,1,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,499137,Milan Vitalis,Sub,0,10,0,0,0,0,6.0,0.04,0.0,2,0,0,0,0,2,0,0,0,0,0,0,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,399710,Aboubakary Koita,Sub,0,47,0,0,0,0,6.3,0.06,0.17,1,0,12,10,1,20,1,0,0,1,1,1,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,300318,Mijat Gacinovic,Sub,0,10,0,0,0,0,6.1,0.0,0.0,1,0,2,2,0,4,1,0,0,0,0,0,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,284560,Oleksandr Zubkov,Sub,0,30,0,0,0,0,6.0,0.09,0.01,2,1,10,9,0,12,0,0,0,0,0,0,0,0
+6106257,2026-10-20,AEK Athens,Manchester City,463353,Zine,Sub,0,47,0,1,0,0,6.6,0.1,0.02,1,1,7,6,2,11,1,0,0,0,0,1,0,0
 6106260,2026-10-13,Arsenal,Lille,276366,David Raya,GK,1,93,0,0,0,0,6.6,0.0,0.0,0,0,21,19,0,25,0,0,0,0,0,0,0,0
 6106260,2026-10-13,Arsenal,Lille,388650,Jurrien Timber,DR,1,77,1,0,0,0,8.3,0.26,0.26,1,1,48,43,2,65,2,1,0,2,0,0,0,0
 6106260,2026-10-13,Arsenal,Lille,334087,Gabriel Magalhaes,DC,1,93,0,0,0,0,7.0,0.0,0.0,0,0,51,47,0,59,1,0,2,0,3,3,1,0
@@ -221,6 +380,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106260,2026-10-13,Lille,Arsenal,553350,Soriba Diaoune,Sub,0,12,0,0,0,0,6.0,0.0,0.0,0,0,4,4,0,10,0,0,0,0,0,1,3,0
 6106260,2026-10-13,Lille,Arsenal,271086,Calvin Verdonk,Sub,0,16,0,0,0,0,6.2,0.0,0.0,0,0,9,6,0,16,4,0,0,0,0,0,0,0
 6106260,2026-10-13,Lille,Arsenal,366886,Osame Sahraoui,Sub,0,22,0,0,0,0,6.1,0.0,0.0,0,0,16,16,1,23,3,0,0,0,0,0,1,0
+6106263,2026-11-03,Barcelona,Aston Villa,422824,Joan Garcia,GK,1,92,0,0,0,0,7.1,0.0,0.0,0,0,19,19,0,32,1,0,0,0,0,2,0,1
+6106263,2026-11-03,Barcelona,Aston Villa,641046,Brian Farinas,DR,1,81,0,0,0,0,7.0,0.0,0.0,0,0,63,61,0,85,3,1,0,0,1,0,1,0
+6106263,2026-11-03,Barcelona,Aston Villa,498386,Pau Cubarsi,DC,1,92,0,0,0,0,7.2,0.0,0.0,0,0,93,88,0,100,1,1,3,0,0,5,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,512879,Gerard Martin,DC,1,92,0,0,0,0,7.4,0.0,0.0,0,0,75,72,1,87,2,2,0,0,1,7,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,128967,Joao Cancelo,DL,1,92,0,1,0,0,8.1,0.03,0.44,1,0,53,51,2,76,2,0,0,4,1,1,1,0
+6106263,2026-11-03,Barcelona,Aston Villa,303139,Rodri,DMC,1,45,0,0,0,0,6.6,0.0,0.01,0,0,50,46,0,52,1,0,1,0,0,0,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,402197,Pedri,DMC,1,69,0,0,0,0,7.0,0.0,0.01,0,0,41,37,2,48,0,1,0,0,0,1,3,0
+6106263,2026-11-03,Barcelona,Aston Villa,480249,Lamine Yamal,AMR,1,92,1,0,0,0,8.2,0.91,0.02,6,3,34,24,0,72,4,1,1,4,4,1,4,0
+6106263,2026-11-03,Barcelona,Aston Villa,463838,Fermin Lopez,AMC,1,69,0,1,0,0,7.7,0.5,0.16,4,2,36,33,2,53,4,0,0,1,2,0,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,349669,Anthony Gordon,AML,1,92,0,0,0,0,7.8,0.48,0.18,3,1,37,30,2,55,1,1,1,3,2,3,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,300447,Raphinha,FW,1,69,2,0,1,0,8.5,0.6,0.03,2,2,21,18,1,33,2,0,1,1,1,0,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,279379,Gabriel Jesus,Sub,0,23,0,0,0,0,7.2,0.0,0.19,0,0,10,9,1,18,1,1,1,2,0,1,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,279423,Frenkie de Jong,Sub,0,23,0,0,0,0,6.1,0.0,0.0,0,0,17,16,0,18,1,1,0,0,0,0,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,422937,Gavi,Sub,0,23,0,0,0,0,6.2,0.0,0.0,0,0,15,14,1,17,3,0,0,0,1,1,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,422938,Alejandro Balde,Sub,0,11,0,0,0,0,5.8,0.0,0.0,0,0,6,5,0,8,1,0,0,0,0,0,0,0
+6106263,2026-11-03,Barcelona,Aston Villa,534796,Marc Bernal,Sub,0,47,0,0,0,0,6.4,0.0,0.0,0,0,32,30,0,40,4,0,0,0,1,0,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,447570,Zion Suzuki,GK,1,92,0,0,0,0,6.3,0.0,0.0,0,0,36,27,0,47,0,0,0,0,0,2,0,5
+6106263,2026-11-03,Aston Villa,Barcelona,322043,Matty Cash,DR,1,92,0,0,0,0,5.7,0.03,0.01,1,0,37,29,1,48,4,1,0,0,1,0,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,344259,Pau Torres,DC,1,92,0,0,0,0,5.9,0.0,0.0,0,0,48,43,0,56,2,1,0,1,1,3,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,100008,Victor Lindelof,DC,1,92,0,0,0,0,5.9,0.0,0.0,0,0,37,35,0,43,1,0,0,1,0,2,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,384134,Ian Maatsen,DL,1,92,0,0,1,0,6.3,0.0,0.0,0,0,39,29,1,65,4,1,0,4,1,0,1,0
+6106263,2026-11-03,Aston Villa,Barcelona,403693,Joao Gomes,DMC,1,61,0,0,0,0,5.3,0.07,0.0,1,0,15,13,0,23,5,0,0,0,0,1,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,331790,Boubacar Kamara,DMC,1,92,0,0,0,0,6.4,0.0,0.07,0,0,26,23,0,46,7,3,0,0,1,1,3,0
+6106263,2026-11-03,Aston Villa,Barcelona,318449,John McGinn,AMR,1,76,0,0,0,0,5.7,0.0,0.01,0,0,19,11,0,29,2,1,0,0,1,0,1,0
+6106263,2026-11-03,Aston Villa,Barcelona,532577,Johan Manzambi,AMC,1,61,0,0,0,0,6.0,0.4,0.02,2,1,9,7,0,21,1,1,0,2,0,0,4,0
+6106263,2026-11-03,Aston Villa,Barcelona,260592,Emiliano Buendia,AML,1,61,0,0,1,0,6.7,0.0,0.03,0,0,10,7,2,24,6,0,1,0,2,1,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,426050,Nicolas Jackson,FW,1,76,0,0,1,0,5.8,0.06,0.11,1,0,11,9,1,21,0,0,0,1,2,2,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,520919,Alysson,Sub,0,16,0,0,0,0,6.3,0.0,0.09,0,0,4,4,0,13,2,0,0,2,0,0,2,0
+6106263,2026-11-03,Aston Villa,Barcelona,535536,Ibrahim Mbaye,Sub,0,31,0,0,0,0,6.4,0.04,0.12,1,0,8,7,2,18,0,0,1,1,0,0,1,0
+6106263,2026-11-03,Aston Villa,Barcelona,115519,Leon Goretzka,Sub,0,31,0,0,0,0,6.3,0.04,0.05,1,0,10,9,1,12,1,0,1,0,0,0,1,0
+6106263,2026-11-03,Aston Villa,Barcelona,317506,Tammy Abraham,Sub,0,16,0,0,0,0,6.0,0.04,0.0,1,0,2,0,0,3,0,0,1,0,0,0,0,0
+6106263,2026-11-03,Aston Villa,Barcelona,92547,Ross Barkley,Sub,0,31,0,0,0,0,5.9,0.08,0.0,1,0,9,5,0,11,0,0,1,0,0,0,1,0
 6106264,2026-09-09,Barcelona,Feyenoord,422824,Joan Garcia,GK,1,93,0,0,0,0,6.2,0.0,0.0,0,0,21,20,0,24,0,0,0,0,0,0,0,1
 6106264,2026-09-09,Barcelona,Feyenoord,301019,Jules Kounde,DR,1,93,0,0,0,0,6.2,0.06,0.01,2,0,92,90,0,108,2,1,1,1,1,5,2,0
 6106264,2026-09-09,Barcelona,Feyenoord,130331,Andreas Christensen,DC,1,93,0,0,0,0,6.6,0.0,0.0,0,0,104,101,0,112,3,0,0,0,0,1,0,0
@@ -285,6 +476,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106267,2026-10-13,Manchester United,Atlético Madrid,343346,Mason Mount,Sub,0,30,0,0,0,0,6.5,0.0,0.01,0,0,16,13,0,24,4,0,0,1,0,0,0,0
 6106267,2026-10-13,Manchester United,Atlético Madrid,99487,Harry Maguire,Sub,0,16,0,0,0,0,6.1,0.03,0.0,1,0,14,14,0,16,0,0,0,0,0,1,0,0
 6106267,2026-10-13,Manchester United,Atlético Madrid,386634,Amad Diallo,Sub,0,30,0,0,0,0,6.3,0.0,0.0,0,0,16,16,1,21,1,0,0,1,0,0,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,336028,Gregor Kobel,GK,1,93,0,0,0,0,6.4,0.0,0.0,0,0,24,17,0,33,0,0,0,0,0,1,0,3
+6106271,2026-11-04,Borussia Dortmund,Real Betis,288892,Ramy Bensebaini,DC,1,74,0,0,1,0,6.2,0.0,0.0,0,0,36,31,0,48,1,0,2,0,2,3,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,296768,Waldemar Anton,DC,1,93,0,0,0,0,7.2,0.0,0.0,0,0,57,44,0,82,4,1,2,2,2,6,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,371275,Nico Schlotterbeck,DC,1,93,0,0,0,0,6.9,0.06,0.0,1,0,57,51,0,69,2,2,2,1,1,3,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,320436,Julian Ryerson,DMR,1,73,0,0,1,0,7.9,0.0,1.26,0,0,27,18,5,62,2,0,0,3,1,0,2,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,418584,Daniel Svensson,DML,1,93,0,0,0,0,6.7,0.46,0.03,2,1,26,23,0,53,2,1,0,0,1,3,1,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,367783,Felix Nmecha,MC,1,74,0,0,0,0,7.0,0.06,0.02,2,0,31,26,0,46,3,0,1,3,0,0,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,382556,Joey Veerman,MC,1,93,0,0,1,0,6.6,0.03,0.02,1,0,71,61,1,85,4,0,1,0,2,1,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,380655,Fabio Silva,AMC,1,90,1,0,0,0,7.4,0.69,0.05,1,1,31,24,2,38,0,0,0,1,2,0,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,422365,Jobe Bellingham,AMC,1,93,0,0,1,0,7.2,0.82,0.03,4,2,48,39,2,73,6,1,2,0,2,0,3,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,236506,Serhou Guirassy,FW,1,33,0,0,0,0,6.0,0.43,0.0,1,0,10,8,1,11,0,0,0,0,0,0,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,513664,Joane Gadou,Sub,0,19,0,0,0,0,6.2,0.0,0.0,0,0,5,4,0,7,1,0,0,0,0,1,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,387125,Maximilian Beier,Sub,0,20,0,0,0,0,6.0,0.0,0.0,0,0,4,4,0,6,1,0,0,0,0,0,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,471855,Konstantinos Karetsas,Sub,0,60,1,0,0,0,7.9,0.15,0.01,3,2,23,17,2,41,2,0,0,2,2,1,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,456771,Ethan Nwaneri,Sub,0,3,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6106271,2026-11-04,Borussia Dortmund,Real Betis,410639,Carney Chukwuemeka,Sub,0,19,0,0,0,0,6.0,0.0,0.01,0,0,4,3,0,7,0,0,0,0,0,1,1,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,448208,Alvaro Valles,GK,1,93,0,0,0,0,6.3,0.0,0.0,0,0,44,27,0,56,0,0,0,0,0,0,0,4
+6106271,2026-11-04,Real Betis,Borussia Dortmund,545675,Angel Ortiz,DR,1,93,0,0,1,0,6.6,0.26,0.03,1,1,49,38,0,75,4,3,0,0,1,6,0,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,402206,Natan,DC,1,93,0,0,1,0,6.9,0.0,0.0,0,0,47,41,0,63,1,2,3,0,1,8,0,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,123232,Diego Llorente,DC,1,93,0,0,0,0,6.1,0.0,0.0,0,0,41,36,0,51,0,2,0,0,0,3,0,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,433286,Valentin Gomez,DL,1,69,0,0,1,0,6.5,0.0,0.0,0,0,27,22,0,56,10,2,3,0,2,5,3,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,144890,Dani Ceballos,DMC,1,61,0,0,0,0,6.5,0.0,0.0,0,0,28,26,0,42,4,1,1,1,1,1,1,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,512611,Facundo Bernal,DMC,1,77,0,0,0,0,6.2,0.04,0.0,1,0,25,22,1,35,3,3,0,0,1,0,0,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,364315,Antony,AMR,1,61,0,0,0,0,5.8,0.03,0.02,1,0,18,14,1,32,0,0,0,0,1,0,2,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,432475,Nelson Deossa,AMC,1,93,0,0,0,0,6.5,0.08,0.0,3,1,35,28,0,60,1,0,3,1,1,0,3,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,427283,Abde Ezzalzouli,AML,1,93,0,1,0,0,6.7,0.07,0.19,2,1,31,24,1,56,0,0,0,2,2,0,3,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,384064,Troy Parrott,FW,1,77,0,0,0,0,6.0,0.0,0.0,0,0,14,12,1,22,1,0,1,0,0,0,2,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,349494,Aitor Ruibal,Sub,0,32,1,0,0,0,7.0,0.36,0.08,2,1,8,7,1,12,0,0,0,0,1,0,0,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,82989,Isco,Sub,0,32,0,0,1,0,6.5,0.0,0.08,0,0,23,19,4,36,1,0,0,0,2,1,0,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,323148,Marc Roca,Sub,0,16,0,0,0,0,6.0,0.04,0.0,1,0,10,9,0,12,0,0,0,0,0,0,0,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,584515,Jose Antonio Morante,Sub,0,16,0,0,0,0,5.9,0.0,0.0,0,0,4,2,0,9,0,0,0,0,0,0,2,0
+6106271,2026-11-04,Real Betis,Borussia Dortmund,422957,Fran Garcia,Sub,0,24,0,0,0,0,6.0,0.0,0.0,0,0,12,10,0,15,1,0,0,0,0,0,0,0
 6106272,2026-09-08,Borussia Dortmund,Villarreal,336028,Gregor Kobel,GK,1,95,0,0,0,0,6.8,0.0,0.01,0,0,29,26,0,40,0,0,0,0,0,0,0,5
 6106272,2026-09-08,Borussia Dortmund,Villarreal,513664,Joane Gadou,DC,1,95,0,0,0,0,6.9,0.0,0.0,0,0,63,60,0,76,4,2,0,0,0,4,1,0
 6106272,2026-09-08,Borussia Dortmund,Villarreal,296768,Waldemar Anton,DC,1,95,0,0,1,0,6.9,0.0,0.0,0,0,49,46,0,65,5,2,2,0,2,5,0,0
@@ -349,6 +572,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106274,2026-10-14,Real Madrid,Roma,415181,Arda Guler,Sub,0,37,0,2,0,0,7.8,0.0,0.29,0,0,27,21,3,37,1,0,0,0,0,0,0,0
 6106274,2026-10-14,Real Madrid,Roma,445649,Endrick,Sub,0,37,1,0,0,0,7.7,0.09,0.0,2,2,6,2,0,15,1,0,1,2,0,0,0,0
 6106274,2026-10-14,Real Madrid,Roma,516341,Carlos Espi,Sub,0,18,1,0,0,0,7.2,0.79,0.0,2,1,5,3,0,10,1,0,1,0,1,0,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,240990,Pierluigi Gollini,GK,1,91,0,0,0,0,6.7,0.0,0.0,0,0,18,18,0,21,0,0,0,0,0,1,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,362788,Leonardo Balerdi,DC,1,91,0,0,0,0,8.2,0.03,0.0,1,1,74,69,1,90,5,3,1,0,0,3,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,486744,Daniele Ghilardi,DC,1,91,0,1,0,0,8.4,0.17,0.69,3,1,51,48,1,65,3,2,2,2,3,1,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,344156,Mario Hermoso,DC,1,76,1,0,0,0,8.3,0.75,0.0,1,1,89,80,0,100,1,1,6,0,1,2,1,0
+6106277,2026-10-20,Roma,Slovan Bratislava,303728,Nahuel Molina,DMR,1,91,1,0,0,0,7.8,0.36,0.16,3,1,64,50,1,87,3,1,0,0,0,0,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,429481,Wesley,DML,1,58,0,0,0,0,7.4,0.04,0.1,1,0,47,38,2,67,0,0,1,1,2,1,1,0
+6106277,2026-10-20,Roma,Slovan Bratislava,476440,Niccolo Pisilli,MC,1,91,1,0,0,0,8.6,0.42,0.32,3,1,79,77,3,96,2,0,1,1,0,1,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,85070,Marten de Roon,MC,1,76,0,0,0,0,6.9,0.0,0.0,0,0,66,60,0,74,3,1,0,0,1,1,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,148546,Lorenzo Pellegrini,AMC,1,50,0,0,0,0,7.3,0.17,0.13,3,1,33,30,2,53,0,1,0,2,1,0,1,0
+6106277,2026-10-20,Roma,Slovan Bratislava,532725,Rodrigo Mora,AMC,1,91,0,0,0,0,6.9,0.35,0.25,1,1,33,31,2,44,0,0,0,0,0,0,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,351354,Donyell Malen,FW,1,58,1,1,0,0,8.4,1.02,0.22,5,3,14,12,3,23,0,0,1,0,0,0,1,0
+6106277,2026-10-20,Roma,Slovan Bratislava,421081,Santiago Castro,Sub,0,33,0,0,0,0,5.9,0.17,0.0,3,0,11,10,0,15,1,0,0,0,2,0,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,425079,Matias Soule,Sub,0,41,0,0,0,0,7.1,0.03,0.14,1,0,39,34,2,52,0,0,0,2,0,1,1,0
+6106277,2026-10-20,Roma,Slovan Bratislava,457282,Konstantinos Koulierakis,Sub,0,15,0,0,0,0,6.2,0.0,0.02,0,0,11,11,1,13,0,0,0,0,0,0,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,244804,Gianluca Mancini,Sub,0,15,0,0,0,0,6.2,0.0,0.0,0,0,14,8,0,17,0,1,1,0,0,0,0,0
+6106277,2026-10-20,Roma,Slovan Bratislava,400165,Devyne Rensch,Sub,0,33,0,0,0,0,6.5,0.06,0.01,1,0,24,22,0,31,1,0,0,1,0,1,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,439530,Dominik Takac,GK,1,91,0,0,0,0,6.6,0.0,0.0,0,0,48,21,0,61,0,0,0,0,0,2,0,6
+6106277,2026-10-20,Slovan Bratislava,Roma,401721,Cesar Blackman,DR,1,91,0,0,0,0,5.3,0.0,0.0,0,0,23,21,0,37,4,1,1,0,2,3,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,353208,Svetozar Markovic,DC,1,91,0,0,0,0,5.6,0.0,0.0,0,0,14,12,0,22,0,1,0,0,0,3,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,113515,Kenan Bajric,DC,1,91,0,0,0,0,7.1,0.0,0.0,0,0,22,14,0,47,4,2,1,0,0,8,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,437686,Sandro Cruz,DL,1,81,0,0,0,0,5.8,0.0,0.0,0,0,21,16,0,44,2,2,2,0,1,5,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,424529,Peter Pokorny,DMC,1,91,0,0,0,0,5.9,0.02,0.0,1,0,30,24,0,41,4,1,1,0,1,4,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,203838,Tigran Barseghyan,MR,1,54,0,0,1,0,5.1,0.0,0.02,0,0,10,3,1,19,3,0,2,0,1,0,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,553365,Rahim Ibrahim,MC,1,68,0,0,0,0,5.4,0.0,0.0,0,0,14,11,0,28,1,0,1,0,3,0,2,0
+6106277,2026-10-20,Slovan Bratislava,Roma,484636,Artur Gajdos,MC,1,68,0,0,0,0,5.5,0.0,0.0,0,0,17,12,0,23,0,0,0,0,0,2,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,448149,Suleiman Camara,ML,1,68,0,0,1,0,5.9,0.0,0.0,0,0,10,6,0,20,1,1,0,3,2,1,2,0
+6106277,2026-10-20,Slovan Bratislava,Roma,485514,Nino Marcelli,FW,1,91,0,0,0,0,5.8,0.0,0.0,0,0,13,12,0,25,0,0,0,1,0,0,2,0
+6106277,2026-10-20,Slovan Bratislava,Roma,101550,Kevin Wimmer,Sub,0,10,0,0,0,0,6.3,0.0,0.0,0,0,5,5,0,9,2,0,0,0,0,0,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,421777,Alen Mustafic,Sub,0,23,0,0,0,0,6.1,0.0,0.0,0,0,10,6,0,12,0,0,0,1,0,0,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,567964,Alasana Yirajang,Sub,0,37,0,0,0,0,6.3,0.0,0.0,0,0,6,5,0,12,0,0,0,2,0,2,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,318250,Cristian Martinez,Sub,0,23,0,0,1,0,5.9,0.0,0.0,0,0,5,5,0,10,1,1,0,0,0,0,0,0
+6106277,2026-10-20,Slovan Bratislava,Roma,544998,Alexej Maros,Sub,0,23,0,0,0,0,6.0,0.0,0.0,0,0,3,3,0,4,0,0,0,0,0,0,0,0
 6106280,2026-09-09,Sporting CP,Galatasaray,141833,Rui Silva,GK,1,94,0,0,0,0,6.7,0.0,0.0,0,0,29,24,0,39,0,0,1,0,0,2,0,3
 6106280,2026-09-09,Sporting CP,Galatasaray,439734,Georgios Vagiannidis,DR,1,83,0,0,0,0,6.4,0.0,0.0,0,0,30,19,1,50,1,2,2,0,1,1,1,0
 6106280,2026-09-09,Sporting CP,Galatasaray,395992,Goncalo Inacio,DC,1,94,0,0,0,0,6.2,0.0,0.0,0,0,39,33,0,59,4,1,2,0,1,7,0,0
@@ -381,6 +636,37 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106280,2026-09-09,Galatasaray,Sporting CP,558471,Renato Nhaga,Sub,0,11,0,0,0,0,6.0,0.0,0.0,0,0,12,12,0,15,0,0,0,0,2,0,0,0
 6106280,2026-09-09,Galatasaray,Sporting CP,349207,Rafael Leao,Sub,0,37,0,0,0,0,6.7,0.0,0.05,0,0,13,11,1,25,0,1,1,3,0,0,1,0
 6106280,2026-09-09,Galatasaray,Sporting CP,528450,Deniz Gul,Sub,0,31,0,0,1,0,6.0,0.0,0.0,0,0,2,2,0,9,1,0,0,1,3,0,1,0
+6106281,2026-10-21,Sporting CP,LASK,429473,Kaique,GK,1,98,0,0,0,0,6.5,0.0,0.0,0,0,32,26,0,48,0,0,0,0,0,0,0,4
+6106281,2026-10-21,Sporting CP,LASK,444257,Ivan Fresneda,DR,1,98,0,0,0,0,6.2,0.0,0.07,0,0,76,70,1,104,2,0,0,0,0,1,1,0
+6106281,2026-10-21,Sporting CP,LASK,394932,Eduardo Quaresma,DC,1,98,0,0,0,0,6.3,0.0,0.0,0,0,76,71,0,91,1,1,3,0,0,5,1,0
+6106281,2026-10-21,Sporting CP,LASK,395992,Goncalo Inacio,DC,1,98,0,0,0,0,6.5,0.04,0.0,1,0,96,89,0,109,1,2,2,0,0,3,0,0
+6106281,2026-10-21,Sporting CP,LASK,460758,Maxi Araujo,DL,1,98,0,0,0,0,6.2,0.32,0.02,1,0,55,44,0,79,1,0,2,2,0,1,3,0
+6106281,2026-10-21,Sporting CP,LASK,531776,Issa Doumbia,MC,1,79,0,0,1,0,5.7,0.08,0.01,1,0,29,26,0,39,2,0,0,0,1,0,1,0
+6106281,2026-10-21,Sporting CP,LASK,540227,Joao Simoes,MC,1,66,0,0,1,0,6.0,0.0,0.0,0,0,22,20,0,30,2,0,0,0,2,0,1,0
+6106281,2026-10-21,Sporting CP,LASK,489232,Sergi Altimira,MC,1,98,0,0,0,0,6.4,0.0,0.0,0,0,70,64,0,82,1,2,0,0,0,2,0,0
+6106281,2026-10-21,Sporting CP,LASK,425093,Geny Catamo,FWR,1,78,0,0,0,0,7.0,0.06,0.24,2,0,36,30,2,56,0,0,0,4,2,0,0,0
+6106281,2026-10-21,Sporting CP,LASK,402887,Luis Suarez,FW,1,98,2,0,0,0,8.2,1.88,0.03,6,3,17,16,3,35,1,0,2,1,3,0,3,0
+6106281,2026-10-21,Sporting CP,LASK,477369,Nestory Irankunda,FWL,1,78,0,0,0,0,7.1,0.06,0.02,2,0,27,22,2,47,1,0,3,2,1,1,2,0
+6106281,2026-10-21,Sporting CP,LASK,478319,Luis Guilherme,Sub,0,20,0,0,0,0,7.0,0.0,0.02,0,0,11,10,1,23,0,0,0,4,0,0,0,0
+6106281,2026-10-21,Sporting CP,LASK,418176,Fotis Ioannidis,Sub,0,19,0,0,0,0,6.2,0.0,0.0,0,0,5,4,0,7,0,0,1,0,0,0,0,0
+6106281,2026-10-21,Sporting CP,LASK,597806,Flavio Goncalves,Sub,0,32,0,0,0,0,6.7,0.0,0.17,0,0,13,10,2,19,0,0,0,2,1,0,0,0
+6106281,2026-10-21,Sporting CP,LASK,609224,Jesse Derry,Sub,0,20,0,0,0,0,6.0,0.8,0.0,3,1,6,5,0,12,0,0,0,0,0,0,0,0
+6106281,2026-10-21,LASK,Sporting CP,485281,Lukas Jungwirth,GK,1,51,0,0,0,0,5.9,0.0,0.01,0,0,26,19,0,27,0,0,0,0,0,0,0,0
+6106281,2026-10-21,LASK,Sporting CP,425605,Xavier Mbuyamba,DC,1,98,0,0,0,0,7.4,0.03,0.01,1,1,45,38,1,67,6,2,2,0,1,5,0,0
+6106281,2026-10-21,LASK,Sporting CP,397267,Andres Andrade,DC,1,98,0,0,0,0,6.5,0.13,0.2,2,0,32,27,0,47,6,1,2,0,0,4,1,0
+6106281,2026-10-21,LASK,Sporting CP,445423,Alemao,DC,1,98,0,0,0,0,6.8,0.0,0.13,0,0,42,39,1,56,2,1,2,0,2,6,0,0
+6106281,2026-10-21,LASK,Sporting CP,403883,Kasper Jrgensen,DMR,1,82,0,1,0,0,6.9,0.03,0.08,1,0,18,15,2,30,1,0,0,0,0,0,0,0
+6106281,2026-10-21,LASK,Sporting CP,528209,Yvan Dibango,DML,1,98,0,0,0,0,6.6,0.0,0.0,0,0,25,17,0,47,5,0,1,0,2,3,0,0
+6106281,2026-10-21,LASK,Sporting CP,124939,Sascha Horvath,MC,1,64,0,0,1,0,6.3,0.0,0.21,0,0,28,22,2,34,0,0,0,0,1,0,1,0
+6106281,2026-10-21,LASK,Sporting CP,399626,Robert Ljubicic,MC,1,98,0,1,0,0,7.3,0.0,0.09,0,0,45,40,2,58,5,2,1,0,3,2,0,0
+6106281,2026-10-21,LASK,Sporting CP,424308,Krystof Danek,FWR,1,98,1,0,1,0,7.5,0.04,0.04,1,1,25,22,1,34,2,1,1,0,2,0,2,0
+6106281,2026-10-21,LASK,Sporting CP,377271,Sasa Kalajdzic,FW,1,82,1,0,1,0,7.7,0.39,0.02,2,2,21,18,0,34,1,0,2,0,3,1,2,0
+6106281,2026-10-21,LASK,Sporting CP,423286,Christoph Lang,FWL,1,64,1,0,1,0,7.2,0.22,0.0,3,3,6,5,0,25,0,0,1,0,3,0,3,0
+6106281,2026-10-21,LASK,Sporting CP,146634,Alessandro Schopf,Sub,0,34,0,0,0,0,5.8,0.0,0.19,0,0,12,10,0,20,3,0,0,0,2,0,0,0
+6106281,2026-10-21,LASK,Sporting CP,384322,Florian Flecker,Sub,0,16,0,0,0,0,6.0,0.0,0.0,0,0,1,1,1,3,1,0,0,0,0,0,0,0
+6106281,2026-10-21,LASK,Sporting CP,485284,Moses Usor,Sub,0,16,0,0,0,0,5.9,0.17,0.0,1,0,5,4,0,8,1,0,1,0,1,0,0,0
+6106281,2026-10-21,LASK,Sporting CP,419581,Samuel Adeniran,Sub,0,34,0,1,0,0,6.6,0.0,0.01,0,0,8,5,1,13,1,1,2,0,2,0,0,0
+6106281,2026-10-21,LASK,Sporting CP,423288,Tobias Schutzenauer,Sub,0,47,0,0,1,0,6.8,0.0,0.0,0,0,15,10,0,17,1,0,0,0,0,0,0,2
 6106284,2026-10-14,Aston Villa,Fenerbahçe,447570,Zion Suzuki,GK,1,91,0,0,0,0,7.5,0.0,0.0,0,0,17,15,0,28,0,0,0,0,0,0,0,4
 6106284,2026-10-14,Aston Villa,Fenerbahçe,322043,Matty Cash,DR,1,91,0,0,0,0,7.9,0.03,0.0,2,1,38,28,1,65,7,0,0,1,2,4,0,0
 6106284,2026-10-14,Aston Villa,Fenerbahçe,344259,Pau Torres,DC,1,91,0,0,0,0,7.7,0.04,0.01,1,0,57,54,0,73,0,0,2,1,0,8,0,0
@@ -411,6 +697,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106284,2026-10-14,Fenerbahçe,Aston Villa,78498,Romelu Lukaku,Sub,0,23,0,0,0,0,5.9,0.0,0.0,0,0,4,4,0,6,0,0,1,0,0,0,0,0
 6106284,2026-10-14,Fenerbahçe,Aston Villa,444758,Dorgeles Nene,Sub,0,23,0,0,0,0,5.8,0.08,0.01,1,0,10,10,0,16,0,0,0,0,0,0,0,0
 6106284,2026-10-14,Fenerbahçe,Aston Villa,408437,Bartug Elmaz,Sub,0,23,0,0,0,0,5.9,0.03,0.0,1,0,20,20,0,22,0,0,0,0,1,0,0,0
+6106285,2026-10-21,Aston Villa,Viking,447570,Zion Suzuki,GK,1,94,0,0,0,0,6.4,0.0,0.0,0,0,25,17,1,31,0,0,0,0,0,0,0,2
+6106285,2026-10-21,Aston Villa,Viking,403693,Joao Gomes,DR,1,69,0,0,0,0,7.2,0.0,0.0,0,0,69,63,0,81,4,1,0,1,0,1,0,0
+6106285,2026-10-21,Aston Villa,Viking,344259,Pau Torres,DC,1,94,0,0,0,0,7.1,0.08,0.02,1,0,71,67,1,85,2,0,2,0,0,6,0,0
+6106285,2026-10-21,Aston Villa,Viking,100008,Victor Lindelof,DC,1,94,0,0,0,0,7.0,0.0,0.01,0,0,71,69,0,82,0,1,3,0,0,8,0,0
+6106285,2026-10-21,Aston Villa,Viking,123167,Tyrone Mings,DL,1,94,0,0,0,0,6.4,0.0,0.0,0,0,39,32,0,54,0,0,0,0,0,3,0,0
+6106285,2026-10-21,Aston Villa,Viking,92547,Ross Barkley,DMC,1,69,1,0,0,0,7.7,0.2,0.0,1,1,40,38,0,47,1,0,1,0,2,3,0,0
+6106285,2026-10-21,Aston Villa,Viking,318449,John McGinn,DMC,1,94,0,0,0,0,7.3,0.04,0.2,1,0,73,68,3,89,3,0,0,0,0,1,0,0
+6106285,2026-10-21,Aston Villa,Viking,520919,Alysson,AMR,1,74,0,0,0,0,7.9,0.37,0.33,3,1,36,32,3,55,0,0,0,4,2,0,0,0
+6106285,2026-10-21,Aston Villa,Viking,260592,Emiliano Buendia,AMC,1,94,1,0,0,0,7.2,1.76,0.08,7,3,38,26,3,52,2,1,0,0,2,0,2,0
+6106285,2026-10-21,Aston Villa,Viking,535536,Ibrahim Mbaye,AML,1,71,0,1,0,0,7.7,0.04,0.27,1,1,23,21,3,39,2,1,0,1,1,0,2,0
+6106285,2026-10-21,Aston Villa,Viking,426050,Nicolas Jackson,FW,1,69,0,0,0,0,7.4,0.62,0.06,4,3,12,11,2,28,0,0,1,2,0,1,3,0
+6106285,2026-10-21,Aston Villa,Viking,437022,Alejandro Garnacho,Sub,0,23,0,0,0,0,5.9,0.38,0.0,3,1,6,4,0,12,0,0,0,0,0,0,0,0
+6106285,2026-10-21,Aston Villa,Viking,115519,Leon Goretzka,Sub,0,25,0,0,0,0,6.2,0.0,0.04,0,0,12,12,1,17,0,0,1,0,0,1,0,0
+6106285,2026-10-21,Aston Villa,Viking,322043,Matty Cash,Sub,0,25,0,0,0,0,5.9,0.0,0.0,0,0,4,4,0,7,1,0,0,0,0,0,0,0
+6106285,2026-10-21,Aston Villa,Viking,317506,Tammy Abraham,Sub,0,25,0,0,0,0,6.0,0.0,0.0,0,0,7,5,0,9,0,0,0,1,0,0,0,0
+6106285,2026-10-21,Aston Villa,Viking,576066,George Hemmings,Sub,0,20,0,0,0,0,5.9,0.0,0.0,0,0,3,2,0,4,0,0,0,0,0,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,38878,Arild stb,GK,1,94,0,0,0,0,7.8,0.0,0.0,0,0,33,22,0,46,0,0,0,0,0,1,0,8
+6106285,2026-10-21,Viking,Aston Villa,395669,Herman Haugen,DR,1,85,0,0,0,0,6.7,0.0,0.0,0,0,28,25,1,46,3,3,0,2,0,2,0,0
+6106285,2026-10-21,Viking,Aston Villa,423967,Gianni Stensness,DC,1,94,0,0,0,0,6.4,0.03,0.0,1,0,66,63,0,81,1,2,1,0,1,3,0,0
+6106285,2026-10-21,Viking,Aston Villa,395417,Jesper Daland,DC,1,74,0,0,0,0,5.9,0.03,0.0,1,0,41,40,0,49,5,0,1,0,1,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,395742,Henrik Heggheim,DL,1,94,0,0,0,0,5.3,0.0,0.0,0,0,31,27,0,43,3,0,0,0,1,2,0,0
+6106285,2026-10-21,Viking,Aston Villa,521276,Peter Christiansen,MR,1,94,1,0,0,0,6.6,0.37,0.0,2,1,9,7,1,22,2,0,0,0,1,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,363898,Kristoffer Askildsen,MC,1,94,0,1,0,0,6.8,0.0,0.07,0,0,44,36,2,51,3,1,0,1,4,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,527104,Tobias Moi,MC,1,62,0,0,0,0,6.4,0.15,0.0,2,1,35,31,1,44,1,0,1,1,1,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,395377,Joe Bell,MC,1,94,0,0,0,0,6.1,0.06,0.01,1,0,59,56,1,65,3,0,1,0,2,1,0,0
+6106285,2026-10-21,Viking,Aston Villa,105042,Zlatko Tripic,ML,1,74,0,0,0,0,6.2,0.09,0.1,2,1,26,17,2,51,1,0,0,3,1,1,0,0
+6106285,2026-10-21,Viking,Aston Villa,335766,Erik Botheim,FW,1,62,0,0,0,0,6.0,0.0,0.0,0,0,9,7,0,15,0,0,1,0,0,3,0,0
+6106285,2026-10-21,Viking,Aston Villa,615559,Amin Cosic,Sub,0,20,0,0,0,0,6.2,0.07,0.0,1,0,10,10,0,14,0,1,0,0,1,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,128998,Henrik Bjrdal,Sub,0,32,0,0,0,0,6.3,0.0,0.0,0,0,17,14,1,23,2,0,0,0,1,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,491387,Essien Bassey,Sub,0,9,0,0,0,0,6.0,0.0,0.0,0,0,5,4,0,5,0,0,0,0,0,0,0,0
+6106285,2026-10-21,Viking,Aston Villa,510599,Vetle Auklend,Sub,0,20,0,0,0,0,6.2,0.0,0.0,0,0,12,11,0,16,0,0,0,0,0,2,0,0
+6106285,2026-10-21,Viking,Aston Villa,418220,Simen Kvia-Egeskog,Sub,0,32,0,0,0,0,6.3,0.0,0.02,0,0,8,7,1,14,0,0,0,1,0,0,0,0
 6106286,2026-09-08,FC Porto,Manchester City,373842,Diogo Costa,GK,1,95,0,0,0,0,7.6,0.0,0.01,0,0,48,39,0,61,0,0,0,0,0,0,0,8
 6106286,2026-09-08,FC Porto,Manchester City,447233,Alberto Costa,DR,1,95,0,0,0,0,6.0,0.0,0.0,0,0,19,13,0,47,2,1,0,0,2,5,0,0
 6106286,2026-09-08,FC Porto,Manchester City,349178,Nehuen Perez,DC,1,95,0,0,0,0,6.4,0.0,0.0,0,0,30,27,0,39,2,0,2,0,0,1,0,0
@@ -443,6 +761,100 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106286,2026-09-08,Manchester City,FC Porto,366116,Iliman Ndiaye,Sub,0,34,0,0,0,0,6.5,0.12,0.11,2,1,9,6,1,15,0,0,0,0,0,0,1,0
 6106286,2026-09-08,Manchester City,FC Porto,493206,Abdukodir Khusanov,Sub,0,48,0,0,0,0,6.4,0.0,0.0,0,0,22,20,0,27,1,0,1,0,0,1,0,0
 6106286,2026-09-08,Manchester City,FC Porto,402596,Elliot Anderson,Sub,0,34,0,0,0,0,7.0,0.03,0.07,1,1,24,23,2,33,2,1,0,0,0,0,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,373842,Diogo Costa,GK,1,95,0,0,0,0,6.4,0.0,0.05,0,0,49,38,0,61,0,0,0,0,0,0,0,2
+6106287,2026-10-20,FC Porto,PSV Eindhoven,447233,Alberto Costa,DR,1,95,0,0,0,0,7.0,0.1,0.0,2,2,34,28,0,62,1,1,4,2,1,6,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,424462,Jakub Kiwior,DC,1,95,0,0,0,0,6.5,0.02,0.0,1,0,60,55,1,71,0,0,1,0,1,8,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,136742,Jan Bednarek,DC,1,95,0,0,0,0,6.8,0.0,0.0,0,0,48,44,0,66,0,2,2,0,1,11,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,381717,Zaidu Sanusi,DL,1,68,0,0,0,0,6.2,0.0,0.0,0,0,24,19,0,37,0,1,0,0,0,3,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,504208,Victor Froholdt,MC,1,75,0,0,0,0,6.0,0.43,0.02,1,1,21,17,0,30,3,1,1,0,0,0,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,329647,Pablo Rosario,MC,1,95,0,0,0,0,6.3,0.05,0.08,2,0,44,39,2,56,2,1,0,0,0,2,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,399953,Gabri Veiga,MC,1,57,0,0,0,0,6.4,0.03,0.16,1,0,24,17,1,37,5,0,1,0,1,0,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,338791,Pepe,FWR,1,95,0,0,0,0,6.2,0.05,0.0,1,0,28,17,0,56,2,0,1,2,2,0,1,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,497564,Samu Aghehowa,FW,1,57,0,0,0,0,6.3,0.08,0.03,1,0,19,12,2,25,0,0,0,1,0,1,1,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,533583,Oskar Pietuszewski,FWL,1,57,0,0,0,0,5.8,0.43,0.0,3,0,9,5,0,23,1,0,0,2,0,0,2,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,299460,Andre Silva,Sub,0,38,0,0,0,0,6.1,0.43,0.19,1,1,10,8,1,15,1,0,0,0,0,0,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,381714,Borja Sainz,Sub,0,38,0,0,0,0,5.9,0.0,0.0,0,0,6,5,0,7,0,0,0,0,1,0,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,254562,Seko Fofana,Sub,0,20,0,0,0,0,6.0,0.0,0.0,0,0,12,12,0,14,0,0,0,0,0,0,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,371030,Hwang In-Beom,Sub,0,38,0,0,0,0,6.2,0.04,0.05,1,0,21,15,1,28,1,0,0,0,0,0,0,0
+6106287,2026-10-20,FC Porto,PSV Eindhoven,549079,Souza,Sub,0,27,0,0,0,0,6.3,0.0,0.0,0,0,9,8,1,15,1,0,1,1,0,1,1,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,388668,Matej Kovar,GK,1,95,0,0,0,0,6.9,0.0,0.0,0,0,49,31,0,68,1,0,0,0,0,2,0,3
+6106287,2026-10-20,PSV Eindhoven,FC Porto,379205,Sergino Dest,DR,1,95,0,0,0,0,7.6,0.12,0.01,2,1,56,51,1,83,3,3,0,2,1,5,1,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,345441,Lutsharel Geertruida,DC,1,95,0,0,1,0,7.3,0.0,0.14,0,0,93,86,1,100,1,0,2,0,2,1,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,504417,Yarek Gasiorowski,DC,1,73,0,0,0,0,7.4,0.0,0.0,0,0,67,59,0,77,2,5,1,0,0,1,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,105995,Filip Kostic,DL,1,87,0,0,0,0,6.7,0.35,0.0,1,0,47,42,0,67,0,1,0,0,1,3,1,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,346767,Mauro Junior,DMC,1,80,0,0,1,0,6.6,0.11,0.05,2,0,65,55,1,83,3,1,1,0,1,2,2,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,497708,Kodai Sano,DMC,1,95,0,0,0,0,6.8,0.0,0.01,0,0,53,46,0,68,3,0,0,1,1,0,2,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,445302,Esmir Bajraktarevic,AMR,1,80,0,0,0,0,7.5,0.44,0.24,4,1,35,34,4,57,2,1,1,2,1,0,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,383560,Sven Mijnans,AMC,1,95,0,0,0,0,7.6,0.12,0.17,2,0,46,38,4,61,1,0,1,3,1,1,1,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,70524,Ivan Perisic,AML,1,87,0,0,0,0,6.8,0.28,0.06,2,0,52,44,2,75,3,1,2,0,1,2,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,322148,Guus Til,FW,1,95,1,0,0,0,7.3,0.8,0.0,4,1,27,25,2,35,0,0,1,0,0,0,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,631386,Amir Bouhamdi,Sub,0,8,0,0,0,0,6.1,0.0,0.0,0,0,2,2,1,4,0,0,0,0,0,0,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,444737,Ryan Flamingo,Sub,0,8,0,0,0,0,6.1,0.0,0.0,0,0,4,2,0,4,0,0,1,0,0,0,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,345333,Armando Obispo,Sub,0,22,0,0,0,0,6.5,0.0,0.0,0,0,6,4,0,11,0,0,3,0,0,2,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,329769,Dennis Man,Sub,0,15,0,0,0,0,6.2,0.07,0.0,1,0,4,4,0,8,2,0,0,0,0,1,0,0
+6106287,2026-10-20,PSV Eindhoven,FC Porto,532301,Noah Fernandez,Sub,0,15,0,0,0,0,6.2,0.0,0.0,0,0,4,3,0,7,0,0,0,1,0,0,0,0
+6106288,2026-11-04,FC Porto,Napoli,373842,Diogo Costa,GK,1,93,0,0,0,0,7.3,0.0,0.02,0,0,49,36,0,60,0,0,0,0,0,1,0,5
+6106288,2026-11-04,FC Porto,Napoli,447233,Alberto Costa,DR,1,93,0,0,0,0,6.9,0.16,0.0,2,0,48,40,0,80,3,0,2,0,0,3,2,0
+6106288,2026-11-04,FC Porto,Napoli,136742,Jan Bednarek,DC,1,93,1,0,0,0,9.0,0.07,0.0,2,1,57,55,1,77,2,4,5,0,0,8,0,0
+6106288,2026-11-04,FC Porto,Napoli,424462,Jakub Kiwior,DC,1,93,1,0,0,0,7.7,0.32,0.0,2,1,69,67,0,81,1,2,1,0,1,6,0,0
+6106288,2026-11-04,FC Porto,Napoli,506630,Martim Fernandes,DL,1,66,0,0,0,0,6.5,0.03,0.12,1,0,26,24,0,38,1,0,0,1,0,2,0,0
+6106288,2026-11-04,FC Porto,Napoli,504208,Victor Froholdt,MC,1,93,0,0,0,0,7.0,0.04,0.0,1,0,24,21,0,40,3,2,4,0,0,0,1,0
+6106288,2026-11-04,FC Porto,Napoli,329647,Pablo Rosario,MC,1,93,0,0,0,0,7.4,0.26,0.08,1,1,69,57,2,78,3,2,2,0,0,1,0,0
+6106288,2026-11-04,FC Porto,Napoli,399953,Gabri Veiga,MC,1,77,1,1,1,0,9.0,0.58,0.12,4,2,49,39,3,73,4,1,0,3,2,0,1,0
+6106288,2026-11-04,FC Porto,Napoli,338791,Pepe,FWR,1,77,0,0,0,0,6.2,0.04,0.07,1,0,41,33,1,56,0,0,0,0,2,0,1,0
+6106288,2026-11-04,FC Porto,Napoli,299460,Andre Silva,FW,1,55,0,0,0,0,6.2,0.0,0.0,0,0,18,11,1,24,0,0,0,0,0,0,0,0
+6106288,2026-11-04,FC Porto,Napoli,381714,Borja Sainz,FWL,1,66,0,0,0,0,6.0,0.07,0.05,2,0,18,16,0,25,0,0,0,0,1,0,1,0
+6106288,2026-11-04,FC Porto,Napoli,445061,Santiago Gimenez,Sub,0,27,0,1,0,0,7.2,0.08,0.14,1,1,6,5,2,11,1,0,0,0,0,1,1,0
+6106288,2026-11-04,FC Porto,Napoli,381717,Zaidu Sanusi,Sub,0,27,0,0,0,0,6.5,0.0,0.0,0,0,12,11,0,14,0,1,1,0,0,0,0,0
+6106288,2026-11-04,FC Porto,Napoli,497564,Samu Aghehowa,Sub,0,38,1,0,0,0,7.5,0.87,0.02,2,2,6,5,1,13,0,0,1,0,1,0,0,0
+6106288,2026-11-04,FC Porto,Napoli,254562,Seko Fofana,Sub,0,16,0,0,0,0,6.3,0.0,0.12,0,0,12,11,0,12,0,0,0,0,0,0,0,0
+6106288,2026-11-04,FC Porto,Napoli,371030,Hwang In-Beom,Sub,0,16,0,1,0,0,7.1,0.0,0.06,0,0,13,12,2,18,2,0,0,0,1,0,0,0
+6106288,2026-11-04,Napoli,FC Porto,241022,Alex Meret,GK,1,93,0,0,0,0,6.3,0.0,0.0,0,0,35,23,0,48,0,0,0,0,0,0,0,4
+6106288,2026-11-04,Napoli,FC Porto,422739,Sam Beukema,DC,1,93,0,0,0,0,5.8,0.0,0.0,0,0,50,43,0,62,1,1,0,1,0,5,0,0
+6106288,2026-11-04,Napoli,FC Porto,430301,Rafa Marin,DC,1,93,0,0,0,1,5.3,0.04,0.0,1,0,60,52,0,84,4,2,2,0,1,4,2,0
+6106288,2026-11-04,Napoli,FC Porto,295358,Amir Rrahmani,DC,1,93,0,0,1,0,6.0,0.0,0.0,0,0,53,45,0,63,2,2,4,0,5,3,0,0
+6106288,2026-11-04,Napoli,FC Porto,122683,Matteo Politano,DMR,1,80,0,0,0,0,5.9,0.04,0.05,1,1,28,24,2,44,1,0,0,0,0,2,0,0
+6106288,2026-11-04,Napoli,FC Porto,429529,Antonio Vergara,DML,1,77,0,0,1,0,5.9,0.35,0.0,1,1,30,24,0,63,4,1,0,0,1,1,2,0
+6106288,2026-11-04,Napoli,FC Porto,349561,Frank Anguissa,MC,1,77,0,0,1,0,6.1,0.0,0.0,0,0,41,36,1,54,2,2,2,0,2,0,2,0
+6106288,2026-11-04,Napoli,FC Porto,336915,Scott McTominay,MC,1,93,1,0,1,0,6.8,0.45,0.01,3,2,39,34,2,57,1,1,1,0,2,0,0,0
+6106288,2026-11-04,Napoli,FC Porto,381255,Billy Gilmour,MC,1,93,0,0,0,0,6.3,0.03,0.25,1,0,65,56,1,74,2,0,0,1,0,0,0,0
+6106288,2026-11-04,Napoli,FC Porto,73084,Kevin De Bruyne,AMC,1,93,0,0,0,0,6.2,0.0,0.44,0,0,50,44,3,61,0,0,0,0,0,0,1,0
+6106288,2026-11-04,Napoli,FC Porto,439584,Rasmus Hjlund,FW,1,93,0,0,0,0,6.3,0.24,0.0,3,1,17,8,1,33,0,0,3,1,0,0,3,0
+6106288,2026-11-04,Napoli,FC Porto,424819,Lorenzo Lucca,Sub,0,13,0,0,0,0,5.9,0.0,0.0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+6106288,2026-11-04,Napoli,FC Porto,354283,Noa Lang,Sub,0,16,0,0,0,0,6.1,0.05,0.0,1,1,9,7,0,11,0,0,0,1,0,0,0,0
+6106288,2026-11-04,Napoli,FC Porto,436627,Giovane,Sub,0,16,0,0,0,0,5.9,0.0,0.0,0,0,7,4,0,11,0,0,0,1,0,0,1,0
+6106291,2026-11-03,Manchester United,Roma,402184,Senne Lammens,GK,1,95,0,0,0,0,6.0,0.0,0.0,0,0,37,18,0,42,0,0,0,0,0,0,0,2
+6106291,2026-11-03,Manchester United,Roma,437299,Leny Yoro,DR,1,95,0,0,0,0,7.1,0.0,0.01,0,0,38,34,0,66,1,4,2,2,0,3,4,0
+6106291,2026-11-03,Manchester United,Roma,517341,Ayden Heaven,DC,1,74,0,0,1,0,5.9,0.0,0.0,0,0,48,42,0,54,3,1,4,0,2,2,0,0
+6106291,2026-11-03,Manchester United,Roma,99487,Harry Maguire,DC,1,87,0,0,1,0,6.5,0.03,0.4,1,0,55,48,1,66,2,1,3,0,2,1,1,0
+6106291,2026-11-03,Manchester United,Roma,353418,Diogo Dalot,DL,1,95,0,0,0,0,7.3,0.13,0.0,2,1,38,32,0,65,5,3,5,1,0,1,1,0
+6106291,2026-11-03,Manchester United,Roma,436048,Carlos Baleba,DMC,1,50,0,0,0,0,6.4,0.04,0.06,1,0,32,26,1,45,0,1,2,2,0,0,1,0
+6106291,2026-11-03,Manchester United,Roma,460260,Kobbie Mainoo,DMC,1,95,0,0,0,0,7.1,0.02,0.01,1,1,80,68,1,97,4,1,0,3,1,1,0,0
+6106291,2026-11-03,Manchester United,Roma,386634,Amad Diallo,AMR,1,74,0,0,0,0,6.5,0.08,0.03,1,0,26,23,0,41,2,0,0,2,0,1,1,0
+6106291,2026-11-03,Manchester United,Roma,123761,Bruno Fernandes,AMC,1,87,1,1,1,0,7.7,0.92,0.11,4,1,53,46,6,67,0,0,0,0,0,0,1,0
+6106291,2026-11-03,Manchester United,Roma,362758,Matheus Cunha,AML,1,95,2,0,2,1,8.4,0.57,0.2,4,3,33,25,2,63,3,0,0,4,4,0,2,0
+6106291,2026-11-03,Manchester United,Roma,353377,Bryan Mbeumo,FW,1,95,0,0,0,0,7.1,0.3,0.2,1,0,19,14,0,32,2,0,1,0,1,1,1,0
+6106291,2026-11-03,Manchester United,Roma,340105,Lisandro Martinez,Sub,0,21,0,0,0,0,6.5,0.0,0.0,0,0,9,8,0,11,0,1,1,0,0,1,0,0
+6106291,2026-11-03,Manchester United,Roma,136345,Youri Tielemans,Sub,0,45,0,0,0,0,6.6,0.0,0.0,0,0,26,25,0,30,0,1,0,0,1,1,0,0
+6106291,2026-11-03,Manchester United,Roma,320374,Matthijs de Ligt,Sub,0,8,0,0,0,0,6.1,0.0,0.0,0,0,2,1,0,4,0,0,0,0,0,2,0,0
+6106291,2026-11-03,Manchester United,Roma,343346,Mason Mount,Sub,0,8,0,0,0,0,6.2,0.0,0.0,0,0,1,0,0,4,2,0,0,0,0,1,0,0
+6106291,2026-11-03,Manchester United,Roma,563779,Shea Lacey,Sub,0,21,0,1,0,0,7.3,0.0,0.01,0,0,7,7,1,14,1,0,0,3,0,0,0,0
+6106291,2026-11-03,Roma,Manchester United,445732,Devis Vasquez,GK,1,95,0,0,0,0,5.5,0.0,0.0,0,0,36,19,0,43,0,0,0,0,0,0,0,2
+6106291,2026-11-03,Roma,Manchester United,362788,Leonardo Balerdi,DC,1,95,0,0,0,0,6.3,0.03,0.0,1,1,47,41,0,63,5,5,3,0,2,4,0,0
+6106291,2026-11-03,Roma,Manchester United,244804,Gianluca Mancini,DC,1,74,0,0,0,0,5.9,0.0,0.0,0,0,38,30,0,49,2,1,1,0,4,2,1,0
+6106291,2026-11-03,Roma,Manchester United,344156,Mario Hermoso,DC,1,75,0,0,0,0,6.5,0.0,0.0,0,0,40,34,0,51,2,1,1,0,1,5,0,0
+6106291,2026-11-03,Roma,Manchester United,400165,Devyne Rensch,DMR,1,20,0,0,0,0,6.6,0.0,0.0,0,0,8,7,0,14,1,1,0,0,0,0,0,0
+6106291,2026-11-03,Roma,Manchester United,429481,Wesley,DML,1,95,0,0,0,0,7.0,0.0,0.0,0,0,35,27,0,61,12,1,1,0,1,2,2,0
+6106291,2026-11-03,Roma,Manchester United,109149,Bryan Cristante,MC,1,95,0,0,0,0,7.1,0.0,0.02,0,0,58,47,1,73,3,3,2,0,2,2,1,0
+6106291,2026-11-03,Roma,Manchester United,85070,Marten de Roon,MC,1,95,0,0,0,0,6.5,0.01,0.02,1,0,50,45,0,67,8,2,1,0,2,2,1,0
+6106291,2026-11-03,Roma,Manchester United,425079,Matias Soule,AMC,1,95,1,0,1,0,6.9,0.49,0.05,3,1,47,35,0,67,1,0,0,1,0,2,1,0
+6106291,2026-11-03,Roma,Manchester United,532725,Rodrigo Mora,AMC,1,45,0,1,0,0,7.3,0.0,0.07,0,0,20,18,3,28,0,1,0,0,0,1,1,0
+6106291,2026-11-03,Roma,Manchester United,351354,Donyell Malen,FW,1,77,1,0,1,0,6.8,0.85,0.0,2,2,20,17,0,34,0,0,0,1,1,0,0,0
+6106291,2026-11-03,Roma,Manchester United,421081,Santiago Castro,Sub,0,18,0,0,0,0,5.9,0.0,0.0,0,0,3,3,0,8,1,0,0,0,0,0,1,0
+6106291,2026-11-03,Roma,Manchester United,486744,Daniele Ghilardi,Sub,0,21,0,0,0,0,6.2,0.0,0.0,0,0,9,9,0,14,0,1,1,0,0,4,0,0
+6106291,2026-11-03,Roma,Manchester United,476440,Niccolo Pisilli,Sub,0,50,0,0,0,0,5.9,0.0,0.03,0,0,18,17,0,24,2,1,0,0,0,0,0,0
+6106291,2026-11-03,Roma,Manchester United,323450,Evan Ndicka,Sub,0,20,0,0,0,0,5.8,0.0,0.0,0,0,9,7,0,11,0,0,0,0,0,0,0,0
+6106291,2026-11-03,Roma,Manchester United,578592,Emanuele Lulli,Sub,0,75,0,0,1,0,6.1,0.0,0.0,0,0,20,18,0,45,0,1,2,2,1,1,0,0
 6106293,2026-09-10,Manchester United,Sabah FK,402184,Senne Lammens,GK,1,93,0,0,0,0,6.8,0.0,0.0,0,0,28,25,0,34,0,0,0,0,0,0,0,0
 6106293,2026-09-10,Manchester United,Sabah FK,349932,Noussair Mazraoui,DR,1,93,0,0,0,0,6.9,0.23,0.02,4,0,51,49,1,85,3,1,1,0,2,3,0,0
 6106293,2026-09-10,Manchester United,Sabah FK,340105,Lisandro Martinez,DC,1,93,1,0,0,0,8.2,0.86,0.06,1,1,66,61,0,78,3,0,2,0,1,4,0,0
@@ -506,6 +918,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106295,2026-09-08,Aston Villa,Club Brugge,408946,Lamare Bogarde,Sub,0,27,0,0,0,0,6.3,0.07,0.0,1,1,9,8,0,13,1,0,0,0,0,0,0,0
 6106295,2026-09-08,Aston Villa,Club Brugge,317506,Tammy Abraham,Sub,0,14,0,0,0,0,5.9,0.0,0.0,0,0,3,2,0,4,2,0,0,0,1,0,0,0
 6106295,2026-09-08,Aston Villa,Club Brugge,92547,Ross Barkley,Sub,0,27,0,0,0,0,6.3,0.0,0.0,0,0,10,9,0,18,3,0,0,0,0,0,2,0
+6106297,2026-10-21,Club Brugge,Lens,35758,Yann Sommer,GK,1,92,0,0,0,0,8.0,0.0,0.0,0,0,37,30,0,46,0,0,0,0,0,0,0,6
+6106297,2026-10-21,Club Brugge,Lens,459256,Kyriani Sabbe,DR,1,81,0,0,0,0,6.9,0.0,0.0,0,0,79,64,0,108,1,1,0,1,0,1,2,0
+6106297,2026-10-21,Club Brugge,Lens,129832,Brandon Mechele,DC,1,92,0,0,0,0,7.8,0.0,0.0,0,0,102,90,0,122,5,0,2,0,1,8,1,0
+6106297,2026-10-21,Club Brugge,Lens,459085,Jorne Spileers,DC,1,92,0,0,0,0,7.9,0.0,0.0,0,0,110,103,0,123,2,1,0,0,1,8,0,0
+6106297,2026-10-21,Club Brugge,Lens,483461,Joaquin Seys,DL,1,92,1,0,0,0,8.4,1.29,0.07,2,2,55,50,2,81,3,2,0,1,0,0,1,0
+6106297,2026-10-21,Club Brugge,Lens,243567,Hans Vanaken,DMC,1,92,1,0,0,0,8.3,0.79,0.1,2,1,105,103,1,122,2,0,1,1,0,3,1,0
+6106297,2026-10-21,Club Brugge,Lens,429534,Freddie Potts,DMC,1,92,0,0,0,0,6.8,0.0,0.01,0,0,78,72,0,92,3,2,1,0,1,0,1,0
+6106297,2026-10-21,Club Brugge,Lens,468850,Carlos Forbs,AMR,1,81,1,0,0,0,8.2,0.42,0.53,1,1,23,16,1,51,2,2,0,3,0,0,1,0
+6106297,2026-10-21,Club Brugge,Lens,426647,Felix Lemarechal,AMC,1,66,0,0,1,0,6.5,0.0,0.0,0,0,28,20,0,45,4,0,0,0,1,0,1,0
+6106297,2026-10-21,Club Brugge,Lens,581683,Jan Virgili,AML,1,72,0,0,0,0,6.7,0.08,0.0,1,0,22,15,0,35,1,2,0,1,0,0,3,0
+6106297,2026-10-21,Club Brugge,Lens,432044,Nicolo Tresoldi,FW,1,81,0,0,0,0,7.2,0.12,0.0,2,1,18,14,0,28,3,0,3,0,0,0,0,0
+6106297,2026-10-21,Club Brugge,Lens,405314,Hugo Siquet,Sub,0,11,0,0,0,0,6.2,0.0,0.0,0,0,3,3,0,4,0,0,1,0,0,1,0,0
+6106297,2026-10-21,Club Brugge,Lens,436591,Milan Robberechts,Sub,0,11,0,0,0,0,6.0,0.0,0.0,0,0,4,3,0,7,0,0,0,0,0,0,0,0
+6106297,2026-10-21,Club Brugge,Lens,476732,Romeo Vermant,Sub,0,11,0,0,0,0,6.1,0.0,0.0,0,0,2,1,0,4,1,0,2,0,1,0,0,0
+6106297,2026-10-21,Club Brugge,Lens,482831,Mamadou Diakhon,Sub,0,20,0,0,0,0,6.5,0.07,0.0,2,0,3,3,1,9,1,0,1,2,0,0,1,0
+6106297,2026-10-21,Club Brugge,Lens,335698,Hugo Vetlesen,Sub,0,26,0,1,1,0,7.0,0.08,0.18,1,0,20,16,2,26,1,0,0,0,1,2,0,0
+6106297,2026-10-21,Lens,Club Brugge,444597,Robin Risser,GK,1,92,0,0,0,0,5.8,0.0,0.0,0,0,47,36,0,53,0,0,0,0,0,1,0,2
+6106297,2026-10-21,Lens,Club Brugge,454321,Samson Baidoo,DC,1,45,0,0,0,0,6.1,0.0,0.0,0,0,36,33,0,41,2,0,0,0,0,1,0,0
+6106297,2026-10-21,Lens,Club Brugge,236546,Ruben Aguilar,DC,1,81,0,0,0,0,5.9,0.02,0.02,1,0,50,47,0,60,2,0,0,1,1,1,0,0
+6106297,2026-10-21,Lens,Club Brugge,286443,Matthieu Udol,DC,1,92,0,0,1,0,6.6,0.11,0.01,2,1,62,54,0,82,6,3,1,0,1,3,1,0
+6106297,2026-10-21,Lens,Club Brugge,457103,Saud Abdulhamid,DMR,1,92,0,0,0,0,6.3,0.08,0.03,1,0,39,31,0,67,8,0,0,1,3,0,2,0
+6106297,2026-10-21,Lens,Club Brugge,401354,Michal Skoras,DML,1,92,0,0,1,0,7.2,0.05,0.44,1,0,49,37,4,81,4,4,1,0,1,1,0,0
+6106297,2026-10-21,Lens,Club Brugge,344198,Michael Cuisance,MC,1,92,0,0,0,0,6.9,0.03,0.58,1,0,44,40,5,63,3,3,0,1,0,1,1,0
+6106297,2026-10-21,Lens,Club Brugge,298837,Amadou Haidara,MC,1,69,0,0,0,0,6.1,0.46,0.02,2,0,39,31,1,48,3,2,1,0,0,0,0,0
+6106297,2026-10-21,Lens,Club Brugge,101537,Thorgan Hazard,AMC,1,57,0,0,0,0,6.3,0.21,0.02,3,1,21,18,2,35,2,0,1,0,1,0,2,0
+6106297,2026-10-21,Lens,Club Brugge,432217,Junior Kadile,AMC,1,92,0,0,0,0,6.0,0.57,0.0,3,2,27,21,0,54,2,1,0,1,1,0,0,0
+6106297,2026-10-21,Lens,Club Brugge,499993,Franjo Ivanovic,FW,1,57,0,0,0,0,6.3,0.47,0.01,2,0,26,21,1,36,0,0,0,1,0,0,1,0
+6106297,2026-10-21,Lens,Club Brugge,457785,Yacine Titraoui,Sub,0,23,0,0,0,0,6.3,0.0,0.0,0,0,15,14,0,20,4,0,0,0,0,0,0,0
+6106297,2026-10-21,Lens,Club Brugge,317504,Odsonne Edouard,Sub,0,35,0,0,0,0,5.9,0.2,0.0,1,1,4,3,0,11,0,0,0,0,0,1,0,0
+6106297,2026-10-21,Lens,Club Brugge,361710,Jean-Clair Todibo,Sub,0,47,0,0,0,0,6.4,0.05,0.0,1,1,27,25,0,35,0,0,1,1,1,3,0,0
+6106297,2026-10-21,Lens,Club Brugge,99143,Florian Thauvin,Sub,0,35,0,0,0,0,6.3,0.2,0.06,1,1,11,8,2,29,1,0,0,1,1,0,2,0
+6106297,2026-10-21,Lens,Club Brugge,541331,Kyllian Antonio,Sub,0,11,0,0,0,0,6.0,0.0,0.0,0,0,9,8,0,10,0,0,0,0,0,0,0,0
 6106299,2026-10-14,Real Betis,FC Porto,448208,Alvaro Valles,GK,1,95,0,0,0,0,6.2,0.0,0.0,0,0,31,20,1,44,0,0,0,0,0,3,0,3
 6106299,2026-10-14,Real Betis,FC Porto,545675,Angel Ortiz,DR,1,95,0,0,1,0,6.8,0.04,0.0,1,1,49,43,0,69,4,2,0,0,2,3,0,0
 6106299,2026-10-14,Real Betis,FC Porto,402206,Natan,DC,1,95,0,0,0,0,5.8,0.0,0.0,0,0,30,28,0,40,0,0,1,0,1,5,0,0
@@ -538,6 +982,66 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106299,2026-10-14,FC Porto,Real Betis,447233,Alberto Costa,Sub,0,37,0,0,0,0,5.9,0.03,0.0,1,0,8,7,1,16,1,0,0,0,1,1,2,0
 6106299,2026-10-14,FC Porto,Real Betis,497564,Samu Aghehowa,Sub,0,37,1,0,0,0,6.7,0.32,0.0,1,1,6,4,0,10,0,0,1,0,0,0,0,0
 6106299,2026-10-14,FC Porto,Real Betis,371030,Hwang In-Beom,Sub,0,25,0,0,0,0,6.3,0.0,0.09,0,0,12,11,2,20,1,1,1,0,0,0,1,0
+6106300,2026-10-21,Real Betis,Feyenoord,448208,Alvaro Valles,GK,1,94,0,0,0,0,7.0,0.0,0.0,0,0,18,13,0,25,0,0,0,0,0,1,0,2
+6106300,2026-10-21,Real Betis,Feyenoord,125211,Hector Bellerin,DR,1,81,0,0,0,0,6.6,0.0,0.0,0,0,37,31,0,49,1,1,0,0,0,1,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,402206,Natan,DC,1,94,0,0,0,0,8.2,0.0,0.0,0,0,28,27,0,50,3,4,2,1,0,9,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,83686,Marc Bartra,DC,1,94,0,0,0,0,7.6,0.05,0.0,3,2,43,39,0,59,1,2,5,0,1,3,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,422957,Fran Garcia,DL,1,94,0,0,0,0,7.4,0.0,0.04,0,0,42,34,1,64,5,3,0,0,0,1,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,323148,Marc Roca,DMC,1,94,0,0,0,0,7.7,0.04,0.12,1,0,67,61,4,85,4,3,0,0,0,0,2,0
+6106300,2026-10-21,Real Betis,Feyenoord,297203,Pablo Fornals,DMC,1,63,0,0,0,0,7.0,0.03,0.18,1,1,54,48,2,62,0,0,0,0,0,2,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,364315,Antony,AMR,1,63,0,0,0,0,7.1,0.05,0.13,2,1,40,37,3,53,6,2,0,0,2,0,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,82989,Isco,AMC,1,79,1,0,0,0,7.6,0.91,0.04,3,2,58,52,2,78,1,1,0,1,2,0,2,0
+6106300,2026-10-21,Real Betis,Feyenoord,427283,Abde Ezzalzouli,AML,1,94,0,0,0,0,7.5,0.38,0.11,8,2,37,33,1,69,1,0,2,3,0,2,6,0
+6106300,2026-10-21,Real Betis,Feyenoord,384064,Troy Parrott,FW,1,79,0,0,0,0,6.6,0.53,0.03,2,1,22,19,2,28,0,0,1,1,1,0,1,0
+6106300,2026-10-21,Real Betis,Feyenoord,303908,Giovani Lo Celso,Sub,0,15,0,0,0,0,6.2,0.0,0.03,0,0,17,15,2,21,0,0,0,0,0,0,2,0
+6106300,2026-10-21,Real Betis,Feyenoord,432475,Nelson Deossa,Sub,0,15,0,0,0,0,6.0,0.08,0.0,2,0,6,6,0,14,0,0,0,0,1,0,1,0
+6106300,2026-10-21,Real Betis,Feyenoord,545675,Angel Ortiz,Sub,0,13,0,0,0,0,6.5,0.0,0.01,0,0,3,3,1,8,0,0,0,1,0,1,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,382631,Rodrigo Riquelme,Sub,0,31,0,0,1,0,6.3,0.06,0.09,1,1,12,10,1,18,1,0,0,0,1,2,0,0
+6106300,2026-10-21,Real Betis,Feyenoord,144890,Dani Ceballos,Sub,0,31,0,0,0,0,6.8,0.0,0.0,0,0,22,20,0,31,2,3,1,2,0,1,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,432438,Tjark Ernst,GK,1,94,0,0,0,0,8.1,0.0,0.0,0,0,26,24,0,41,0,0,0,0,0,1,0,9
+6106300,2026-10-21,Feyenoord,Real Betis,444719,Givairo Read,DR,1,94,0,0,0,0,6.9,0.08,0.0,1,0,49,42,2,74,4,2,0,2,2,1,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,259929,Jeremiah St. Juste,DC,1,78,0,0,0,0,6.1,0.0,0.0,0,0,59,58,0,68,2,0,1,0,1,4,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,430511,Mika Marmol,DC,1,94,0,0,1,0,6.2,0.0,0.04,0,0,72,57,1,83,1,0,2,0,1,6,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,395234,Javi Lopez,DL,1,94,0,0,0,0,6.3,0.05,0.46,2,0,46,41,1,67,0,0,1,1,1,0,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,400142,Charles Vanhoutte,MC,1,78,0,0,1,0,6.6,0.0,0.01,0,0,55,50,1,71,4,2,1,0,1,1,1,0
+6106300,2026-10-21,Feyenoord,Real Betis,409892,Oussama Targhalline,MC,1,91,0,0,0,0,7.6,0.05,0.0,1,0,77,69,1,99,5,4,2,1,0,2,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,489979,Gjivai Zechiel,MC,1,94,0,0,0,0,5.8,0.55,0.07,2,0,65,55,0,73,1,0,0,0,1,0,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,515829,Anis Hadj Moussa,FWR,1,94,0,0,0,0,6.4,0.13,0.0,4,2,39,28,1,59,2,0,0,2,0,1,3,0
+6106300,2026-10-21,Feyenoord,Real Betis,486738,Nacho Ferri,FW,1,94,0,0,0,0,5.9,0.0,0.0,0,0,10,7,0,23,1,0,3,0,3,0,1,0
+6106300,2026-10-21,Feyenoord,Real Betis,415927,Luciano Valente,FWL,1,81,0,0,0,0,6.9,0.0,0.09,0,0,59,51,2,73,3,0,1,3,0,0,2,0
+6106300,2026-10-21,Feyenoord,Real Betis,431258,Tsuyoshi Watanabe,Sub,0,16,0,0,0,0,6.4,0.0,0.0,0,0,6,6,0,9,0,1,1,0,0,0,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,568706,Gaoussou Diarra,Sub,0,16,0,0,0,0,6.3,0.02,0.0,1,0,5,5,0,10,1,0,0,2,0,0,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,361794,Sem Steijn,Sub,0,13,0,0,0,0,6.1,0.04,0.02,1,0,3,2,1,6,0,0,0,0,0,0,0,0
+6106300,2026-10-21,Feyenoord,Real Betis,552274,Tobias van den Elshout,Sub,0,3,0,0,0,0,6.0,0.0,0.0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,388668,Matej Kovar,GK,1,93,0,0,0,0,6.0,0.0,0.01,0,0,53,45,0,60,0,0,0,0,0,2,0,1
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,379205,Sergino Dest,DR,1,93,0,0,0,0,6.6,0.89,0.05,5,3,53,50,2,87,1,0,0,1,0,2,0,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,345333,Armando Obispo,DC,1,93,0,0,0,0,7.1,0.06,0.09,2,0,60,49,1,71,3,1,8,0,1,3,0,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,345441,Lutsharel Geertruida,DC,1,93,0,0,0,0,6.6,0.0,0.23,0,0,75,71,3,83,2,1,0,0,2,0,0,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,105995,Filip Kostic,DL,1,83,0,0,0,0,5.7,0.02,0.04,1,0,49,37,0,69,2,1,0,1,0,0,1,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,346767,Mauro Junior,DMC,1,93,0,0,0,0,6.8,0.07,0.11,2,0,77,68,2,95,3,1,0,1,0,0,3,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,497708,Kodai Sano,DMC,1,93,1,0,0,0,7.5,0.08,0.06,1,1,79,71,2,98,2,1,1,0,2,0,1,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,70524,Ivan Perisic,AMR,1,93,0,0,0,0,7.3,0.05,0.75,2,0,49,38,4,76,2,1,3,0,1,0,1,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,383560,Sven Mijnans,AMC,1,89,0,0,0,0,6.8,0.92,0.15,6,2,38,31,1,62,2,0,0,2,1,0,2,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,484652,Ruben van Bommel,AML,1,68,0,0,0,0,6.7,0.48,0.01,2,1,38,24,0,49,3,0,2,1,1,3,0,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,322148,Guus Til,FW,1,93,0,0,0,0,6.7,0.14,0.1,2,1,31,27,2,45,0,0,0,1,0,2,0,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,377466,Ricardo Pepi,Sub,0,25,0,0,0,0,6.0,0.16,0.0,2,0,4,3,0,9,0,1,0,0,0,0,1,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,445302,Esmir Bajraktarevic,Sub,0,10,0,0,0,0,6.1,0.14,0.0,2,1,3,2,0,6,0,0,0,0,0,0,0,0
+6106303,2026-11-04,PSV Eindhoven,Club Brugge,551858,Mikkel Hansen,Sub,0,4,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,35758,Yann Sommer,GK,1,93,0,0,0,0,8.2,0.0,0.0,0,0,51,31,0,73,0,1,1,0,0,2,0,7
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,459256,Kyriani Sabbe,DR,1,93,0,0,0,0,6.0,0.02,0.0,1,0,27,19,0,58,1,2,0,0,0,2,1,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,129832,Brandon Mechele,DC,1,93,0,0,0,0,6.9,0.06,0.0,1,0,39,34,0,63,3,1,2,0,0,12,1,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,459085,Jorne Spileers,DC,1,93,0,0,1,0,6.5,0.06,0.0,1,0,35,27,0,47,1,2,0,0,1,8,0,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,483461,Joaquin Seys,DL,1,93,0,2,0,0,8.5,0.0,0.26,0,0,41,32,3,77,2,2,0,0,1,1,2,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,429534,Freddie Potts,DMC,1,93,0,0,0,0,6.6,0.0,0.0,0,0,31,25,0,48,3,0,1,0,2,5,0,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,468850,Carlos Forbs,MR,1,86,1,0,1,0,7.4,0.97,0.19,3,2,16,11,2,38,5,2,0,1,1,1,2,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,243567,Hans Vanaken,MC,1,93,0,0,0,0,7.1,0.0,0.21,0,0,51,42,3,65,2,1,1,1,1,3,0,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,335698,Hugo Vetlesen,MC,1,80,0,0,1,0,6.1,0.0,0.0,0,0,26,20,0,40,3,1,0,0,1,0,0,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,581683,Jan Virgili,ML,1,35,0,0,0,0,6.3,0.0,0.0,0,0,7,5,0,16,0,1,1,0,0,0,2,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,432044,Nicolo Tresoldi,FW,1,80,1,0,0,0,7.4,0.34,0.12,2,1,22,14,1,32,1,0,2,0,0,0,2,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,405314,Hugo Siquet,Sub,0,7,0,0,0,0,6.1,0.0,0.0,0,0,3,1,0,5,0,0,0,0,0,1,0,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,476732,Romeo Vermant,Sub,0,13,0,0,0,0,6.1,0.0,0.0,0,0,2,1,0,7,0,0,1,0,1,1,1,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,426647,Felix Lemarechal,Sub,0,58,0,0,0,0,6.5,0.12,0.08,2,0,19,14,0,28,3,0,2,0,2,0,0,0
+6106303,2026-11-04,Club Brugge,PSV Eindhoven,482831,Mamadou Diakhon,Sub,0,13,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 6106304,2026-09-10,PSV Eindhoven,Shakhtar Donetsk,388668,Matej Kovar,GK,1,92,0,0,0,0,6.4,0.0,0.0,0,0,28,23,0,38,1,0,0,0,0,0,0,1
 6106304,2026-09-10,PSV Eindhoven,Shakhtar Donetsk,379205,Sergino Dest,DR,1,92,1,0,1,0,7.3,0.1,0.0,1,1,43,39,1,77,4,0,1,0,2,3,2,0
 6106304,2026-09-10,PSV Eindhoven,Shakhtar Donetsk,345333,Armando Obispo,DC,1,92,0,1,1,0,7.1,0.0,0.11,0,0,78,72,1,89,3,3,1,0,2,2,0,0
@@ -566,6 +1070,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106304,2026-09-10,Shakhtar Donetsk,PSV Eindhoven,424607,Dmytro Kryskiv,Sub,0,4,0,0,1,0,5.9,0.0,0.0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 6106304,2026-09-10,Shakhtar Donetsk,PSV Eindhoven,373291,Lassina Traore,Sub,0,27,0,0,0,0,6.2,0.05,0.0,1,0,3,2,1,8,0,0,0,0,1,0,0,0
 6106304,2026-09-10,Shakhtar Donetsk,PSV Eindhoven,478838,Newerton,Sub,0,27,0,0,0,0,6.1,0.0,0.23,0,0,4,4,0,6,0,0,0,0,0,0,1,0
+6106306,2026-11-03,Feyenoord,Inter,432438,Tjark Ernst,GK,1,93,0,0,0,0,5.9,0.0,0.0,0,0,28,21,0,33,0,0,0,0,0,0,0,4
+6106306,2026-11-03,Feyenoord,Inter,444719,Givairo Read,DR,1,61,0,0,0,0,6.3,0.11,0.07,2,0,52,46,1,74,3,0,0,1,0,1,0,0
+6106306,2026-11-03,Feyenoord,Inter,430511,Mika Marmol,DC,1,93,0,0,0,0,6.2,0.02,0.0,1,0,91,79,0,107,2,3,0,0,0,6,0,0
+6106306,2026-11-03,Feyenoord,Inter,513345,Thijs Kraaijeveld,DC,1,77,0,0,0,0,6.3,0.0,0.0,0,0,65,61,0,76,1,2,2,0,1,4,0,0
+6106306,2026-11-03,Feyenoord,Inter,395234,Javi Lopez,DL,1,61,0,0,0,0,6.2,0.18,0.0,3,0,40,36,0,66,5,0,0,0,0,2,1,0
+6106306,2026-11-03,Feyenoord,Inter,400142,Charles Vanhoutte,MC,1,45,0,0,0,0,5.9,0.0,0.0,0,0,18,16,0,26,1,0,1,0,0,3,1,0
+6106306,2026-11-03,Feyenoord,Inter,409892,Oussama Targhalline,MC,1,93,0,0,0,0,6.7,0.04,0.0,1,0,66,61,0,83,3,1,0,4,2,0,3,0
+6106306,2026-11-03,Feyenoord,Inter,489979,Gjivai Zechiel,MC,1,93,0,0,1,0,6.1,0.0,0.01,0,0,47,42,2,66,2,0,0,1,1,1,0,0
+6106306,2026-11-03,Feyenoord,Inter,515829,Anis Hadj Moussa,FWR,1,93,0,0,0,0,6.4,0.26,0.03,2,1,57,51,1,80,1,0,0,3,0,0,0,0
+6106306,2026-11-03,Feyenoord,Inter,486738,Nacho Ferri,FW,1,61,0,0,0,0,5.9,0.0,0.09,0,0,10,10,1,24,0,0,1,0,2,2,2,0
+6106306,2026-11-03,Feyenoord,Inter,415927,Luciano Valente,FWL,1,93,0,0,0,0,6.6,0.08,0.04,2,1,61,52,2,75,0,0,0,1,0,3,0,0
+6106306,2026-11-03,Feyenoord,Inter,431258,Tsuyoshi Watanabe,Sub,0,32,0,0,0,0,6.2,0.0,0.0,0,0,22,21,0,25,1,2,0,0,1,0,0,0
+6106306,2026-11-03,Feyenoord,Inter,552274,Tobias van den Elshout,Sub,0,48,0,0,0,0,5.9,0.0,0.0,0,0,14,10,0,18,1,0,0,0,0,0,0,0
+6106306,2026-11-03,Feyenoord,Inter,361794,Sem Steijn,Sub,0,32,0,0,0,0,6.0,0.0,0.0,0,0,7,6,0,8,1,0,0,0,0,0,0,0
+6106306,2026-11-03,Feyenoord,Inter,422633,Mats Deijl,Sub,0,16,0,0,0,0,6.0,0.0,0.0,0,0,10,10,0,11,0,0,0,0,0,0,0,0
+6106306,2026-11-03,Feyenoord,Inter,604803,Jerayno Schaken,Sub,0,32,0,0,0,0,6.1,0.0,0.01,0,0,8,8,1,12,1,0,0,0,0,0,0,0
+6106306,2026-11-03,Inter,Feyenoord,321236,Josep Martinez,GK,1,93,0,0,0,0,7.4,0.0,0.0,0,0,41,30,0,54,0,0,0,0,0,1,0,2
+6106306,2026-11-03,Inter,Feyenoord,357897,Carlos Augusto,DC,1,93,0,0,0,0,7.7,0.0,0.09,0,0,34,29,0,61,1,1,2,1,1,13,0,0
+6106306,2026-11-03,Inter,Feyenoord,349126,Yann Bisseck,DC,1,93,1,0,0,0,7.7,0.04,0.0,1,1,55,48,0,71,0,0,1,0,0,2,1,0
+6106306,2026-11-03,Inter,Feyenoord,297390,Manuel Akanji,DC,1,84,0,0,1,0,7.5,0.0,0.0,0,0,34,31,0,51,1,5,1,0,0,7,0,0
+6106306,2026-11-03,Inter,Feyenoord,362219,Djed Spence,DMR,1,93,0,0,0,0,7.8,0.1,0.08,2,1,48,43,2,76,1,1,1,2,0,2,1,0
+6106306,2026-11-03,Inter,Feyenoord,255929,Federico Dimarco,DML,1,93,0,0,0,0,6.5,0.06,0.02,2,0,44,32,0,63,7,1,0,0,0,1,0,0
+6106306,2026-11-03,Inter,Feyenoord,148684,Nicolo Barella,MC,1,77,0,0,0,0,7.3,0.0,0.04,0,0,59,51,3,68,3,2,1,0,5,0,0,0
+6106306,2026-11-03,Inter,Feyenoord,118169,Piotr Zielinski,MC,1,77,1,0,0,0,7.9,0.12,0.01,3,2,42,39,0,51,3,0,0,0,1,1,1,0
+6106306,2026-11-03,Inter,Feyenoord,110373,Hakan Calhanoglu,MC,1,56,0,0,1,0,7.2,0.0,0.14,0,0,40,38,1,52,3,1,0,0,1,0,1,0
+6106306,2026-11-03,Inter,Feyenoord,296322,Marcus Thuram,FW,1,56,0,0,0,0,7.2,0.1,0.0,2,1,16,10,2,28,0,0,4,1,1,0,1,0
+6106306,2026-11-03,Inter,Feyenoord,497222,Francesco Pio Esposito,FW,1,93,1,0,0,0,7.6,0.75,0.06,1,1,23,17,0,30,2,0,1,0,2,0,0,0
+6106306,2026-11-03,Inter,Feyenoord,28421,Henrikh Mkhitaryan,Sub,0,37,0,0,0,0,6.4,0.0,0.0,0,0,31,30,0,36,1,2,0,0,1,0,0,0
+6106306,2026-11-03,Inter,Feyenoord,439534,Petar Sucic,Sub,0,16,0,0,0,0,6.1,0.0,0.0,0,0,16,15,0,18,0,1,0,0,0,0,0,0
+6106306,2026-11-03,Inter,Feyenoord,447489,Ange-Yoan Bonny,Sub,0,37,0,0,0,0,6.5,0.0,0.09,0,0,15,14,0,28,0,1,0,3,0,1,2,0
+6106306,2026-11-03,Inter,Feyenoord,259648,Benjamin Pavard,Sub,0,9,0,0,0,0,6.2,0.0,0.0,0,0,10,10,0,12,1,0,0,0,0,1,0,0
+6106306,2026-11-03,Inter,Feyenoord,459075,Aleksandar Stankovic,Sub,0,16,0,0,0,0,6.1,0.0,0.02,0,0,20,18,0,21,1,0,0,0,1,0,0,0
 6106309,2026-10-14,Feyenoord,Como,432438,Tjark Ernst,GK,1,93,0,0,0,0,6.2,0.0,0.0,0,0,26,22,0,33,0,0,0,0,0,0,0,3
 6106309,2026-10-14,Feyenoord,Como,444719,Givairo Read,DR,1,93,0,0,1,0,6.9,0.0,0.09,0,0,49,39,1,72,7,1,0,1,1,1,1,0
 6106309,2026-10-14,Feyenoord,Como,259929,Jeremiah St. Juste,DC,1,78,0,0,0,0,6.4,0.0,0.0,0,0,62,61,0,67,1,0,1,0,1,2,0,0
@@ -629,6 +1165,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106311,2026-09-08,Real Betis,Lille,452407,Alvaro Fidalgo,Sub,0,35,0,0,0,0,6.0,0.0,0.01,0,0,18,16,1,22,0,0,0,0,0,0,0,0
 6106311,2026-09-08,Real Betis,Lille,323148,Marc Roca,Sub,0,29,0,0,1,0,6.1,0.03,0.0,1,1,17,17,0,18,0,0,0,0,1,0,0,0
 6106311,2026-09-08,Real Betis,Lille,422957,Fran Garcia,Sub,0,15,0,0,0,0,6.0,0.0,0.0,0,0,4,3,0,8,1,0,0,0,0,1,1,0
+6106312,2026-10-21,Lille,Galatasaray,361843,Berke Ozer,GK,1,93,0,0,0,0,4.7,0.0,0.0,0,0,35,26,0,42,0,0,0,1,0,1,0,1
+6106312,2026-10-21,Lille,Galatasaray,575106,Maxima Goffi,DR,1,62,0,0,0,0,5.8,0.0,0.0,0,0,37,33,0,53,2,2,0,0,0,2,0,0
+6106312,2026-10-21,Lille,Galatasaray,414495,Nathan Ngoy,DC,1,93,0,0,0,0,6.6,0.0,0.0,0,0,60,53,1,79,3,2,3,0,1,6,1,0
+6106312,2026-10-21,Lille,Galatasaray,438897,Alexsandro,DC,1,93,0,1,0,0,6.5,0.09,0.2,1,0,69,62,1,87,3,4,1,0,0,6,0,0
+6106312,2026-10-21,Lille,Galatasaray,271086,Calvin Verdonk,DL,1,93,0,0,0,0,6.5,0.0,0.08,0,0,45,37,2,64,3,2,1,1,3,1,0,0
+6106312,2026-10-21,Lille,Galatasaray,137521,Nabil Bentaleb,MC,1,74,0,0,1,0,5.8,0.03,0.08,1,0,57,51,2,68,4,0,0,1,1,1,0,0
+6106312,2026-10-21,Lille,Galatasaray,43415,Benjamin Andre,MC,1,61,0,0,1,0,6.1,0.02,0.02,1,0,37,34,1,47,3,0,0,1,1,0,1,0
+6106312,2026-10-21,Lille,Galatasaray,468938,Ngal'ayel Mukau,MC,1,62,0,0,0,0,6.1,0.0,0.0,0,0,32,28,0,38,0,0,0,2,0,1,0,0
+6106312,2026-10-21,Lille,Galatasaray,402130,Dilane Bakwa,FWR,1,93,0,0,0,0,6.5,0.45,0.05,4,2,30,25,1,50,3,0,2,0,0,0,1,0
+6106312,2026-10-21,Lille,Galatasaray,424252,Hakon Haraldsson,FW,1,93,0,1,0,0,7.0,0.13,0.23,2,0,34,29,2,46,2,0,1,1,0,0,1,0
+6106312,2026-10-21,Lille,Galatasaray,553350,Soriba Diaoune,FWL,1,74,2,0,0,0,8.4,0.74,0.02,3,3,24,17,1,44,1,1,1,3,2,0,3,0
+6106312,2026-10-21,Lille,Galatasaray,424805,Maurits Kjrgaard,Sub,0,32,0,0,0,0,6.4,0.23,0.08,1,0,22,20,1,29,1,0,0,1,0,0,0,0
+6106312,2026-10-21,Lille,Galatasaray,24444,Olivier Giroud,Sub,0,31,0,0,0,0,6.1,0.0,0.0,0,0,4,2,0,6,0,0,2,0,0,1,0,0
+6106312,2026-10-21,Lille,Galatasaray,301326,Gaetan Perrin,Sub,0,19,0,0,1,0,5.9,0.04,0.0,1,0,9,5,0,17,1,0,0,0,1,0,1,0
+6106312,2026-10-21,Lille,Galatasaray,382492,Tanguy Nianzou,Sub,0,31,0,0,0,0,5.7,0.0,0.0,0,0,18,18,0,20,0,0,0,0,0,1,0,0
+6106312,2026-10-21,Lille,Galatasaray,532237,Basar Onal,Sub,0,19,0,0,0,0,6.0,0.04,0.02,1,0,10,10,0,15,1,0,0,0,0,0,0,0
+6106312,2026-10-21,Galatasaray,Lille,258840,Ugurcan Cakir,GK,1,93,0,0,0,0,7.1,0.0,0.0,0,0,41,27,0,54,1,0,3,0,0,3,0,4
+6106312,2026-10-21,Galatasaray,Lille,243889,Roland Sallai,DR,1,93,0,1,0,0,7.6,0.0,0.4,0,0,39,28,2,65,2,2,1,1,1,2,0,0
+6106312,2026-10-21,Galatasaray,Lille,322655,Davinson Sanchez,DC,1,93,0,0,0,0,7.1,0.0,0.03,0,0,67,59,1,80,3,1,3,0,0,2,1,0
+6106312,2026-10-21,Galatasaray,Lille,108073,Abdulkerim Bardakci,DC,1,93,0,0,0,0,6.6,0.0,0.0,0,0,53,44,0,67,3,0,3,0,0,7,0,0
+6106312,2026-10-21,Galatasaray,Lille,349699,Ismail Jakobs,DL,1,93,0,0,1,0,7.1,0.0,0.12,0,0,29,26,2,56,4,0,0,1,2,4,0,0
+6106312,2026-10-21,Galatasaray,Lille,349218,Gabriel Sara,DMC,1,61,0,0,0,0,6.6,0.03,0.01,1,0,26,23,0,38,3,2,1,1,1,2,1,0
+6106312,2026-10-21,Galatasaray,Lille,248109,Lucas Torreira,DMC,1,93,0,0,0,0,6.6,0.04,0.03,1,0,48,44,0,55,5,0,2,0,1,0,0,0
+6106312,2026-10-21,Galatasaray,Lille,361709,Yunus Akgun,AMR,1,75,1,0,0,0,7.8,0.35,0.0,1,1,26,17,1,44,3,3,1,0,0,2,1,0
+6106312,2026-10-21,Galatasaray,Lille,465918,Aleksey Batrakov,AMC,1,84,1,0,0,0,7.4,0.35,0.04,1,1,29,25,1,42,2,0,0,1,0,1,1,0
+6106312,2026-10-21,Galatasaray,Lille,421779,Baris Alper Yilmaz,AML,1,74,0,1,0,0,7.7,0.04,0.11,1,0,25,16,1,42,1,1,4,3,1,0,0,0
+6106312,2026-10-21,Galatasaray,Lille,298510,Victor Osimhen,FW,1,83,1,0,0,0,7.5,1.0,0.02,4,1,11,7,0,21,0,1,3,1,1,0,1,0
+6106312,2026-10-21,Galatasaray,Lille,123481,Mario Lemina,Sub,0,32,0,0,0,0,6.6,0.04,0.0,1,1,11,10,0,17,2,0,1,0,1,0,0,0
+6106312,2026-10-21,Galatasaray,Lille,144711,Leroy Sane,Sub,0,18,0,0,0,0,6.0,0.0,0.0,0,0,3,2,0,11,0,1,0,0,1,0,1,0
+6106312,2026-10-21,Galatasaray,Lille,77464,Ilkay Gundogan,Sub,0,9,0,0,0,0,6.0,0.0,0.0,0,0,1,1,0,2,0,0,0,0,0,0,1,0
+6106312,2026-10-21,Galatasaray,Lille,373036,Eren Elmali,Sub,0,19,0,0,0,0,6.0,0.0,0.0,0,0,3,2,0,9,1,0,0,0,1,0,0,0
+6106312,2026-10-21,Galatasaray,Lille,528450,Deniz Gul,Sub,0,10,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,2,0,0,0,0,0,0,1,0
 6106315,2026-10-14,Bodø/Glimt,Borussia Dortmund,275011,Nikita Haikin,GK,1,93,0,0,0,0,7.7,0.0,0.0,0,0,37,24,0,50,0,0,1,0,0,1,0,4
 6106315,2026-10-14,Bodø/Glimt,Borussia Dortmund,438195,Fredrik Sjvold,DR,1,93,1,0,0,0,8.1,0.33,0.01,2,1,63,54,0,83,6,2,1,1,0,2,0,0
 6106315,2026-10-14,Bodø/Glimt,Borussia Dortmund,295248,Haitam Aleesami,DC,1,93,0,0,0,0,7.2,0.0,0.01,0,0,73,70,0,84,0,0,3,0,0,9,0,0
@@ -689,6 +1257,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106318,2026-09-09,Arsenal,Napoli,399296,Christos Tzolis,Sub,0,29,0,1,0,0,6.9,0.6,0.06,3,2,11,10,2,17,0,0,0,0,0,0,1,0
 6106318,2026-09-09,Arsenal,Napoli,372424,Martin Zubimendi,Sub,0,13,0,0,0,0,6.2,0.0,0.0,0,0,2,2,0,6,0,2,0,0,1,0,0,0
 6106318,2026-09-09,Arsenal,Napoli,389935,Noni Madueke,Sub,0,22,0,0,0,0,6.5,0.48,0.15,2,1,16,14,1,21,0,0,0,1,1,0,1,0
+6106322,2026-11-04,RB Leipzig,Manchester City,365332,Maarten Vandevoordt,GK,1,94,0,0,0,0,6.3,0.0,0.0,0,0,39,30,0,46,0,0,0,0,0,1,0,3
+6106322,2026-11-04,RB Leipzig,Manchester City,356183,Ridle Baku,DR,1,73,1,0,1,0,7.0,0.07,0.0,2,2,20,14,1,37,2,0,0,0,4,3,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,415172,Castello Lukeba,DC,1,94,0,0,0,0,5.5,0.0,0.0,0,0,40,37,1,50,0,1,0,1,1,2,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,104917,Willi Orban,DC,1,94,0,0,0,0,5.9,0.0,0.0,0,0,32,29,0,42,3,0,0,0,0,2,1,0
+6106322,2026-11-04,RB Leipzig,Manchester City,330538,David Raum,DL,1,94,0,0,1,0,7.3,0.04,0.06,1,0,34,31,2,67,7,4,0,2,4,1,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,369979,Christoph Baumgartner,MC,1,56,0,0,1,0,6.3,0.12,0.02,3,1,18,18,1,27,2,1,0,0,1,1,1,0
+6106322,2026-11-04,RB Leipzig,Manchester City,486734,Neil El Aynaoui,MC,1,73,0,0,1,0,6.5,0.0,0.0,0,0,39,35,0,52,3,3,0,0,2,0,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,485929,Ezechiel Banzuzi,MC,1,94,0,0,0,0,6.4,0.15,0.04,2,0,28,23,0,43,1,2,1,0,1,4,1,0
+6106322,2026-11-04,RB Leipzig,Manchester City,471784,Brajan Gruda,FWR,1,94,0,1,0,0,6.8,0.09,0.04,2,1,38,30,1,52,2,0,0,1,2,0,1,0
+6106322,2026-11-04,RB Leipzig,Manchester City,428330,Romulo,FW,1,66,0,0,0,0,6.3,0.0,0.01,0,0,14,14,1,25,2,0,0,0,0,0,1,0
+6106322,2026-11-04,RB Leipzig,Manchester City,416030,Antonio Nusa,FWL,1,72,1,0,0,0,8.0,0.38,0.08,2,2,25,17,4,46,2,0,1,2,0,0,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,418587,Nicolas Seiwald,Sub,0,21,0,0,0,0,5.8,0.0,0.0,0,0,7,5,0,8,1,0,0,0,1,0,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,300945,Christopher Nkunku,Sub,0,38,0,1,0,0,6.5,0.0,0.04,0,0,9,8,1,10,0,0,0,0,2,0,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,511411,Tidiam Gomis,Sub,0,28,0,0,0,0,6.0,0.08,0.0,1,0,5,4,0,12,0,0,2,0,1,0,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,401014,Rocco Reitz,Sub,0,22,0,0,0,0,6.0,0.03,0.0,1,0,3,1,0,8,2,0,0,0,0,0,0,0
+6106322,2026-11-04,RB Leipzig,Manchester City,296769,Benjamin Henrichs,Sub,0,21,0,0,0,0,5.9,0.0,0.01,0,0,10,9,0,12,1,0,0,0,1,1,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,262515,Gianluigi Donnarumma,GK,1,94,0,0,0,0,6.3,0.0,0.0,0,0,29,21,0,44,1,0,1,0,0,2,0,4
+6106322,2026-11-04,Manchester City,RB Leipzig,394933,Matheus Nunes,DR,1,78,0,0,0,0,6.4,0.0,0.05,0,0,108,103,0,117,2,0,0,0,0,2,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,493206,Abdukodir Khusanov,DC,1,94,0,0,1,0,6.8,0.0,0.0,0,0,90,86,0,110,1,4,1,0,1,6,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,374631,Marc Guehi,DC,1,94,0,0,0,0,6.3,0.0,0.0,0,0,79,73,0,85,0,1,1,0,0,1,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,468847,Nico O'Reilly,DL,1,94,0,0,0,0,6.8,0.35,0.19,1,0,47,39,2,70,4,0,0,1,1,4,1,0
+6106322,2026-11-04,Manchester City,RB Leipzig,402596,Elliot Anderson,DMC,1,82,0,1,0,0,8.0,0.07,0.44,1,0,83,79,1,102,8,3,0,0,0,1,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,331254,Phil Foden,MR,1,63,0,0,0,0,6.2,0.08,0.0,1,0,37,32,0,54,0,1,0,1,1,0,2,0
+6106322,2026-11-04,Manchester City,RB Leipzig,369430,Enzo Fernandez,MC,1,82,1,0,0,0,7.6,0.32,0.01,1,1,59,51,1,74,1,0,0,3,1,0,1,0
+6106322,2026-11-04,Manchester City,RB Leipzig,386153,Rayan Cherki,MC,1,94,0,0,0,0,6.8,0.26,0.03,4,1,74,67,0,94,1,0,0,1,0,0,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,366116,Iliman Ndiaye,ML,1,82,0,1,0,0,7.6,0.0,0.22,0,0,35,32,2,55,3,1,0,2,0,0,2,0
+6106322,2026-11-04,Manchester City,RB Leipzig,315227,Erling Haaland,FW,1,94,1,0,0,0,7.8,1.02,0.0,3,3,8,4,0,18,1,0,3,0,0,2,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,388098,Jeremy Doku,Sub,0,31,0,0,1,0,6.7,0.08,0.24,1,0,11,10,1,18,0,0,0,3,1,0,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,93894,Mateo Kovacic,Sub,0,12,0,0,0,0,6.3,0.0,0.0,0,0,6,5,1,9,1,0,0,1,0,0,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,504830,Ayyoub Bouaddi,Sub,0,12,0,0,0,0,6.0,0.0,0.0,0,0,4,3,0,4,0,0,0,0,0,0,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,313171,Ruben Dias,Sub,0,16,0,0,0,0,6.0,0.0,0.0,0,0,5,5,0,6,0,0,0,0,0,0,0,0
+6106322,2026-11-04,Manchester City,RB Leipzig,521094,Allan,Sub,0,12,0,0,0,0,6.0,0.0,0.0,0,0,1,1,0,1,0,0,0,0,2,0,0,0
 6106323,2026-10-13,RB Leipzig,PSV Eindhoven,365332,Maarten Vandevoordt,GK,1,94,0,0,0,0,9.1,0.0,0.0,0,0,43,33,1,54,0,0,1,0,0,1,0,5
 6106323,2026-10-13,RB Leipzig,PSV Eindhoven,356183,Ridle Baku,DR,1,85,0,0,0,0,7.0,0.09,0.45,2,2,29,24,1,52,1,1,1,0,2,5,0,0
 6106323,2026-10-13,RB Leipzig,PSV Eindhoven,415172,Castello Lukeba,DC,1,94,0,0,0,0,6.9,0.0,0.01,0,0,50,46,0,58,0,1,1,0,0,4,0,0
@@ -719,6 +1319,38 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106323,2026-10-13,PSV Eindhoven,RB Leipzig,566827,Ayoni Santos,Sub,0,11,0,0,0,0,6.2,0.01,0.02,1,0,4,4,1,6,0,0,0,0,0,0,0,0
 6106323,2026-10-13,PSV Eindhoven,RB Leipzig,504417,Yarek Gasiorowski,Sub,0,18,0,0,0,0,6.1,0.0,0.0,0,0,10,9,0,11,0,1,0,0,1,0,0,0
 6106323,2026-10-13,PSV Eindhoven,RB Leipzig,551858,Mikkel Hansen,Sub,0,11,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,67369,Peter Gulacsi,GK,1,92,0,0,0,0,4.9,0.0,0.0,0,0,24,16,0,34,0,0,0,0,0,2,0,6
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,440159,Alex Freeman,DR,1,78,0,0,0,0,5.8,0.06,0.03,1,0,19,16,2,32,1,1,1,1,0,2,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,434077,Renato Veiga,DC,1,92,0,0,0,0,5.5,0.0,0.02,0,0,44,35,0,61,3,1,0,0,2,6,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,448936,Santiago Mourino,DC,1,92,0,0,1,0,5.1,0.0,0.0,0,0,31,27,0,41,3,1,2,0,6,2,1,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,468931,Carlos Romero,DL,1,62,0,0,0,0,5.4,0.07,0.0,2,0,22,16,0,37,4,0,0,0,0,1,1,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,399047,Pape Gueye,DMC,1,92,0,0,0,0,5.7,0.1,0.04,2,1,36,28,1,48,0,0,1,0,2,3,1,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,362735,Santi Comesana,DMC,1,62,0,0,1,0,5.2,0.0,0.0,0,0,9,7,0,19,5,0,0,0,4,0,1,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,239872,Nicolas Pepe,AMR,1,45,0,0,0,0,5.8,0.04,0.0,1,0,8,7,0,22,0,0,1,1,0,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,603190,Carlos Macia,AMC,1,92,0,0,0,0,5.7,0.0,0.02,0,0,22,18,0,29,1,1,1,0,0,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,371027,Tajon Buchanan,AML,1,92,0,0,0,0,6.3,0.01,0.02,1,0,17,10,1,38,3,4,0,1,0,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,135366,Ayoze Perez,FW,1,62,0,0,0,0,6.0,0.05,0.0,1,1,12,10,0,17,0,1,2,0,2,0,1,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,389020,Georges Mikautadze,Sub,0,30,0,0,0,0,5.9,0.18,0.01,3,0,6,5,2,12,0,0,0,0,0,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,445292,Tani Oluwaseyi,Sub,0,30,0,0,0,0,6.0,0.0,0.0,0,0,8,5,0,10,1,0,0,0,0,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,448211,Alberto Moleiro,Sub,0,30,0,0,1,0,5.8,0.08,0.02,2,0,13,9,1,16,0,0,0,0,1,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,537235,Pau Navarro,Sub,0,14,0,0,0,0,6.0,0.0,0.0,0,0,10,8,0,10,0,0,0,0,0,0,0,0
+6106326,2026-11-03,Villarreal,Paris Saint-Germain,448209,Sergi Cardona,Sub,0,47,0,0,1,0,6.7,0.03,0.05,1,0,23,20,3,34,1,5,0,0,2,0,0,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,329019,Matvey Safonov,GK,1,92,0,0,0,0,7.4,0.0,0.0,0,0,37,32,0,47,0,0,1,0,0,3,0,2
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,320834,Achraf Hakimi,DR,1,73,0,0,0,0,7.7,0.14,0.11,2,0,62,57,3,78,1,1,0,3,0,0,3,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,432378,Willian Pacho,DC,1,92,0,0,0,0,7.0,0.0,0.0,0,0,66,63,0,76,2,0,1,0,0,2,0,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,399826,Illia Zabarnyi,DC,1,92,0,0,0,0,7.1,0.05,0.0,1,0,67,60,0,74,0,1,1,0,0,2,0,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,139186,Lucas Hernandez,DL,1,92,0,0,0,0,7.3,0.05,0.0,2,1,64,58,0,80,5,1,1,0,2,0,1,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,384887,Vitinha,MC,1,73,0,1,0,0,7.9,0.0,0.05,0,0,87,81,2,96,1,2,1,0,0,1,0,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,465388,Joao Neves,MC,1,92,1,0,0,0,8.9,0.75,0.0,4,2,73,69,2,95,4,0,0,0,0,2,1,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,294193,Fabian Ruiz,MC,1,92,2,0,0,0,9.4,0.64,0.17,4,3,107,98,1,128,1,0,0,1,0,1,1,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,426648,Maghnes Akliouche,FWR,1,59,0,2,0,0,8.3,0.08,0.39,1,0,36,33,5,50,0,0,0,0,2,0,1,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,513665,Senny Mayulu,FW,1,59,1,0,0,0,8.2,0.36,0.13,1,1,20,20,1,31,0,0,1,0,0,2,1,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,433183,Desire Doue,FWL,1,73,1,0,0,0,9.5,0.25,0.27,5,4,49,42,3,74,2,0,1,2,0,0,0,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,462099,Mika Godts,Sub,0,33,0,0,0,0,6.2,0.0,0.0,0,0,13,10,0,19,0,0,0,0,0,0,1,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,560493,Quentin Ndjantou,Sub,0,19,0,0,0,0,6.1,0.0,0.02,0,0,9,8,0,13,0,0,0,0,0,0,1,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,349760,Ferran Torres,Sub,0,33,0,0,0,0,6.2,0.0,0.0,0,0,10,9,0,12,0,0,0,0,0,0,0,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,440085,Beraldo,Sub,0,19,0,0,0,0,6.1,0.08,0.0,1,0,21,19,0,23,0,0,0,0,0,0,0,0
+6106326,2026-11-03,Paris Saint-Germain,Villarreal,599927,David Boly,Sub,0,19,1,0,0,0,7.2,0.04,0.0,1,1,21,18,0,24,0,0,0,0,0,0,0,0
 6106328,2026-10-13,Villarreal,Napoli,400826,Luiz Junior,GK,1,93,0,0,0,0,6.4,0.0,0.0,0,0,27,14,0,38,1,0,0,0,0,2,0,2
 6106328,2026-10-13,Villarreal,Napoli,448936,Santiago Mourino,DR,1,93,1,0,0,0,8.0,0.03,0.09,1,1,52,44,0,73,2,1,2,1,2,3,1,0
 6106328,2026-10-13,Villarreal,Napoli,434077,Renato Veiga,DC,1,93,0,0,0,0,6.8,0.02,0.56,1,0,57,50,1,71,0,0,0,0,0,12,0,0
@@ -781,6 +1413,37 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106331,2026-09-10,Roma,Fenerbahçe,476440,Niccolo Pisilli,Sub,0,42,0,0,0,0,6.1,0.0,0.0,0,0,54,52,0,60,1,0,0,0,1,0,0,0
 6106331,2026-09-10,Roma,Fenerbahçe,85070,Marten de Roon,Sub,0,8,0,0,0,0,6.0,0.0,0.0,0,0,8,8,0,8,0,0,0,0,0,0,0,0
 6106331,2026-09-10,Roma,Fenerbahçe,532725,Rodrigo Mora,Sub,0,21,0,0,0,0,6.2,0.0,0.0,0,0,11,8,0,17,1,0,0,2,0,0,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,399834,Dmytro Riznyk,GK,1,93,0,0,0,0,6.2,0.0,0.0,0,0,43,35,0,46,0,0,0,0,0,0,0,1
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,428352,Vinicius Tobias,DR,1,93,0,0,0,0,7.0,0.0,0.01,0,0,52,48,1,77,3,0,0,0,1,0,2,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,284817,Mykola Matviienko,DC,1,89,0,0,0,0,6.2,0.06,0.0,1,0,69,61,0,77,0,1,1,0,0,2,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,370248,Valerii Bondar,DC,1,93,0,0,0,0,6.2,0.0,0.0,0,0,57,53,0,64,2,1,1,0,2,2,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,425770,Pedro Henrique,DL,1,93,0,0,0,0,6.3,0.07,0.01,2,1,51,47,1,77,5,4,0,0,2,0,1,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,312812,Yehor Nazaryna,DMC,1,66,0,0,0,0,6.8,0.0,0.21,0,0,31,29,2,44,1,1,0,1,0,1,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,475166,Alisson Santana,MR,1,89,0,0,0,0,7.3,0.1,0.02,3,1,26,16,1,56,2,1,0,6,0,0,2,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,468024,Marlon Gomes,MC,1,82,0,0,0,0,6.8,0.14,0.17,2,0,28,24,1,44,3,2,0,2,2,0,1,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,427997,Oleh Ocheretko,MC,1,93,0,0,0,0,6.7,0.0,0.11,0,0,27,25,2,39,5,0,0,0,0,2,1,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,519673,Gleiker Mendoza,ML,1,66,0,0,0,0,6.4,0.0,0.02,0,0,19,13,0,37,3,1,1,3,0,0,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,478297,Kaua Elias,FW,1,93,0,0,0,0,6.6,1.18,0.19,5,1,17,11,0,44,3,1,3,3,1,0,1,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,521271,Lucas Ferreira,Sub,0,4,0,0,0,0,6.0,0.0,0.0,0,0,4,4,0,5,0,0,0,0,0,0,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,521087,Isaque,Sub,0,27,0,0,1,0,5.8,0.0,0.0,0,0,7,6,0,8,0,0,0,0,2,0,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,549084,Luca Meirelles,Sub,0,4,0,0,0,0,6.2,0.0,0.01,0,0,0,0,1,2,1,0,0,0,0,0,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,373291,Lassina Traore,Sub,0,11,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+6106335,2026-11-03,Shakhtar Donetsk,Sporting CP,478838,Newerton,Sub,0,27,0,0,0,0,6.1,0.2,0.0,1,1,10,9,0,14,3,0,0,0,0,0,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,141833,Rui Silva,GK,1,93,0,0,0,0,7.1,0.0,0.0,0,0,20,13,0,30,1,0,0,0,0,0,0,3
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,394932,Eduardo Quaresma,DC,1,93,0,0,0,0,7.7,0.07,0.0,2,1,43,40,0,63,1,1,3,3,1,4,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,395992,Goncalo Inacio,DC,1,93,0,0,0,0,7.7,0.0,0.04,0,0,48,40,0,62,2,2,1,2,1,6,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,549224,Eduardo Felicissimo,DC,1,93,0,0,0,0,8.2,0.0,0.0,0,0,41,37,0,62,2,4,1,0,2,4,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,425093,Geny Catamo,MR,1,82,0,0,0,0,7.0,0.0,0.05,0,0,25,19,1,43,6,0,0,3,1,0,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,467757,Silas Andersen,MC,1,93,0,0,0,0,7.4,0.06,0.24,1,0,45,41,3,65,6,0,0,0,4,0,3,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,489232,Sergi Altimira,MC,1,93,0,0,0,0,7.2,0.0,0.0,0,0,47,43,0,64,8,0,0,0,2,5,1,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,460758,Maxi Araujo,ML,1,87,0,0,1,0,7.2,0.05,0.34,2,1,32,28,2,57,6,0,0,0,4,1,2,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,531776,Issa Doumbia,AMC,1,87,1,0,0,0,7.3,0.51,0.01,2,1,26,23,0,36,2,0,1,2,2,0,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,402887,Luis Suarez,FW,1,93,0,0,0,0,6.3,0.82,0.09,4,0,15,11,1,29,0,0,1,1,1,1,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,418176,Fotis Ioannidis,FW,1,69,0,0,0,0,6.9,0.0,0.0,0,0,20,17,1,36,3,1,1,1,0,2,1,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,540227,Joao Simoes,Sub,0,6,0,0,0,0,6.0,0.0,0.0,0,0,1,1,0,3,0,0,0,0,0,0,1,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,444257,Ivan Fresneda,Sub,0,11,0,0,0,0,6.1,0.0,0.0,0,0,3,2,0,5,0,0,0,0,0,1,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,401251,Rodrigo Zalazar,Sub,0,24,0,0,0,0,6.1,0.0,0.0,0,0,5,2,0,9,1,0,0,0,0,0,0,0
+6106335,2026-11-03,Sporting CP,Shakhtar Donetsk,597804,Salvador Blopa,Sub,0,6,0,0,0,0,6.0,0.0,0.0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
 6106337,2026-10-14,Shakhtar Donetsk,AEK Athens,399834,Dmytro Riznyk,GK,1,95,0,0,0,0,6.7,0.0,0.0,0,0,34,30,0,41,0,0,0,0,0,1,0,2
 6106337,2026-10-14,Shakhtar Donetsk,AEK Athens,428352,Vinicius Tobias,DR,1,95,1,0,0,0,8.3,0.03,0.0,1,1,57,50,1,81,4,3,1,0,2,4,1,0
 6106337,2026-10-14,Shakhtar Donetsk,AEK Athens,284817,Mykola Matviienko,DC,1,95,0,0,0,0,6.1,0.0,0.03,0,0,74,68,0,77,0,0,0,0,0,0,2,0
@@ -845,6 +1508,70 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106338,2026-10-13,Barcelona,Galatasaray,392646,Karim Adeyemi,Sub,0,35,1,0,0,0,6.9,0.77,0.03,4,2,17,15,0,26,0,0,1,1,1,0,0,0
 6106338,2026-10-13,Barcelona,Galatasaray,534796,Marc Bernal,Sub,0,21,0,0,0,0,6.3,0.0,0.0,0,0,26,26,0,30,2,0,0,0,1,0,0,0
 6106338,2026-10-13,Barcelona,Galatasaray,422937,Gavi,Sub,0,12,0,0,0,0,6.0,0.0,0.11,0,0,17,15,1,18,0,0,0,0,1,0,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,258840,Ugurcan Cakir,GK,1,94,0,0,0,0,7.8,0.0,0.0,0,0,45,16,0,56,0,0,0,0,0,1,0,5
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,243889,Roland Sallai,DR,1,67,0,0,1,0,6.8,0.0,0.0,0,0,24,17,0,42,1,2,2,0,2,0,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,322655,Davinson Sanchez,DC,1,94,0,1,0,0,7.6,0.0,0.16,0,0,46,32,1,61,2,2,1,0,2,2,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,108073,Abdulkerim Bardakci,DC,1,94,0,0,0,0,7.1,0.0,0.0,0,0,41,38,0,53,1,1,1,0,0,7,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,349699,Ismail Jakobs,DL,1,76,0,0,0,0,7.1,0.0,0.0,0,0,25,20,1,37,2,1,2,0,1,1,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,123481,Mario Lemina,DMC,1,82,0,0,0,0,7.3,0.0,0.0,0,0,32,28,0,47,5,2,1,0,0,4,2,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,248109,Lucas Torreira,DMC,1,94,0,0,1,0,7.0,0.04,0.0,1,0,35,31,0,49,4,1,1,0,0,3,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,361709,Yunus Akgun,AMR,1,94,0,0,0,0,7.5,0.0,0.17,0,0,28,24,5,44,4,0,0,2,1,1,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,465918,Aleksey Batrakov,AMC,1,76,2,0,0,0,9.1,0.35,0.06,3,3,34,28,1,56,1,2,1,1,3,2,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,421779,Baris Alper Yilmaz,AML,1,67,0,0,1,0,7.3,0.03,0.1,1,0,20,15,3,32,0,0,3,3,1,2,1,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,298510,Victor Osimhen,FW,1,94,0,0,0,0,6.6,0.41,0.05,7,1,13,10,1,28,0,0,1,1,2,1,1,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,349218,Gabriel Sara,Sub,0,12,0,0,0,0,6.0,0.0,0.0,0,0,5,2,0,5,0,0,0,0,0,0,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,144711,Leroy Sane,Sub,0,18,0,0,0,0,6.0,0.0,0.07,0,0,5,4,0,10,0,0,0,0,0,0,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,349207,Rafael Leao,Sub,0,27,0,0,0,0,5.9,0.04,0.0,1,0,8,8,0,16,0,0,0,0,0,0,1,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,371063,Wilfried Singo,Sub,0,27,0,0,0,0,6.1,0.0,0.0,0,0,9,8,0,15,0,0,1,0,0,1,0,0
+6106341,2026-11-03,Galatasaray,VfB Stuttgart,373036,Eren Elmali,Sub,0,18,0,0,0,0,6.2,0.0,0.0,0,0,6,5,0,14,1,0,0,0,1,1,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,142529,Fabian Bredlow,GK,1,94,0,0,0,0,5.1,0.0,0.0,0,0,29,19,0,34,0,0,0,0,0,0,0,2
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,261020,Maximilian Mittelstadt,DC,1,94,0,0,0,0,6.9,0.0,0.22,0,0,43,34,2,81,3,4,2,0,2,7,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,343317,Jeff Chabot,DC,1,94,0,0,0,0,6.5,0.0,0.0,0,0,31,22,0,46,0,3,3,0,0,6,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,422909,Ramon Hendriks,DC,1,94,0,0,1,0,7.0,0.0,0.0,0,0,33,27,1,54,4,1,6,0,3,8,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,379252,Jamie Leweling,MR,1,74,0,0,0,0,5.9,0.75,0.0,2,0,7,5,0,37,1,1,0,1,0,1,3,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,278125,Grischa Promel,MC,1,73,0,0,1,0,5.6,0.0,0.0,0,0,29,21,0,32,0,0,0,0,2,0,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,347884,Atakan Karazor,MC,1,17,0,0,1,0,5.7,0.0,0.0,0,0,3,3,0,6,0,0,0,0,1,1,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,349888,Chris Fuhrich,ML,1,81,0,0,0,0,6.9,0.15,0.37,3,1,29,25,3,47,3,1,0,3,1,0,1,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,433572,Bilal El Khannouss,AMC,1,94,0,0,0,0,6.4,0.11,0.03,2,1,44,38,0,65,1,1,3,0,0,0,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,351339,Ermedin Demirovic,FW,1,73,0,0,0,0,5.8,0.0,0.0,0,0,10,9,1,15,1,0,1,0,4,1,1,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,357091,Deniz Undav,FW,1,94,0,0,1,0,6.2,0.07,0.21,2,1,25,19,2,34,2,0,0,0,0,0,1,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,402874,Lorenz Assignon,Sub,0,20,0,0,0,0,6.5,0.04,0.17,1,0,8,6,1,16,1,1,0,0,1,0,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,349125,Nikolas Nartey,Sub,0,21,0,0,0,0,6.1,0.0,0.0,0,0,8,7,0,12,1,0,0,0,1,0,1,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,444298,Dzenan Pejcinovic,Sub,0,21,0,0,0,0,6.1,0.42,0.0,1,1,5,5,0,8,0,0,0,0,0,0,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,395850,Tiago Tomas,Sub,0,13,0,0,0,0,6.0,0.36,0.0,2,1,1,0,0,3,0,0,0,0,0,0,0,0
+6106341,2026-11-03,VfB Stuttgart,Galatasaray,606483,Yanik Spalt,Sub,0,77,0,0,1,0,6.9,0.0,0.02,0,0,30,26,1,48,2,3,1,1,1,1,1,0
+6106389,2026-11-04,Slavia Prague,Arsenal,586627,Nazar Domchak,GK,1,95,0,0,0,0,6.4,0.0,0.01,0,0,47,37,0,56,0,0,0,0,0,1,0,3
+6106389,2026-11-04,Slavia Prague,Arsenal,365943,Tomas Vlcek,DR,1,60,0,0,0,0,5.7,0.0,0.0,0,0,20,15,0,31,2,1,0,0,1,1,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,110868,Tomas Holes,DC,1,95,0,0,0,0,6.9,0.1,0.13,1,0,58,52,2,76,2,2,0,0,1,2,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,404203,David Zima,DC,1,95,0,0,0,0,7.2,0.12,0.12,2,0,52,49,1,75,1,4,3,2,0,6,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,631472,Oskar Kubiak,DL,1,95,0,0,0,0,6.5,0.46,0.01,4,2,31,24,1,52,1,4,1,0,2,0,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,361838,Michal Sadilek,DMC,1,95,0,0,0,0,6.7,0.0,0.08,0,0,40,36,2,57,3,0,0,1,3,0,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,551510,David Moses,DMC,1,80,0,0,1,0,6.2,0.0,0.0,0,0,25,18,0,40,3,3,0,1,1,0,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,631474,Emmanuel Ayaosi,AMR,1,70,0,0,0,0,6.0,0.12,0.0,2,0,12,9,0,30,1,0,0,0,1,1,3,0
+6106389,2026-11-04,Slavia Prague,Arsenal,607572,Mubarak Suleiman,AMC,1,45,0,0,0,0,5.8,0.0,0.0,0,0,8,6,0,16,3,0,0,0,0,1,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,443813,Danijel Sturm,AML,1,45,0,0,0,0,6.0,0.0,0.0,0,0,10,7,0,16,1,0,2,0,0,1,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,582333,Wiktor Nowak,FW,1,95,1,0,0,0,7.0,0.83,0.0,2,2,18,14,1,35,4,0,1,1,2,0,4,0
+6106389,2026-11-04,Slavia Prague,Arsenal,499961,Stepan Chaloupek,Sub,0,15,0,0,0,0,6.1,0.04,0.03,1,0,3,3,1,5,1,0,0,0,0,0,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,426258,David Jurasek,Sub,0,25,0,1,0,0,7.2,0.02,0.46,1,0,6,3,2,12,0,1,0,0,1,0,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,464771,Mojmir Chytil,Sub,0,50,0,0,0,0,6.8,0.29,0.0,1,1,6,3,2,21,2,0,1,2,1,0,3,0
+6106389,2026-11-04,Slavia Prague,Arsenal,485298,Mikulas Konecny,Sub,0,35,0,0,0,0,6.7,0.18,0.0,3,1,7,6,1,17,1,1,3,0,0,1,0,0
+6106389,2026-11-04,Slavia Prague,Arsenal,449348,Ange N'Guessan,Sub,0,50,0,0,0,0,7.0,0.06,0.0,1,0,19,18,2,29,2,3,1,0,2,1,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,276366,David Raya,GK,1,95,0,0,0,0,7.2,0.0,0.05,0,0,40,25,1,50,0,0,0,0,0,1,0,4
+6106389,2026-11-04,Arsenal,Slavia Prague,322036,Ben White,DR,1,77,0,0,0,0,7.2,0.0,0.4,0,0,22,14,1,40,2,1,3,1,1,1,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,334087,Gabriel Magalhaes,DC,1,95,0,0,0,0,7.6,0.43,0.01,1,0,53,45,0,70,2,2,6,0,2,7,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,301440,Ezri Konsa,DC,1,61,0,0,1,0,6.8,0.0,0.0,0,0,45,42,0,53,4,0,0,0,2,0,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,404832,Piero Hincapie,DL,1,95,0,0,0,0,6.9,0.0,0.02,0,0,24,22,3,56,6,0,3,0,1,6,1,0
+6106389,2026-11-04,Arsenal,Slavia Prague,372424,Martin Zubimendi,DMC,1,95,0,0,0,0,7.4,0.0,0.0,0,0,64,53,0,80,4,2,3,1,0,4,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,332325,Declan Rice,DMC,1,95,0,0,1,0,6.4,0.0,0.04,0,0,75,67,0,92,0,0,1,1,2,1,1,0
+6106389,2026-11-04,Arsenal,Slavia Prague,389935,Noni Madueke,AMR,1,92,1,0,0,0,8.1,0.36,0.08,2,2,22,18,1,41,1,0,1,3,1,1,1,0
+6106389,2026-11-04,Arsenal,Slavia Prague,238916,Mikel Merino,AMC,1,95,0,1,0,0,7.4,0.92,0.03,3,2,46,38,1,59,3,0,3,0,1,2,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,332403,Eberechi Eze,AML,1,61,0,0,0,0,7.0,0.43,0.03,1,0,27,22,1,44,1,0,0,4,0,0,2,0
+6106389,2026-11-04,Arsenal,Slavia Prague,362815,Viktor Gyokeres,FW,1,77,1,1,0,0,8.3,0.29,0.13,2,1,21,17,1,29,0,0,1,0,0,0,1,0
+6106389,2026-11-04,Arsenal,Slavia Prague,399296,Christos Tzolis,Sub,0,34,0,0,0,0,6.1,0.05,0.02,1,0,13,12,1,17,1,0,0,0,0,1,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,388650,Jurrien Timber,Sub,0,18,0,0,0,0,6.0,0.05,0.0,1,0,6,5,0,9,0,1,0,0,0,0,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,247454,Martin degaard,Sub,0,18,0,0,0,0,5.9,0.07,0.04,1,0,14,11,0,17,0,0,0,0,0,0,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,425591,Cristhian Mosquera,Sub,0,34,0,0,0,0,6.3,0.0,0.0,0,0,9,7,0,13,2,0,1,0,0,1,0,0
+6106389,2026-11-04,Arsenal,Slavia Prague,571994,Max Dowman,Sub,0,3,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 6106392,2026-09-10,Slavia Prague,Lens,383684,Jakub Markovic,GK,1,97,0,0,0,0,6.4,0.0,0.0,0,0,41,29,0,52,0,0,0,0,0,1,0,4
 6106392,2026-09-10,Slavia Prague,Lens,365943,Tomas Vlcek,DC,1,97,0,0,0,0,7.7,0.0,0.0,0,0,24,18,0,43,4,2,5,0,1,8,0,0
 6106392,2026-09-10,Slavia Prague,Lens,404203,David Zima,DC,1,45,0,0,0,0,6.4,0.0,0.0,0,0,17,13,0,24,0,0,0,0,1,3,0,0
@@ -941,6 +1668,37 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106400,2026-09-09,Viking,VfB Stuttgart,510599,Vetle Auklend,Sub,0,23,0,0,0,0,6.0,0.0,0.0,0,0,12,8,0,18,1,0,0,0,0,2,0,0
 6106400,2026-09-09,Viking,VfB Stuttgart,418220,Simen Kvia-Egeskog,Sub,0,23,0,0,0,0,6.0,0.0,0.0,0,0,11,9,0,16,0,0,1,0,1,0,0,0
 6106400,2026-09-09,Viking,VfB Stuttgart,396782,Henrik Falchener,Sub,0,32,0,0,0,0,6.4,0.0,0.0,0,0,16,15,0,23,0,1,1,0,0,4,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,294165,Alberto Brignoli,GK,1,94,0,0,0,0,6.9,0.0,0.0,0,0,27,20,0,43,0,0,0,0,0,1,0,5
+6106401,2026-11-04,AEK Athens,Real Madrid,391933,Lazaros Rota,DR,1,94,0,0,0,0,6.3,0.0,0.0,0,0,24,18,0,56,4,0,1,1,3,4,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,279169,Harold Moukoudi,DC,1,94,0,0,0,0,6.2,0.2,0.01,1,1,30,28,0,46,0,2,0,0,0,7,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,422207,Filipe Relvas,DC,1,94,0,0,0,0,6.3,0.0,0.0,0,0,32,30,0,39,0,1,1,0,0,4,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,493121,Stavros Pilios,DL,1,94,1,0,0,0,7.0,0.35,0.0,1,1,26,22,1,46,0,0,1,0,0,7,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,399710,Aboubakary Koita,MR,1,94,1,1,0,1,7.1,0.17,0.1,3,1,17,16,1,47,5,0,0,3,0,0,2,0
+6106401,2026-11-04,AEK Athens,Real Madrid,202261,Kaan Kairinen,MC,1,59,0,0,0,0,6.1,0.0,0.0,0,0,11,10,0,14,2,1,0,0,1,1,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,433488,Kervin Arriaga,MC,1,94,0,0,1,0,6.6,0.0,0.0,0,0,29,28,0,42,0,2,3,0,3,7,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,369887,Lovro Majer,ML,1,52,0,0,0,0,7.3,0.0,0.15,0,0,12,11,2,27,6,2,0,1,0,1,1,0
+6106401,2026-11-04,AEK Athens,Real Madrid,300318,Mijat Gacinovic,FW,1,59,0,0,0,0,6.9,0.3,0.12,1,1,14,10,1,32,4,2,0,2,0,0,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,315755,Luka Jovic,FW,1,87,0,1,0,0,7.5,0.08,0.01,1,1,18,16,2,29,0,0,2,2,1,1,3,0
+6106401,2026-11-04,AEK Athens,Real Madrid,476796,Barnabas Varga,Sub,0,35,0,0,0,0,6.2,0.0,0.0,0,0,11,6,0,14,1,0,4,0,1,1,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,239013,Razvan Marin,Sub,0,35,0,0,0,0,6.0,0.1,0.01,2,0,13,11,0,17,0,0,0,0,0,0,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,284560,Oleksandr Zubkov,Sub,0,7,0,0,0,0,5.9,0.0,0.0,0,0,1,0,0,1,0,0,0,0,0,0,0,0
+6106401,2026-11-04,AEK Athens,Real Madrid,463353,Zine,Sub,0,42,0,0,0,0,6.6,0.0,0.05,0,0,10,7,1,23,6,0,0,1,0,0,1,0
+6106401,2026-11-04,Real Madrid,AEK Athens,73798,Thibaut Courtois,GK,1,94,0,0,0,0,6.6,0.0,0.0,0,0,19,18,0,27,0,0,0,0,0,0,0,3
+6106401,2026-11-04,Real Madrid,AEK Athens,322153,Denzel Dumfries,DR,1,94,0,1,0,0,6.8,0.51,0.67,1,1,46,44,2,54,1,0,1,0,1,0,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,337879,Eder Militao,DC,1,94,0,0,0,0,7.0,0.07,0.0,2,1,66,62,0,80,3,2,1,0,1,3,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,104010,Antonio Rudiger,DC,1,94,0,0,0,0,6.6,0.0,0.0,0,0,78,76,0,85,1,1,2,0,0,4,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,363496,Marc Cucurella,DL,1,80,0,1,1,0,7.6,0.45,0.15,2,1,80,75,2,98,5,0,3,0,5,2,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,369109,Eduardo Camavinga,DMC,1,94,0,0,0,0,7.6,0.0,0.01,0,0,58,54,2,79,12,1,1,1,6,2,1,0
+6106401,2026-11-04,Real Madrid,AEK Athens,136741,Bernardo Silva,DMC,1,66,0,0,0,0,6.6,0.48,0.04,1,0,56,54,2,68,3,0,0,2,1,0,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,557000,Yan Diomande,AMR,1,66,0,0,0,0,6.9,0.03,0.12,1,0,37,34,2,59,3,0,0,4,0,0,2,0
+6106401,2026-11-04,Real Madrid,AEK Athens,379868,Jude Bellingham,AMC,1,85,1,0,0,0,7.9,0.21,0.09,3,1,61,57,1,74,2,0,1,1,0,0,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,337782,Vinicius Junior,AML,1,80,0,0,0,0,6.3,0.15,0.04,3,0,31,26,2,48,2,0,0,0,0,0,2,0
+6106401,2026-11-04,Real Madrid,AEK Athens,300713,Kylian Mbappe,FW,1,94,1,0,0,0,8.1,1.02,0.32,7,3,35,28,2,57,0,0,0,2,0,0,3,0
+6106401,2026-11-04,Real Madrid,AEK Athens,317541,Brahim Diaz,Sub,0,14,0,0,0,0,6.4,0.04,0.0,1,0,11,11,1,17,0,0,0,0,0,0,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,437583,Alvaro Carreras,Sub,0,14,0,0,0,0,6.3,0.0,0.07,0,0,7,7,1,15,0,0,0,1,1,0,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,344644,Federico Valverde,Sub,0,28,1,0,0,0,7.5,0.03,0.06,1,1,32,28,3,35,0,1,0,0,0,0,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,516341,Carlos Espi,Sub,0,9,0,0,0,0,6.1,0.0,0.0,0,0,2,1,0,3,0,0,0,0,0,0,0,0
+6106401,2026-11-04,Real Madrid,AEK Athens,445649,Endrick,Sub,0,28,0,0,0,0,6.4,0.11,0.2,2,0,11,7,2,16,1,0,1,0,1,0,0,0
 6106404,2026-09-08,AEK Athens,LASK,294165,Alberto Brignoli,GK,1,93,0,0,0,0,7.1,0.0,0.0,0,0,21,16,0,34,0,0,0,1,0,0,0,3
 6106404,2026-09-08,AEK Athens,LASK,391933,Lazaros Rota,DR,1,93,0,0,0,0,8.1,0.03,0.09,1,0,40,33,2,74,2,4,2,2,1,2,0,0
 6106404,2026-09-08,AEK Athens,LASK,279169,Harold Moukoudi,DC,1,93,0,0,0,0,7.3,0.04,0.0,1,0,50,47,0,63,0,3,2,0,0,7,0,0
@@ -1001,6 +1759,70 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106405,2026-10-14,Liverpool,LASK,444539,Luke Chambers,Sub,0,8,0,0,0,0,6.0,0.0,0.0,0,0,3,1,0,4,0,0,0,0,1,0,0,0
 6106405,2026-10-14,Liverpool,LASK,136451,Joe Gomez,Sub,0,32,0,0,0,0,6.0,0.0,0.0,0,0,17,17,0,19,0,0,0,0,0,1,0,0
 6106405,2026-10-14,Liverpool,LASK,548106,Victor Munoz,Sub,0,21,0,0,0,0,5.8,0.03,0.01,1,0,7,6,0,12,1,0,0,0,0,0,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,485281,Lukas Jungwirth,GK,1,93,0,0,0,0,8.2,0.0,0.05,0,0,32,26,1,44,0,0,0,0,0,0,0,5
+6106408,2026-11-03,LASK,Slovan Bratislava,425605,Xavier Mbuyamba,DC,1,62,0,0,0,0,7.4,0.1,0.01,1,0,38,32,0,49,3,3,0,0,0,0,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,397267,Andres Andrade,DC,1,93,0,0,0,0,7.1,0.34,0.01,3,1,70,55,2,85,3,1,3,0,0,1,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,445423,Alemao,DC,1,93,0,0,0,0,7.4,0.1,0.0,2,1,77,72,1,88,0,1,2,0,0,3,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,389086,Melayro Bogarde,DMC,1,93,0,0,0,0,8.0,0.07,0.13,1,0,80,74,2,98,9,2,0,1,1,0,2,0
+6106408,2026-11-03,LASK,Slovan Bratislava,403883,Kasper Jrgensen,MR,1,93,2,0,0,0,9.0,0.44,0.03,2,2,36,29,2,55,0,2,3,0,0,1,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,124939,Sascha Horvath,MC,1,80,0,1,0,0,8.0,0.04,0.16,1,0,57,54,4,77,1,3,0,2,0,0,1,0
+6106408,2026-11-03,LASK,Slovan Bratislava,399626,Robert Ljubicic,MC,1,62,1,0,0,0,7.8,1.09,0.02,4,1,30,25,1,51,1,1,0,0,0,1,1,0
+6106408,2026-11-03,LASK,Slovan Bratislava,528209,Yvan Dibango,ML,1,93,0,0,0,0,7.1,0.04,0.29,1,0,39,29,1,65,4,1,0,0,0,0,1,0
+6106408,2026-11-03,LASK,Slovan Bratislava,485284,Moses Usor,FW,1,74,0,1,0,0,8.2,0.53,0.22,3,2,13,10,1,34,1,0,0,2,1,0,2,0
+6106408,2026-11-03,LASK,Slovan Bratislava,419581,Samuel Adeniran,FW,1,62,1,0,0,0,8.1,0.24,0.12,4,1,16,13,1,32,1,0,1,0,0,1,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,423286,Christoph Lang,Sub,0,19,0,0,0,0,6.3,0.14,0.09,2,0,4,3,1,11,2,0,0,0,0,0,1,0
+6106408,2026-11-03,LASK,Slovan Bratislava,377271,Sasa Kalajdzic,Sub,0,31,0,0,0,0,6.9,0.67,0.0,5,2,9,7,0,20,2,0,1,0,1,0,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,146634,Alessandro Schopf,Sub,0,13,0,0,0,0,6.3,0.0,0.02,0,0,13,13,0,20,1,1,0,0,0,0,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,424308,Krystof Danek,Sub,0,31,0,0,0,0,6.2,0.0,0.15,0,0,14,11,2,21,2,0,0,0,1,0,0,0
+6106408,2026-11-03,LASK,Slovan Bratislava,442403,Daniel Elfadli,Sub,0,31,0,0,0,0,6.2,0.0,0.0,0,0,20,20,0,24,3,0,0,0,1,0,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,444325,Aleksandar Popovic,GK,1,93,0,0,0,0,6.2,0.0,0.0,0,0,35,18,0,53,0,0,0,0,0,1,0,5
+6106408,2026-11-03,Slovan Bratislava,LASK,101550,Kevin Wimmer,DC,1,45,0,0,1,0,6.0,0.0,0.02,0,0,23,17,0,33,2,1,1,0,1,3,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,469722,Sahmkou Camara,DC,1,93,0,0,0,0,6.4,0.0,0.01,0,0,35,32,0,55,5,2,0,0,1,3,4,0
+6106408,2026-11-03,Slovan Bratislava,LASK,353208,Svetozar Markovic,DC,1,93,0,0,0,0,6.6,0.0,0.0,0,0,30,27,0,48,3,2,0,0,1,7,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,401721,Cesar Blackman,DMR,1,93,0,0,0,0,6.1,0.0,0.0,0,0,45,32,0,78,3,3,0,2,0,1,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,452198,Samuel Kozlovsky,DML,1,93,0,0,0,0,6.4,0.0,0.01,0,0,26,18,0,46,1,2,1,0,0,8,1,0
+6106408,2026-11-03,Slovan Bratislava,LASK,421777,Alen Mustafic,MC,1,93,0,0,0,0,5.8,0.0,0.12,0,0,35,30,1,57,1,1,0,2,1,2,1,0
+6106408,2026-11-03,Slovan Bratislava,LASK,318250,Cristian Martinez,MC,1,75,0,0,1,0,5.6,0.0,0.01,0,0,35,30,0,48,3,0,0,1,1,0,1,0
+6106408,2026-11-03,Slovan Bratislava,LASK,544998,Alexej Maros,AMC,1,62,0,0,0,0,5.9,0.29,0.05,1,1,14,10,1,29,2,0,0,0,1,0,3,0
+6106408,2026-11-03,Slovan Bratislava,LASK,448149,Suleiman Camara,AMC,1,35,0,0,0,0,5.8,0.0,0.0,0,0,7,4,0,12,0,0,0,0,1,0,1,0
+6106408,2026-11-03,Slovan Bratislava,LASK,114947,Andraz Sporar,FW,1,74,0,0,0,0,5.9,0.13,0.0,3,1,17,14,0,24,0,0,1,0,1,0,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,203838,Tigran Barseghyan,Sub,0,19,0,0,0,0,6.3,0.38,0.0,2,2,5,3,1,12,0,0,0,1,0,0,1,0
+6106408,2026-11-03,Slovan Bratislava,LASK,437686,Sandro Cruz,Sub,0,48,0,0,0,0,6.5,0.0,0.01,0,0,21,19,0,35,3,1,1,0,0,6,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,424529,Peter Pokorny,Sub,0,18,0,0,0,0,6.3,0.0,0.01,0,0,11,10,0,14,1,1,0,0,0,0,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,485514,Nino Marcelli,Sub,0,58,0,0,0,0,5.8,0.0,0.01,0,0,19,19,1,28,1,0,0,1,1,0,0,0
+6106408,2026-11-03,Slovan Bratislava,LASK,639793,Leo Hofstadter,Sub,0,31,0,0,0,0,6.2,0.04,0.0,1,1,11,8,0,18,0,0,0,1,0,0,3,0
+6106410,2026-10-21,Como,Manchester United,256536,Jean Butez,GK,1,94,0,0,0,0,6.8,0.0,0.0,0,0,44,33,0,55,0,0,1,0,0,1,0,3
+6106410,2026-10-21,Como,Manchester United,421975,Yan Couto,DR,1,79,0,0,0,0,7.2,0.0,0.16,0,0,48,43,1,58,1,1,0,1,0,0,0,0
+6106410,2026-10-21,Como,Manchester United,116465,Marc Oliver Kempf,DC,1,94,0,0,1,0,6.4,0.0,0.0,0,0,74,72,0,81,2,0,0,0,2,1,0,0
+6106410,2026-10-21,Como,Manchester United,516374,Jacobo Ramon,DC,1,94,1,0,0,0,8.0,0.43,0.01,1,1,95,88,0,110,5,1,1,1,0,2,0,0
+6106410,2026-10-21,Como,Manchester United,454341,Alex Valle,DL,1,94,0,0,0,0,6.9,0.0,0.02,0,0,53,46,0,84,7,1,1,0,0,2,2,0
+6106410,2026-10-21,Como,Manchester United,433972,Maximo Perrone,DMC,1,79,0,0,0,0,7.2,0.0,0.0,0,0,84,76,0,91,0,4,0,0,2,0,1,0
+6106410,2026-10-21,Como,Manchester United,279320,Luis Milla,DMC,1,94,0,0,0,0,7.1,0.0,0.01,0,0,81,75,1,97,3,1,2,0,1,2,1,0
+6106410,2026-10-21,Como,Manchester United,379615,Lucas da Cunha,AMR,1,68,0,1,0,0,7.4,0.1,0.03,2,0,50,41,1,65,2,0,0,1,0,1,0,0
+6106410,2026-10-21,Como,Manchester United,448659,Nico Paz,AMC,1,79,2,1,0,0,10.0,0.47,0.25,4,4,62,49,1,91,2,2,0,3,2,0,4,0
+6106410,2026-10-21,Como,Manchester United,407944,Martin Baturina,AML,1,63,0,0,0,0,7.3,0.06,0.12,1,1,38,36,3,52,1,2,0,1,0,0,2,0
+6106410,2026-10-21,Como,Manchester United,422873,Tasos Douvikas,FW,1,94,1,0,0,0,7.6,0.87,0.09,3,2,11,9,1,22,0,1,1,0,0,0,1,0
+6106410,2026-10-21,Como,Manchester United,531127,Ivan Smolcic,Sub,0,15,0,0,0,0,5.8,0.0,0.0,0,0,2,1,0,3,0,0,0,0,0,0,0,0
+6106410,2026-10-21,Como,Manchester United,368272,Maxence Caqueret,Sub,0,31,0,0,0,0,6.0,0.0,0.01,0,0,16,16,0,20,2,1,0,0,0,0,0,0
+6106410,2026-10-21,Como,Manchester United,372509,Samuele Ricci,Sub,0,15,0,0,0,0,5.9,0.0,0.0,0,0,5,5,0,5,0,0,0,0,1,0,0,0
+6106410,2026-10-21,Como,Manchester United,343496,Alberto Dossena,Sub,0,15,0,0,0,0,6.0,0.0,0.0,0,0,7,6,0,8,1,0,0,0,0,0,0,0
+6106410,2026-10-21,Como,Manchester United,468000,Kaiki,Sub,0,26,0,1,0,0,6.7,0.0,0.37,0,0,5,4,1,16,3,0,0,2,2,0,2,0
+6106410,2026-10-21,Manchester United,Como,402184,Senne Lammens,GK,1,94,0,0,0,0,6.4,0.0,0.0,0,0,22,16,0,32,0,0,0,0,0,2,0,4
+6106410,2026-10-21,Manchester United,Como,353418,Diogo Dalot,DR,1,94,0,0,0,0,6.3,0.07,0.0,2,0,49,42,0,75,4,2,1,2,2,0,0,0
+6106410,2026-10-21,Manchester United,Como,320374,Matthijs de Ligt,DC,1,78,0,0,0,0,5.5,0.0,0.0,0,0,36,33,0,39,0,1,1,0,0,1,0,0
+6106410,2026-10-21,Manchester United,Como,99487,Harry Maguire,DC,1,94,0,0,0,0,6.8,0.05,0.0,2,0,82,78,0,96,4,1,4,0,0,3,0,0
+6106410,2026-10-21,Manchester United,Como,349932,Noussair Mazraoui,DL,1,94,0,0,0,0,5.3,0.0,0.01,0,0,65,61,0,83,5,0,1,0,0,2,1,0
+6106410,2026-10-21,Manchester United,Como,451236,Andrey Santos,DMC,1,45,0,0,1,0,6.2,0.0,0.0,0,0,27,26,0,36,3,1,0,0,2,1,0,0
+6106410,2026-10-21,Manchester United,Como,343346,Mason Mount,DMC,1,94,0,0,0,0,6.0,0.03,0.03,1,0,60,54,0,75,3,0,0,0,1,2,2,0
+6106410,2026-10-21,Manchester United,Como,353377,Bryan Mbeumo,AMR,1,85,0,0,0,0,5.9,0.07,0.05,1,0,17,14,1,30,1,0,0,1,3,0,2,0
+6106410,2026-10-21,Manchester United,Como,136345,Youri Tielemans,AMC,1,94,0,0,0,0,6.4,0.04,0.0,1,1,46,38,1,63,2,1,0,1,0,1,0,0
+6106410,2026-10-21,Manchester United,Como,362758,Matheus Cunha,AML,1,45,0,0,0,0,6.1,0.04,0.01,1,0,20,15,0,27,2,0,1,0,2,0,0,0
+6106410,2026-10-21,Manchester United,Como,123761,Bruno Fernandes,FW,1,66,0,0,0,0,5.9,0.03,0.01,1,0,45,36,2,53,3,0,0,0,0,0,2,0
+6106410,2026-10-21,Manchester United,Como,436048,Carlos Baleba,Sub,0,49,0,0,1,0,5.6,0.0,0.0,0,0,40,30,1,51,4,2,0,0,0,0,0,0
+6106410,2026-10-21,Manchester United,Como,383956,Joshua Zirkzee,Sub,0,28,1,0,0,0,6.7,0.35,0.0,1,1,5,2,0,11,0,0,0,0,0,0,1,0
+6106410,2026-10-21,Manchester United,Como,470680,Harry Amass,Sub,0,16,0,0,0,0,6.1,0.0,0.0,0,0,3,3,0,6,0,0,0,0,0,0,0,0
+6106410,2026-10-21,Manchester United,Como,563779,Shea Lacey,Sub,0,9,0,0,1,0,6.1,0.0,0.0,0,0,6,6,0,7,0,0,1,0,1,0,0,0
+6106410,2026-10-21,Manchester United,Como,386634,Amad Diallo,Sub,0,49,0,1,0,0,7.9,0.14,0.12,3,2,22,19,2,45,1,1,1,5,0,0,2,0
 6106411,2026-09-10,Como,RB Leipzig,256536,Jean Butez,GK,1,94,0,0,0,0,6.9,0.0,0.0,0,0,39,30,0,48,0,0,0,0,0,2,0,3
 6106411,2026-09-10,Como,RB Leipzig,421975,Yan Couto,DR,1,73,0,0,0,0,6.9,0.0,0.12,0,0,35,31,1,56,2,0,0,1,1,3,0,0
 6106411,2026-09-10,Como,RB Leipzig,516374,Jacobo Ramon,DC,1,94,0,0,0,0,6.8,0.0,0.0,0,0,61,58,0,68,3,1,0,0,1,2,0,0
@@ -1065,6 +1887,37 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106414,2026-10-13,Sporting CP,Lens,467757,Silas Andersen,Sub,0,21,0,1,0,0,7.1,0.04,0.17,1,0,9,8,1,15,1,0,1,0,0,0,0,0
 6106414,2026-10-13,Sporting CP,Lens,418176,Fotis Ioannidis,Sub,0,9,0,0,0,0,5.9,0.0,0.0,0,0,1,1,0,4,0,0,0,0,1,0,1,0
 6106414,2026-10-13,Sporting CP,Lens,609224,Jesse Derry,Sub,0,21,0,0,0,0,6.3,0.0,0.0,0,0,3,2,0,8,3,0,0,1,1,0,0,0
+6106416,2026-11-04,Lens,Como,444597,Robin Risser,GK,1,93,0,0,0,0,5.0,0.0,0.0,0,0,32,26,0,40,1,0,0,0,0,3,0,2
+6106416,2026-11-04,Lens,Como,454321,Samson Baidoo,DC,1,93,0,0,1,0,4.7,0.0,0.0,0,0,60,55,0,70,2,0,1,0,1,5,0,0
+6106416,2026-11-04,Lens,Como,236546,Ruben Aguilar,DC,1,93,1,0,0,0,6.7,0.03,0.18,1,1,71,64,2,93,4,1,2,2,1,3,0,0
+6106416,2026-11-04,Lens,Como,541331,Kyllian Antonio,DC,1,93,0,0,0,0,5.4,0.0,0.0,0,0,60,57,0,79,3,3,0,0,2,1,1,0
+6106416,2026-11-04,Lens,Como,401354,Michal Skoras,DMR,1,45,0,0,0,0,6.0,0.0,0.0,0,0,13,8,0,23,1,0,0,1,0,1,0,0
+6106416,2026-11-04,Lens,Como,286443,Matthieu Udol,DML,1,93,0,0,0,0,4.8,0.07,0.0,2,0,43,37,0,58,3,0,1,0,0,1,0,0
+6106416,2026-11-04,Lens,Como,344198,Michael Cuisance,MC,1,93,0,0,1,0,5.1,0.05,0.0,1,0,43,41,1,56,8,1,0,1,3,0,0,0
+6106416,2026-11-04,Lens,Como,298837,Amadou Haidara,MC,1,69,0,0,0,0,5.4,0.02,0.0,1,0,25,22,0,40,5,2,0,0,3,1,1,0
+6106416,2026-11-04,Lens,Como,101537,Thorgan Hazard,AMC,1,93,0,0,0,0,6.3,0.18,0.17,3,0,24,20,1,39,6,0,2,1,0,1,0,0
+6106416,2026-11-04,Lens,Como,99143,Florian Thauvin,AMC,1,69,0,1,0,0,6.0,0.04,0.02,1,1,24,21,2,41,1,0,0,0,1,0,2,0
+6106416,2026-11-04,Lens,Como,499993,Franjo Ivanovic,FW,1,45,0,0,0,0,5.8,0.32,0.0,1,1,10,6,0,17,0,1,0,0,1,0,2,0
+6106416,2026-11-04,Lens,Como,432217,Junior Kadile,Sub,0,24,0,0,0,0,6.0,0.07,0.0,1,0,9,7,0,18,0,0,0,1,0,0,0,0
+6106416,2026-11-04,Lens,Como,538927,Andrija Bulatovic,Sub,0,24,0,0,0,0,6.0,0.0,0.0,0,0,18,16,1,20,0,0,0,0,0,0,0,0
+6106416,2026-11-04,Lens,Como,457103,Saud Abdulhamid,Sub,0,48,0,0,0,0,5.9,0.0,0.09,0,0,19,16,1,29,2,1,0,0,0,0,0,0
+6106416,2026-11-04,Lens,Como,622003,Mezian Mesloub,Sub,0,48,0,0,0,0,5.9,0.0,0.0,0,0,19,13,1,36,1,3,0,1,0,0,1,0
+6106416,2026-11-04,Como,Lens,256536,Jean Butez,GK,1,93,0,0,0,0,6.7,0.0,0.0,0,0,32,31,0,38,0,0,1,0,0,0,0,2
+6106416,2026-11-04,Como,Lens,421975,Yan Couto,DR,1,93,0,0,0,0,7.0,0.22,0.0,2,0,53,49,0,78,0,1,0,2,1,2,0,0
+6106416,2026-11-04,Como,Lens,116465,Marc Oliver Kempf,DC,1,71,1,0,0,0,7.6,0.3,0.0,1,1,60,52,0,72,1,0,2,0,0,7,0,0
+6106416,2026-11-04,Como,Lens,516374,Jacobo Ramon,DC,1,93,0,0,0,0,7.9,0.0,0.0,0,0,85,76,1,100,3,3,1,0,0,6,0,0
+6106416,2026-11-04,Como,Lens,454341,Alex Valle,DL,1,93,0,1,0,0,7.8,0.0,0.45,0,0,50,46,1,66,2,1,0,1,0,2,0,0
+6106416,2026-11-04,Como,Lens,433972,Maximo Perrone,DMC,1,93,0,0,0,0,7.2,0.46,0.01,2,1,83,81,1,95,2,0,1,0,0,2,0,0
+6106416,2026-11-04,Como,Lens,279320,Luis Milla,DMC,1,57,0,1,0,0,8.2,0.0,0.38,0,0,45,41,4,61,1,2,1,0,0,1,1,0
+6106416,2026-11-04,Como,Lens,379615,Lucas da Cunha,AMR,1,57,1,0,0,0,8.9,0.45,0.01,3,2,39,35,0,55,1,3,1,3,1,2,1,0
+6106416,2026-11-04,Como,Lens,448659,Nico Paz,AMC,1,57,1,2,0,0,10.0,0.18,0.23,4,2,34,25,2,59,1,2,1,3,3,0,3,0
+6106416,2026-11-04,Como,Lens,368272,Maxence Caqueret,AML,1,93,0,0,0,0,7.9,0.0,0.16,0,0,52,47,1,67,6,1,0,1,3,0,1,0
+6106416,2026-11-04,Como,Lens,422873,Tasos Douvikas,FW,1,60,3,1,0,0,10.0,1.37,0.1,3,3,6,5,2,18,0,0,0,1,0,1,0,0
+6106416,2026-11-04,Como,Lens,531127,Ivan Smolcic,Sub,0,22,0,0,0,0,6.2,0.0,0.0,0,0,22,20,0,23,0,0,0,0,0,1,0,0
+6106416,2026-11-04,Como,Lens,407944,Martin Baturina,Sub,0,36,1,0,0,0,7.8,0.51,0.0,1,1,19,16,0,33,1,0,0,4,1,0,0,0
+6106416,2026-11-04,Como,Lens,372509,Samuele Ricci,Sub,0,36,0,0,0,0,6.6,0.0,0.0,0,0,40,40,1,43,1,0,0,0,1,0,0,0
+6106416,2026-11-04,Como,Lens,533537,Mattia Liberali,Sub,0,36,1,1,0,0,8.7,0.08,0.18,1,1,22,21,2,34,4,1,0,1,1,0,1,0
+6106416,2026-11-04,Como,Lens,584486,Matteo Papaccioli,Sub,0,33,1,0,0,0,7.0,0.43,0.0,1,1,4,3,0,7,0,0,0,0,0,0,0,0
 6106417,2026-10-13,Viking,Bayern München,38878,Arild stb,GK,1,96,0,0,0,0,6.5,0.0,0.0,0,0,34,13,0,47,0,0,0,0,0,4,0,5
 6106417,2026-10-13,Viking,Bayern München,395742,Henrik Heggheim,DR,1,84,0,0,0,0,6.5,0.03,0.0,1,1,11,6,0,29,1,3,1,0,0,3,0,0
 6106417,2026-10-13,Viking,Bayern München,423967,Gianni Stensness,DC,1,96,1,0,0,0,7.4,0.06,0.0,1,1,40,32,0,51,2,0,1,0,2,5,0,0
@@ -1097,6 +1950,69 @@ match_id,date,team,opponent,player_id,player,position,started,minutes,goals,assi
 6106417,2026-10-13,Bayern München,Viking,327721,Dayot Upamecano,Sub,0,51,0,0,0,0,6.5,0.02,0.0,1,0,30,28,0,42,1,1,0,0,0,4,3,0
 6106417,2026-10-13,Bayern München,Viking,422717,Hiroki Ito,Sub,0,14,0,0,0,0,6.0,0.06,0.0,1,0,7,5,1,12,0,0,0,0,1,0,0,0
 6106417,2026-10-13,Bayern München,Viking,404776,Ismael Saibari,Sub,0,51,0,0,1,0,6.4,0.15,0.11,2,0,6,6,0,17,1,0,0,0,1,0,1,0
+6106420,2026-11-04,Viking,Sabah FK,38878,Arild stb,GK,1,94,0,0,0,0,6.5,0.0,0.0,0,0,34,26,0,41,0,0,0,0,0,1,0,3
+6106420,2026-11-04,Viking,Sabah FK,395742,Henrik Heggheim,DR,1,55,0,0,0,0,6.7,0.0,0.03,0,0,29,26,1,51,1,1,1,1,1,3,0,0
+6106420,2026-11-04,Viking,Sabah FK,423967,Gianni Stensness,DC,1,94,0,0,1,0,6.4,0.12,0.0,2,0,64,56,0,74,2,1,2,0,1,1,0,0
+6106420,2026-11-04,Viking,Sabah FK,396782,Henrik Falchener,DC,1,94,1,0,0,0,8.3,0.11,0.25,2,1,53,45,1,68,2,6,2,0,0,1,0,0
+6106420,2026-11-04,Viking,Sabah FK,320438,Kristoffer Haugen,DL,1,65,0,1,1,0,6.9,0.0,0.1,0,0,33,26,1,50,4,3,0,0,1,1,1,0
+6106420,2026-11-04,Viking,Sabah FK,363898,Kristoffer Askildsen,DMC,1,94,0,0,0,0,7.7,0.04,0.02,1,0,44,32,2,62,4,2,0,1,0,2,0,0
+6106420,2026-11-04,Viking,Sabah FK,527104,Tobias Moi,DMC,1,85,0,0,0,0,6.4,0.0,0.01,0,0,44,40,1,49,2,0,2,0,0,2,0,0
+6106420,2026-11-04,Viking,Sabah FK,128998,Henrik Bjrdal,AMR,1,55,0,0,0,0,6.2,0.0,0.01,0,0,28,18,0,39,0,0,1,0,0,0,0,0
+6106420,2026-11-04,Viking,Sabah FK,418220,Simen Kvia-Egeskog,AMC,1,85,0,0,0,0,7.0,0.1,0.13,2,1,32,25,2,44,2,1,2,0,1,0,0,0
+6106420,2026-11-04,Viking,Sabah FK,105042,Zlatko Tripic,AML,1,94,1,1,0,0,8.5,1.35,0.26,5,3,43,36,4,86,3,0,0,1,0,0,1,0
+6106420,2026-11-04,Viking,Sabah FK,335766,Erik Botheim,FW,1,94,2,0,0,0,8.3,0.5,0.07,4,2,14,11,0,30,3,0,1,0,0,0,4,0
+6106420,2026-11-04,Viking,Sabah FK,395669,Herman Haugen,Sub,0,39,0,0,0,0,6.8,0.0,0.06,0,0,11,9,1,20,3,1,0,0,0,0,0,0
+6106420,2026-11-04,Viking,Sabah FK,521276,Peter Christiansen,Sub,0,39,0,1,0,0,7.1,0.15,0.09,3,1,9,7,2,16,0,1,0,0,1,0,0,0
+6106420,2026-11-04,Viking,Sabah FK,532369,Niklas Fuglestad,Sub,0,9,0,0,0,0,6.3,0.29,0.0,1,0,4,4,0,6,0,1,0,0,0,0,0,0
+6106420,2026-11-04,Viking,Sabah FK,532959,Jakob Hansen,Sub,0,9,0,0,0,0,6.2,0.0,0.04,0,0,6,5,0,8,0,1,0,0,0,0,0,0
+6106420,2026-11-04,Viking,Sabah FK,510599,Vetle Auklend,Sub,0,29,0,0,0,0,6.5,0.06,0.0,1,0,9,6,0,17,1,1,0,1,0,0,0,0
+6106420,2026-11-04,Sabah FK,Viking,135763,Stas Pokatilov,GK,1,94,0,0,0,0,6.7,0.0,0.0,0,0,31,19,0,46,0,0,0,0,0,1,0,4
+6106420,2026-11-04,Sabah FK,Viking,236489,Akim Zedadka,DR,1,94,0,0,0,0,5.7,0.03,0.0,2,0,54,47,0,78,2,2,0,3,2,2,1,0
+6106420,2026-11-04,Sabah FK,Viking,453628,Steve Solvet,DC,1,94,0,0,0,0,6.1,0.05,0.0,1,0,42,34,1,61,0,1,2,0,0,9,0,0
+6106420,2026-11-04,Sabah FK,Viking,559781,Aden McCarthy,DC,1,94,0,0,0,1,5.2,0.03,0.02,1,0,44,38,0,53,1,0,2,0,0,3,0,0
+6106420,2026-11-04,Sabah FK,Viking,401353,Tymoteusz Puchacz,DL,1,94,0,0,0,0,6.7,0.12,0.18,3,1,48,40,6,78,2,2,1,0,1,2,0,0
+6106420,2026-11-04,Sabah FK,Viking,349657,Ivan Lepinjica,DMC,1,94,0,0,0,0,6.4,0.04,0.01,1,0,63,51,1,78,3,1,2,1,1,2,1,0
+6106420,2026-11-04,Sabah FK,Viking,485964,Umarali Rakhmonaliev,DMC,1,78,0,1,1,0,6.9,0.06,0.29,2,1,48,37,3,63,1,2,1,0,2,2,0,0
+6106420,2026-11-04,Sabah FK,Viking,530841,Christian Nwachukwu,AMR,1,70,0,0,0,0,6.5,0.0,0.08,0,0,18,14,1,34,1,0,0,2,0,1,1,0
+6106420,2026-11-04,Sabah FK,Viking,435062,Abdulla Xaybulayev,AMC,1,70,0,0,0,0,6.2,0.13,0.03,2,0,30,25,0,47,2,1,0,0,2,3,1,0
+6106420,2026-11-04,Sabah FK,Viking,132038,Veljko Simic,AML,1,32,0,0,0,0,6.0,0.0,0.0,0,0,17,12,0,19,0,0,0,0,0,0,1,0
+6106420,2026-11-04,Sabah FK,Viking,470090,Orphe Mbina,FW,1,69,1,0,0,0,7.3,0.51,0.0,2,1,7,3,0,15,0,0,2,1,0,2,0,0
+6106420,2026-11-04,Sabah FK,Viking,564937,Rahman Dasdamirov,Sub,0,16,0,0,0,0,5.0,0.0,0.0,0,0,9,6,0,11,1,0,0,0,0,0,0,0
+6106420,2026-11-04,Sabah FK,Viking,505204,Xayal Aliyev,Sub,0,25,0,0,0,0,6.0,0.0,0.01,0,0,5,4,0,6,0,0,0,1,0,0,0,0
+6106420,2026-11-04,Sabah FK,Viking,418966,Du Queiroz,Sub,0,24,0,0,0,0,6.0,0.0,0.03,0,0,17,16,0,20,0,1,0,0,0,0,0,0
+6106420,2026-11-04,Sabah FK,Viking,566788,Joy-Lance Mickels,Sub,0,62,0,0,1,0,6.0,0.14,0.01,2,1,18,15,0,28,0,1,1,1,1,0,1,0
+6106420,2026-11-04,Sabah FK,Viking,411954,Xander Severina,Sub,0,24,0,0,0,0,6.1,0.0,0.0,0,0,11,9,0,14,0,1,0,1,0,0,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,135763,Stas Pokatilov,GK,1,92,0,0,0,0,6.5,0.0,0.0,0,0,36,25,0,49,0,0,0,0,0,1,0,6
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,236489,Akim Zedadka,DR,1,92,0,0,1,0,7.0,0.02,0.01,1,0,60,51,1,89,3,2,2,0,0,6,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,453628,Steve Solvet,DC,1,92,0,0,1,0,5.9,0.03,0.0,1,0,44,36,0,55,0,0,2,0,1,5,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,559781,Aden McCarthy,DC,1,92,1,0,1,0,7.8,0.43,0.04,1,1,36,32,1,46,2,1,1,0,1,1,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,401353,Tymoteusz Puchacz,DL,1,92,0,1,0,0,7.1,0.0,0.39,0,0,39,29,2,65,1,1,1,0,0,5,1,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,349657,Ivan Lepinjica,DMC,1,92,0,0,1,0,6.3,0.02,0.01,1,0,48,40,3,60,0,2,0,0,1,2,1,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,485964,Umarali Rakhmonaliev,DMC,1,80,0,0,0,0,6.4,0.08,0.07,1,0,37,32,1,53,0,1,0,0,1,3,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,455761,Kaheem Parris,AMR,1,64,0,0,0,0,6.5,0.07,0.0,1,1,16,12,0,25,0,0,1,2,2,1,2,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,418966,Du Queiroz,AMC,1,64,0,0,0,0,6.3,0.0,0.0,0,0,19,16,1,26,1,1,0,1,0,0,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,132038,Veljko Simic,AML,1,92,0,0,0,0,6.1,0.48,0.0,4,1,29,20,0,48,3,1,0,1,1,0,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,566788,Joy-Lance Mickels,FW,1,80,0,0,0,0,6.4,0.02,0.05,1,1,20,13,1,28,0,0,2,0,0,1,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,376859,Aleksey Isayev,Sub,0,28,0,0,0,0,6.1,0.0,0.02,0,0,13,12,0,16,1,0,0,0,1,0,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,435062,Abdulla Xaybulayev,Sub,0,12,0,0,0,0,6.1,0.0,0.0,0,0,7,7,0,9,0,0,0,0,0,0,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,530841,Christian Nwachukwu,Sub,0,12,0,0,0,0,6.4,0.0,0.0,0,0,6,6,0,13,2,0,0,1,0,0,0,0
+6106422,2026-10-20,Sabah FK,Borussia Dortmund,470090,Orphe Mbina,Sub,0,28,0,0,0,0,6.0,0.31,0.0,2,0,2,1,0,9,0,0,0,1,0,0,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,336028,Gregor Kobel,GK,1,92,0,0,0,0,6.7,0.0,0.0,0,0,28,22,0,37,0,0,0,0,0,1,0,3
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,288892,Ramy Bensebaini,DC,1,71,0,0,0,0,6.5,0.07,0.03,3,0,50,42,0,66,2,2,1,0,0,2,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,296768,Waldemar Anton,DC,1,92,0,0,0,0,6.9,0.0,0.02,0,0,52,45,0,68,4,1,3,0,1,6,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,371275,Nico Schlotterbeck,DC,1,92,0,0,0,0,7.0,0.1,0.0,2,0,65,52,0,83,2,2,3,1,0,4,2,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,382556,Joey Veerman,DMC,1,92,0,1,0,0,8.5,0.13,0.25,2,2,79,68,3,98,1,4,3,0,0,1,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,320436,Julian Ryerson,MR,1,92,0,0,0,0,6.9,0.08,0.01,1,0,37,34,0,58,2,0,0,2,0,0,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,367783,Felix Nmecha,MC,1,71,0,0,0,0,6.4,0.18,0.38,2,1,47,40,3,60,2,0,2,0,2,0,1,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,410639,Carney Chukwuemeka,MC,1,70,0,0,0,0,7.4,0.0,0.77,0,0,36,29,5,49,2,2,0,0,0,0,1,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,418584,Daniel Svensson,ML,1,76,0,0,0,0,6.5,0.0,0.48,0,0,32,30,2,46,0,0,0,0,3,3,1,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,236506,Serhou Guirassy,FW,1,92,2,0,0,0,8.2,2.09,0.11,8,4,29,23,2,41,1,0,1,0,1,0,1,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,380655,Fabio Silva,FW,1,90,0,0,0,0,6.3,0.75,0.14,4,2,23,14,1,34,0,0,0,0,2,0,1,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,92051,Marcel Sabitzer,Sub,0,22,0,0,0,0,6.4,0.0,0.01,0,0,7,4,0,13,2,1,0,0,1,1,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,513664,Joane Gadou,Sub,0,21,0,0,0,0,6.1,0.0,0.0,0,0,0,0,0,2,0,0,0,0,0,2,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,387125,Maximilian Beier,Sub,0,16,0,0,0,0,5.9,0.0,0.0,0,0,5,4,0,9,0,0,0,0,1,0,1,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,422365,Jobe Bellingham,Sub,0,21,0,0,0,0,6.4,0.0,0.16,0,0,11,9,1,14,0,1,0,0,1,1,0,0
+6106422,2026-10-20,Borussia Dortmund,Sabah FK,456771,Ethan Nwaneri,Sub,0,2,0,0,0,0,6.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 6106424,2026-10-13,Sabah FK,Slavia Prague,135763,Stas Pokatilov,GK,1,94,0,0,0,0,8.0,0.0,0.0,0,0,38,22,0,51,0,0,0,0,0,0,0,6
 6106424,2026-10-13,Sabah FK,Slavia Prague,236489,Akim Zedadka,DR,1,94,0,0,1,0,7.7,0.0,0.0,0,0,51,40,0,77,1,1,4,2,3,3,3,0
 6106424,2026-10-13,Sabah FK,Slavia Prague,453628,Steve Solvet,DC,1,71,0,0,1,0,7.4,0.0,0.0,0,0,29,23,0,41,0,1,1,0,2,5,0,0

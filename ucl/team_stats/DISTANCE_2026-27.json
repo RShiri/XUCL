@@ -1,0 +1,225 @@
+{
+ "season": "2026-27",
+ "stat": "Distance per match",
+ "unit": "km/match",
+ "source": "https://data.fotmob.com/stats/42/season/47760/phys_tdc_team.json",
+ "fetched_utc": "2026-11-09T03:30:58+00:00",
+ "teams": [
+  {
+   "team": "Bodø/Glimt",
+   "team_id": "8402",
+   "km": 124.29,
+   "matches": 4
+  },
+  {
+   "team": "Club Brugge",
+   "team_id": "8342",
+   "km": 122.78,
+   "matches": 4
+  },
+  {
+   "team": "Lens",
+   "team_id": "8588",
+   "km": 121.93,
+   "matches": 4
+  },
+  {
+   "team": "Inter",
+   "team_id": "8636",
+   "km": 121.48,
+   "matches": 4
+  },
+  {
+   "team": "FC Porto",
+   "team_id": "9773",
+   "km": 121.08,
+   "matches": 4
+  },
+  {
+   "team": "Viking",
+   "team_id": "8478",
+   "km": 120.66,
+   "matches": 4
+  },
+  {
+   "team": "Arsenal",
+   "team_id": "9825",
+   "km": 120.55,
+   "matches": 4
+  },
+  {
+   "team": "LASK",
+   "team_id": "9977",
+   "km": 120.09,
+   "matches": 4
+  },
+  {
+   "team": "PSV Eindhoven",
+   "team_id": "8640",
+   "km": 119.91,
+   "matches": 4
+  },
+  {
+   "team": "Slavia Prague",
+   "team_id": "7787",
+   "km": 119.83,
+   "matches": 4
+  },
+  {
+   "team": "Villarreal",
+   "team_id": "10205",
+   "km": 119.69,
+   "matches": 4
+  },
+  {
+   "team": "RB Leipzig",
+   "team_id": "178475",
+   "km": 119.66,
+   "matches": 4
+  },
+  {
+   "team": "Borussia Dortmund",
+   "team_id": "9789",
+   "km": 119.53,
+   "matches": 4
+  },
+  {
+   "team": "Sabah FK",
+   "team_id": "951893",
+   "km": 119.28,
+   "matches": 4
+  },
+  {
+   "team": "Barcelona",
+   "team_id": "8634",
+   "km": 118.71,
+   "matches": 4
+  },
+  {
+   "team": "Feyenoord",
+   "team_id": "10235",
+   "km": 118.65,
+   "matches": 4
+  },
+  {
+   "team": "Paris Saint-Germain",
+   "team_id": "9847",
+   "km": 118.64,
+   "matches": 4
+  },
+  {
+   "team": "Bayern München",
+   "team_id": "9823",
+   "km": 118.37,
+   "matches": 4
+  },
+  {
+   "team": "Napoli",
+   "team_id": "9875",
+   "km": 118.34,
+   "matches": 4
+  },
+  {
+   "team": "Manchester City",
+   "team_id": "8456",
+   "km": 117.47,
+   "matches": 4
+  },
+  {
+   "team": "Lille",
+   "team_id": "8639",
+   "km": 117.47,
+   "matches": 4
+  },
+  {
+   "team": "Como",
+   "team_id": "10171",
+   "km": 117.45,
+   "matches": 4
+  },
+  {
+   "team": "VfB Stuttgart",
+   "team_id": "10269",
+   "km": 117.35,
+   "matches": 4
+  },
+  {
+   "team": "Sporting CP",
+   "team_id": "9768",
+   "km": 117.31,
+   "matches": 4
+  },
+  {
+   "team": "AEK Athens",
+   "team_id": "8563",
+   "km": 116.4,
+   "matches": 4
+  },
+  {
+   "team": "Shakhtar Donetsk",
+   "team_id": "9728",
+   "km": 116.15,
+   "matches": 4
+  },
+  {
+   "team": "Slovan Bratislava",
+   "team_id": "6019",
+   "km": 116.13,
+   "matches": 4
+  },
+  {
+   "team": "Manchester United",
+   "team_id": "10260",
+   "km": 116.01,
+   "matches": 4
+  },
+  {
+   "team": "Atlético Madrid",
+   "team_id": "9906",
+   "km": 115.65,
+   "matches": 4
+  },
+  {
+   "team": "Aston Villa",
+   "team_id": "10252",
+   "km": 115.3,
+   "matches": 4
+  },
+  {
+   "team": "Galatasaray",
+   "team_id": "8637",
+   "km": 114.25,
+   "matches": 4
+  },
+  {
+   "team": "Liverpool",
+   "team_id": "8650",
+   "km": 112.69,
+   "matches": 4
+  },
+  {
+   "team": "Real Madrid",
+   "team_id": "8633",
+   "km": 112.38,
+   "matches": 4
+  },
+  {
+   "team": "Real Betis",
+   "team_id": "8603",
+   "km": 111.85,
+   "matches": 4
+  },
+  {
+   "team": "Fenerbahçe",
+   "team_id": "8695",
+   "km": 111.66,
+   "matches": 4
+  },
+  {
+   "team": "Roma",
+   "team_id": "8686",
+   "km": 111.52,
+   "matches": 4
+  }
+ ]
+}

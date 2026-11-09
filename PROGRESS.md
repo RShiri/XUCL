@@ -15,6 +15,7 @@ py ucl/progress_log.py lesson --failed "what not to repeat"
 ## Platform updates & changes
 
 <!-- progress:platform -->
+- **2026-11-09** — Weekly update (2026-27): schedule rc=0, backfill rc=0, pushed=False, took 5382s
 
 ## Lessons — what worked / what didn't
 
@@ -25,6 +26,7 @@ py ucl/progress_log.py lesson --failed "what not to repeat"
 <!-- progress:scrapes -->
 | When | Season | Trigger | Target | Result | Took | Notes |
 |---|---|---|---|---|---|---|
+| 2026-11-09 07:00 | 2026-27 | backfill.py | 36 match(es) | ✅ 36 saved | 1h 29m | — |
 | 2026-10-15 11:49 | 2024-25 | scrape_whoscored.py | fixtures sweep | ✅ 189 saved | 38m 05s | — |
 | 2026-10-15 10:49 | 2025-26 | scrape_whoscored.py | fixtures sweep | ✅ 146 saved, 43 already had data | 37m 31s | — |
 | 2026-10-15 07:58 | 2025-26 | scrape_whoscored.py | fixtures sweep | ✅ 43 saved | 11m 12s | 2 id(s) not in the schedule |

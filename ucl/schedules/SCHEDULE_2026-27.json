@@ -3,7 +3,7 @@
   "competition": "Champions League",
   "format": "league",
   "fotmob_league_id": "42",
-  "generated_utc": "2026-10-14T23:57:16.957663+00:00",
+  "generated_utc": "2026-11-09T03:30:57.423988+00:00",
   "matches": [
     {
       "fotmob_id": 6106295,
@@ -554,10 +554,10 @@
       "away": "Slavia Prague",
       "home_id": "8695",
       "away_id": "7787",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -569,10 +569,10 @@
       "away": "Borussia Dortmund",
       "home_id": "951893",
       "away_id": "9789",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 1,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -584,10 +584,10 @@
       "away": "Barcelona",
       "home_id": "9847",
       "away_id": "8634",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -599,10 +599,10 @@
       "away": "Villarreal",
       "home_id": "8650",
       "away_id": "10205",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 3,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -614,10 +614,10 @@
       "away": "AEK Athens",
       "home_id": "8456",
       "away_id": "8563",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 5,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -629,10 +629,10 @@
       "away": "Slovan Bratislava",
       "home_id": "8686",
       "away_id": "6019",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -644,10 +644,10 @@
       "away": "PSV Eindhoven",
       "home_id": "9773",
       "away_id": "8640",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 0,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -659,10 +659,10 @@
       "away": "Bodø/Glimt",
       "home_id": "9875",
       "away_id": "8402",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 3,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -674,10 +674,10 @@
       "away": "Atlético Madrid",
       "home_id": "10269",
       "away_id": "9906",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 1,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -689,10 +689,10 @@
       "away": "Galatasaray",
       "home_id": "8639",
       "away_id": "8637",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 4,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -704,10 +704,10 @@
       "away": "Manchester United",
       "home_id": "10171",
       "away_id": "10260",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -719,10 +719,10 @@
       "away": "Arsenal",
       "home_id": "9823",
       "away_id": "9825",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -734,10 +734,10 @@
       "away": "RB Leipzig",
       "home_id": "8633",
       "away_id": "178475",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -749,10 +749,10 @@
       "away": "Shakhtar Donetsk",
       "home_id": "8636",
       "away_id": "9728",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 1,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -764,10 +764,10 @@
       "away": "LASK",
       "home_id": "9768",
       "away_id": "9977",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 3,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -779,10 +779,10 @@
       "away": "Viking",
       "home_id": "10252",
       "away_id": "8478",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 3,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -794,10 +794,10 @@
       "away": "Lens",
       "home_id": "8342",
       "away_id": "8588",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 3,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -809,10 +809,10 @@
       "away": "Feyenoord",
       "home_id": "8603",
       "away_id": "10235",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 1,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -824,10 +824,10 @@
       "away": "Sporting CP",
       "home_id": "9728",
       "away_id": "9768",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 0,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -839,10 +839,10 @@
       "away": "VfB Stuttgart",
       "home_id": "8637",
       "away_id": "10269",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -854,10 +854,10 @@
       "away": "Aston Villa",
       "home_id": "8634",
       "away_id": "10252",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 3,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -869,10 +869,10 @@
       "away": "Bayern München",
       "home_id": "9906",
       "away_id": "9823",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 0,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -884,10 +884,10 @@
       "away": "Roma",
       "home_id": "10260",
       "away_id": "8686",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 3,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -899,10 +899,10 @@
       "away": "Inter",
       "home_id": "10235",
       "away_id": "8636",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 0,
+      "away_score": 3,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -914,10 +914,10 @@
       "away": "Lille",
       "home_id": "8402",
       "away_id": "8639",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 0,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -929,10 +929,10 @@
       "away": "Paris Saint-Germain",
       "home_id": "10205",
       "away_id": "9847",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 0,
+      "away_score": 6,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -944,10 +944,10 @@
       "away": "Slovan Bratislava",
       "home_id": "9977",
       "away_id": "6019",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 0,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -959,10 +959,10 @@
       "away": "Liverpool",
       "home_id": "8695",
       "away_id": "8650",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 3,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -974,10 +974,10 @@
       "away": "Real Madrid",
       "home_id": "8563",
       "away_id": "8633",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 3,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -989,10 +989,10 @@
       "away": "Real Betis",
       "home_id": "9789",
       "away_id": "8603",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -1004,10 +1004,10 @@
       "away": "Napoli",
       "home_id": "9773",
       "away_id": "9875",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -1019,10 +1019,10 @@
       "away": "Club Brugge",
       "home_id": "8640",
       "away_id": "8342",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 1,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -1034,10 +1034,10 @@
       "away": "Manchester City",
       "home_id": "178475",
       "away_id": "8456",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 2,
+      "away_score": 3,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -1049,10 +1049,10 @@
       "away": "Arsenal",
       "home_id": "7787",
       "away_id": "9825",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 1,
+      "away_score": 2,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -1064,10 +1064,10 @@
       "away": "Como",
       "home_id": "8588",
       "away_id": "10171",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 1,
+      "away_score": 9,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
@@ -1079,10 +1079,10 @@
       "away": "Sabah FK",
       "home_id": "8478",
       "away_id": "951893",
-      "home_score": null,
-      "away_score": null,
-      "status": "N",
-      "finished": false,
+      "home_score": 4,
+      "away_score": 1,
+      "status": "F",
+      "finished": true,
       "stage": "league"
     },
     {
